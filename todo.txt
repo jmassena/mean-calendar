@@ -1,0 +1,88 @@
+
+basic auth working.
+
+Next:
+
+  [!!!] try moving DAL code to mongoose model. See what it looks like. Not sure I am a fan of this.
+        I changed my mind. I will keep schema definition in one file and DAL in another.
+
+
+  [x] OAuth with google plus
+      - prototype is working!!!
+
+    todo:
+      [x] create passport local strategy so code is consistent
+      [x] refactor code so config module is used.
+
+
+      [x] move the database config to config/mongo module
+
+
+
+  [] setup logging to file system
+      - will this work on Heroku?
+
+
+
+  [x] better error messages
+    [x] return error id, msg for expected errors which we show message for
+       other errors we give generic error message.
+
+
+  [] create gulp tasks to run tests on test/build environments.
+  [] can I just always build to dist in realtime and use for testing dev and pro?
+
+  [] use less for css generation
+    [] create gulp task to regenerate css on less file changes.
+       This needs to happen when you are testing also so add this dependency to test tasks.
+
+  [] refactor
+
+    [] create notification directive that can be triggered from any other controller or service
+       look at paul's toast project
+
+        - [] add html feature
+        - [] add header feature
+        - [] add icon?
+
+    [] create directive for login/logout/currentUser menu items
+
+  [] create roles admin/user
+  [] assign rights to roles {editSelf,editAll,readSelf,readAll}
+     Read up more on typical role/permission models for web apps.
+
+  [] main controller needs to watch AuthSvc.isLoggedIn so if a user logs out on one tab the change is noticed on second tab.
+
+
+
+//create AuthService like so:
+http://stackoverflow.com/questions/14206492/how-do-i-store-a-current-user-context-in-angular/14206567#comment20831205_14206567
+
+app.factory( 'AuthService', function() {
+  var currentUser;
+
+  return {
+    login: function() { ... },
+    logout: function() { ... },
+    isLoggedIn: function() { ... },
+    currentUser: function() { return currentUser; }
+    ...
+  };
+});
+
+
+then controllers can use the service:
+app.controller( 'MainCtrl', function( $scope, AuthService ) {
+  $scope.$watch( AuthService.isLoggedIn, function ( isLoggedIn ) {
+    $scope.isLoggedIn = isLoggedIn;
+    $scope.currentUser = AuthService.currentUser();
+  });
+});
+
+
+// what to store in token:
+// issuer, expiration, scopes (what person can access, or maybe this could be roles), subject (user identifier)
+ "iss": "http://galaxies.com",
+  "exp": 1300819380,
+  "scopes": ["explorer", "solar-harvester", "seller"],
+  "sub": "tom@andromeda.com"

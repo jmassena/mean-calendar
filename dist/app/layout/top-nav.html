@@ -1,0 +1,51 @@
+<nav class="navbar navbar-default" role="navigation">
+  <div class="navbar-header">
+
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <!-- data-toggle tells bs to what to do with the button when space is less than needed
+    data-target specifies which element to toggle -->
+    <button type="button" data-target="#navbar-collapse" data-toggle="collapse" class="navbar-toggle">
+      <span class="sr-only">Toggle navigation</span>
+      <!-- I think these are where the collapsed items will be placed -->
+      <span class="icon-bar">
+      </span>
+      <span class="icon-bar">
+      </span>
+      <span class="icon-bar">
+      </span>
+    </button>
+    <a ui-sref="welcome" class="navbar-brand">Authentication</a>
+  </div>
+
+  <div class="collapse navbar-collapse" id="navbar-collapse">
+    <ul class="nav navbar-nav pull-right">
+
+      <li>
+        <a ng-hide="vm.user===null">{{vm.user.userName}}</a>
+      </li>
+      <li>
+        <a ui-sref="login" ng-show="vm.user===null">Login</a>
+      </li>
+      <li>
+        <a ui-sref="register" ng-show="vm.user===null">Register</a>
+      </li>
+      <li>
+        <a ui-sref="login" ng-hide="vm.user===null" ng-click="vm.logout()">Logout</a>
+      </li>
+
+      <!-- <li ng-repeat="ddTab in vm.getDropdownTabs()" class="dropdown">
+
+        <a href="" class="dropdown-toggle" data-toggle="dropdown">
+          {{ddTab.text}} <b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu">
+          <li ng-repeat="menuItem in ddTab.items"
+            ng-class="{'dropdown-header': menuItem.type=='header', divider: menuItem.type=='divider'}">
+            {{(menuItem.type!='link')?menuItem.text:''}}
+            <a ng-if="menuItem.type=='link'" href="{{menuItem.href||''}}">{{menuItem.text}}</a>
+          </li>
+        <ul>
+      </li> -->
+    </ul>
+  </div>
+</nav>

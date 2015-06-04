@@ -1,0 +1,105 @@
+
+notification.top-left-float-notification {
+  position: absolute;
+  left: 20%;
+  top: 10px;
+  z-index: 10;
+  width:700px;
+}
+/*notification.top-middle-notification>div {
+  position: relative;
+}*/
+
+
+notification.right-notification {
+  position: absolute;
+  right: 10px;
+  top: 100px;
+  z-index: 10;
+}
+
+notification.top-middle-notification {
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  z-index: 10;
+}
+
+notification.top-middle-notification>div {
+  position: relative;
+  left: -50%;
+}
+/*notification.top-left-third-notification {
+  position: absolute;
+  left: 33%;
+  top: 10px;
+  z-index: 10;
+}
+
+notification.top-left-third-notification>div {
+  position: relative;
+  left: -50%;
+}*/
+
+li.notification {
+  position: relative;
+  list-style: none;
+
+  -webkit-transition: all ease .5s;
+  -o-transition: all ease .5s;
+  transition: all ease .5s;
+  /*position: absolute;*/
+
+  color: black;
+  background-color: #ffffff;
+  border: solid 1px black;
+  border-radius: 10px;
+  padding: 10px;
+  margin: 10px;
+  min-width: 300px;
+  max-width: 500px;
+  min-height: 30px;
+  box-shadow: 5px 5px 7px #aaa;
+
+  /*-webkit-transition: opacity ease .9s;
+  -o-transition: opacity ease .9s;
+  transition: opacity ease .9s;*/
+}
+
+/*global-notification>div {
+  position: relative;
+  left: -50%;
+}*/
+
+notification li button.notification-close {
+  font-weight: bold;
+  font-size: 21px;
+  color: #000;
+  opacity: .3;
+  background-color: Transparent;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  top: 0px;
+  right: 10px;
+
+  /*-webkit-transition: opacity ease .9s;
+  -o-transition: opacity ease .9s;
+  transition: opacity ease .9s;*/
+}
+
+li.notification-removed {
+  opacity: 0;
+  -webkit-transition: opacity ease .5s;
+  -o-transition: opacity ease .5s;
+  transition: opacity ease .5s;
+}
+
+li.notification-success {
+  background-color: #efe;
+}
+
+li.notification-error {
+  background-color: #ff7777;
+}

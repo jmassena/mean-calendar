@@ -1,0 +1,64 @@
+<!-- app/index.html -->
+<!-- ng-strict-di -->
+<!doctype html>
+
+<html lang="en" ng-app="app">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- inject-vendor:css -->
+  <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.css">
+  <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap-theme.css">
+  <!-- endinject -->
+
+  <link rel="stylesheet" href="/content/app-style.css">
+  <link rel="stylesheet" href="/content/notification.css">
+
+  <!-- Is this line doing anything? -->
+  <link rel="icon" href="/content/img/favicon.ico" type="image/x-icon" />
+
+  <title ng-bind="title"></title>
+</head>
+
+<body>
+
+  <div ui-view="top-nav"></div>
+  <notification class="top-left-float-notification" global="true"></notification>
+
+  <div ui-view="main-content"></div>
+
+  <!-- inject-vendor:js -->
+
+  <!-- jquery has to be before bootstrap -->
+  <script src="/bower_components/jquery/dist/jquery.js"></script>
+  <script src="/bower_components/bootstrap/dist/js/bootstrap.js"></script>
+
+  <!-- NOTE: when adding something here, consider adding it to the karma.config -->
+  <script src="/bower_components/angular/angular.js"></script>
+  <script src="/bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+  <script src="/bower_components/angular-resource/angular-resource.js"></script>
+  <script src="/bower_components/moment/moment.js"></script>
+  <script src="/bower_components/angular-cookies/angular-cookies.js"></script>
+  <!-- endinject -->
+
+  <!-- app angular scripts -->
+  <!-- Import modules first -->
+
+  <script src="/app/app.module.js"></script>
+  <!-- inject:js -->
+  <!-- endinject -->
+  <script src="/app/app.routes.js"></script>
+  <script src="/app/registration.controller.js"></script>
+  <script src="/app/layout/menu.controller.js"></script>
+  <script src="/app/user.service.js"></script>
+  <script src="/app/login.controller.js"></script>
+  <script src="/app/auth.service.js"></script>
+  <script src="/app/welcome.controller.js"></script>
+  <script src="/app/notification.directive.js"></script>
+  <script src="/app/notification.service.js"></script>
+  <script src="/app/global-notification.service.js"></script>
+
+</body>
+
+</html>

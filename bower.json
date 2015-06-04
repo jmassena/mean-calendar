@@ -1,0 +1,21 @@
+{
+  "name": "todo",
+  "version": "0.0.0",
+  "authors": [
+    "justin massena <justin@massena.com>"
+  ],
+  "license": "MIT",
+  "ignore": [],
+  "dependencies": {
+    "angular-ui-router": "~0.2.14",
+    "jquery": "~2.1.3",
+    "angular-mocks": "~1.4.0",
+    "angular-resource": "~1.4.0",
+    "moment": "~2.10.2",
+    "bootstrap": "~3.3.4",
+    "angular-cookies": "~1.4.0"
+  },
+  "resolutions": {
+    "angular": "1.4.0-rc.2"
+  }
+}

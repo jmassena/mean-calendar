@@ -1,0 +1,3 @@
+src/server/test/e2e
+--reporter spec
+--recursive

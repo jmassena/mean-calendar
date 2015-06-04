@@ -1,0 +1,4 @@
+<h2>Welcome{{vm.user!=null?(' ' + vm.user.firstName + ' ' + vm.user.lastName + '!'):'!'}}
+</h2>
+
+<h2 ng-show="vm.user ==null">Please log in or register</h2>

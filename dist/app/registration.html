@@ -1,0 +1,89 @@
+<!-- <div id='userMessage' class="alert user-message" ng-class="{'alert-danger':vm.userMessage.type=='error', 'alert-success':vm.userMessage.type=='success'}" ng-show="vm.userMessage.show">
+  <button type="button" class="close" ng-click="vm.clearUserMessage()" id="btnUserMessageClose">
+    <span>&times;</span>
+  </button>
+  <span> {{vm.userMessage.message}}</span>
+</div> -->
+
+<!-- style="position:absolute;top:40px;right:10px; z-index:100;max-width:600px;" -->
+<!-- <notification></notification> -->
+
+<h3>Registration</h3>
+<!-- <notification class="right-notification" notifications="vm.notifications"></notification> -->
+<!-- <notification notifications="vm.notifications"></notification> -->
+<notification class="right-notification" notifications="vm.notifications"></notification>
+
+<br/>
+<div class="form-container-med">
+  <form id="userForm" name="form" class="form form-horizontal" ng-submit="vm.submitUser(vm.form)" novalidate>
+    <!-- username -->
+    <div class="form-group">
+      <label for="userName" class="col-sm-2 control-label">User Name</label>
+      <div class="col-sm-6">
+        <input ng-model="vm.form.userName" class="form-control" id="userName" name="userName" placeholder="User Name" required minlength="8" type="text">
+
+        <div ng-show="form.$submitted || form.userName.$touched" class="invalid-message">
+          <span ng-show="form.userName.$error.required">Username is required.</span>
+          <span ng-show="form.userName.$error.minlength">Length must be at least 8 characters.</span>
+        </div>
+      </div>
+
+    </div>
+    <!-- password -->
+    <div class="form-group">
+      <label for="password" class="col-sm-2 control-label">Password</label>
+      <div class="col-sm-6">
+        <input ng-model="vm.form.password" class="form-control" id="password" name="password" placeholder="Password" required minlength="8" type="password">
+        <div ng-show="form.$submitted || form.password.$touched" class="invalid-message">
+          <span ng-show="form.password.$error.required">Password is required.</span>
+          <span ng-show="form.password.$error.minlength">Length must be at least 8 characters.</span>
+        </div>
+      </div>
+    </div>
+    <!-- email -->
+    <div class="form-group">
+      <label for="email" class="col-sm-2 control-label">Email</label>
+      <div class="col-sm-6">
+        <input ng-model="vm.form.email" class="form-control" id="email" name="email" placeholder="Email Address" required type="email">
+        <div ng-show="form.$submitted || form.email.$touched" class="invalid-message">
+          <span ng-show="form.email.$error.required">Email is required.</span>
+          <span ng-show="form.email.$error.email">This is not a valid email.</span>
+        </div>
+      </div>
+    </div>
+    <!-- first name -->
+    <div class="form-group">
+      <label for="firstName" class="col-sm-2 control-label">First Name</label>
+      <div class="col-sm-6">
+        <input ng-model="vm.form.firstName" class="form-control" id="firstName" name="firstName" placeholder="First Name" required type="text">
+        <div ng-show="form.$submitted || form.firstName.$touched" class="invalid-message">
+          <span ng-show="form.firstName.$error.required">First Name is required.</span>
+        </div>
+      </div>
+    </div>
+    <!-- last name -->
+    <div class="form-group">
+      <label for="lastName" class="col-sm-2 control-label">Last Name</label>
+      <div class="col-sm-6">
+        <input ng-model="vm.form.lastName" class="form-control" id="lastName" name="lastName" placeholder="Last Name" required type="text">
+        <div ng-show="form.$submitted || form.lastName.$touched" class="invalid-message">
+          <span ng-show="form.lastName.$error.required">Last Name is required.</span>
+        </div>
+      </div>
+    </div>
+    <!-- buttons -->
+    <div class="form-group form-button-row">
+      <div class="col-sm-offset-2 col-sm-6">
+        <!-- <button type="button" class="btn btn-danger ">Cancel</button> -->
+        <!-- <button id="btnSubmit" type="submit" ng-disabled="form.$invalid" class="btn btn-default">Submit</button> -->
+        <button id="btnSubmit" type="submit" ng-disabled="form.$invalid" class="btn btn-default">Submit</button>
+      </div>
+    </div>
+  </form>
+
+  <button style="float:right" class="btn btn-default" ng-click="vm.localNotificationTest()">Local Notification</button>
+  <button style="float:right" class="btn btn-default" ng-click="vm.singleGlobalNotificationTest()">Single Global Notification</button>
+  <button style="float:right" class="btn btn-default" ng-click="vm.globalNotificationTest()">Multi Global Notification</button>
+  <button style="float:right" class="btn btn-default" ng-click="vm.globalNotificationClear()">Clear Global Notification</button>
+
+</div>
