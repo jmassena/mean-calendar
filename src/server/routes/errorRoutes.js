@@ -1,5 +1,7 @@
 'use strict';
 
+var config = require('../config/environment');
+
 module.exports.notFoundHandler = function (req, res, next) {
 
   // catch 404 and forward to error handler
@@ -10,7 +12,11 @@ module.exports.notFoundHandler = function (req, res, next) {
 
 module.exports.errorHandler = function (err, req, res, next) {
 
-  console.log('error handler route called');
+  if(config.env === 'dev') {
+    console.log('error handler route called');
+    console.log(err);
+
+  }
 
   var code = err.statusCode || 500;
   var name = err.name || 'Unspecified Error';

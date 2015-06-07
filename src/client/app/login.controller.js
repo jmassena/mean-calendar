@@ -25,6 +25,12 @@
       if(AuthSvc.isLoggedIn()) {
         $state.go('welcome');
       }
+
+      var test = true;
+      if(test) {
+        vm.form.userName = 'testUser1234';
+        vm.form.password = 'testUser1234';
+      }
     }
 
     function login(user) {

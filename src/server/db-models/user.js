@@ -6,7 +6,7 @@ var crypto = require('crypto');
 // var uniqueValidator = require('mongoose-unique-validator');
 // var _ = require('underscore');
 
-var providers = ['google'];
+var providers = ['google', 'local'];
 
 if(!mongoose.models.User) {
 
@@ -42,7 +42,8 @@ if(!mongoose.models.User) {
     provider: {
       type: String,
       required: true,
-      default: 'local'
+      default: 'local',
+      enum: providers
     },
 
     google: {},

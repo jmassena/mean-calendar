@@ -1,0 +1,60 @@
+Calendar db:
+
+
+
+post: save event
+user/userId/calendar/event
+
+get: get event
+user/userId/calendar/event/eventId
+
+put: update event
+user/userId/calendar/event/eventId
+
+delete: delete event
+user/userId/calendar/event/eventId
+
+
+user/userId/calendar?start:xxx&end:yyy
+
+get: gets range including sun - sat range for start/end dates.
+user/userId/calendar?view=month&
+
+
+// calendar options
+eventTypes{name, color}
+
+calendarEvent{
+  _id, userId, startDateTime, endDateTime, type, notifyDateTime, title, desc,
+   location, allDay
+}
+
+
+Calendar{
+  userId,
+  name,
+  type: 'User' (||holiday)
+  locale: 'US',
+
+}
+
+
+
+db.calendars.find({_id:ObjectId("5571da1c88d65384a7049cfc")})
+
+> db.calendars.find({_id:ObjectId("5571da1c88d65384a7049cfc")},{'events._id':1})
+{ "_id" : ObjectId("5571da1c88d65384a7049cfc"),
+"events" : [
+{ "_id" : ObjectId("5571e5b133b99181ba160761") },
+{ "_id" : ObjectId("5571e7a3796c56b1bde8a49b") },
+{ "_id" : ObjectId("5571eb680fe1808bc347a5be") },
+{ "_id" : ObjectId("5571ee9b62bd420fc9132c16") },
+{ "_id" : ObjectId("55720fa4a1312a94f1c86306") },
+{ "_id" : ObjectId("55721014e73bd94df210d659") },
+{ "_id" : ObjectId("55721523115aa96cf91942f8") },
+{ "_id" : ObjectId("557215537bad2ce6fa00426f") },
+{ "_id" : ObjectId("5572159f94c30f61fbe05683") },
+{ "_id" : ObjectId("557215ba80dcdb85fbc3fa70") },
+{ "_id" : ObjectId("55721674011876acfc5d907c") },
+{ "_id" : ObjectId("5572169b35c29902fde4b197") },
+{ "_id" : ObjectId("55721a966a0596bc03aa38b8") } ] }
