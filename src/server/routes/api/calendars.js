@@ -39,6 +39,30 @@ router.get('/users/:userId/calendars/', auth.isAuthenticated(), function (req, r
     }, next);
 });
 
+// // GET default calendar for user
+// router.get('/users/:userId/calendars/default/start/:start/end/:end', auth.isAuthenticated(), function (req, res, next) {
+//
+//   var userId = req.params.userId;
+//
+//   if(userId !== req.user.id) {
+//     console.log('param id: ' + userId + ' authenticated userId: ' + req.user.id);
+//     return next(exceptionMessages.error('permission_denied'));
+//   }
+//
+//   var query = Calendar.find({
+//     userId: userId,
+//     defaultCalendar: true
+//   })
+//   .sort('events.startDateTime')
+//   .select('userId type title eventTypeColors events')
+//   ;
+//
+//   query.exec()
+//     .then(function (calendars) {
+//       res.status(200).json(calendars);
+//     }, next);
+// });
+
 // GET one
 router.get('/users/:userId/calendars/:calendarId', auth.isAuthenticated(), function (req, res, next) {
 

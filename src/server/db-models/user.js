@@ -48,10 +48,12 @@ if(!mongoose.models.User) {
 
     google: {},
 
-    createdDateTime: {
-      type: Date,
-      default: Date.now
-    }
+    // NOTE: we can get the time an object was created from the objectId like so
+    // ObjectId('1234123412341324').getTimestamp(); returns ISODate("2012-10-15T21:26:17Z").
+    // createdDateTime: {
+    //   type: Date,
+    //   default: Date.now
+    // }
   });
 
   UserSchema.set('toJSON', {
