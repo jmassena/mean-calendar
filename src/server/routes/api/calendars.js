@@ -2,36 +2,25 @@
 
 var express = require('express');
 var router = express.Router();
-var mongoose = require('mongoose');
+// var mongoose = require('mongoose');
 var Calendar = require('../../db-models/calendar.js');
 // var routeUtils = require('../routeUtils.js');
 var exceptionMessages = require('../../common/exceptionMessages.js');
 var auth = require('../../auth/auth.service');
-var path = require('path');
+// var path = require('path');
 
 module.exports = router;
 
 // GET list for user
-router.get('/users/:userId/calendars/', auth.isAuthenticated(), function (req, res, next) {
+router.get('/calendars/', auth.isAuthenticated(), function (req, res, next) {
+
+  //console.log('calling route: ' + 'GET /calendars/');
 
   var userId = req.params.userId;
-  // // user's calendars can be filtered by title
-  // var title = req.query.title;
-  // might want just a list of calendars without events
-  var includeEvents = req.query.includeEvents;
-
-  if(userId !== req.user.id) {
-    console.log('param id: ' + userId + ' authenticated userId: ' + req.user.id);
-    return next(exceptionMessages.error('permission_denied'));
-  }
 
   var query = Calendar.find({
-    userId: userId
+    userId: req.user._id
   });
-
-  if(!includeEvents) {
-    query.select('userId type title eventTypeColors');
-  }
 
   query.exec()
     .then(function (calendars) {
@@ -39,124 +28,105 @@ router.get('/users/:userId/calendars/', auth.isAuthenticated(), function (req, r
     }, next);
 });
 
-// // GET default calendar for user
-// router.get('/users/:userId/calendars/default/start/:start/end/:end', auth.isAuthenticated(), function (req, res, next) {
-//
-//   var userId = req.params.userId;
-//
-//   if(userId !== req.user.id) {
-//     console.log('param id: ' + userId + ' authenticated userId: ' + req.user.id);
-//     return next(exceptionMessages.error('permission_denied'));
-//   }
-//
-//   var query = Calendar.find({
-//     userId: userId,
-//     defaultCalendar: true
-//   })
-//   .sort('events.startDateTime')
-//   .select('userId type title eventTypeColors events')
-//   ;
-//
-//   query.exec()
-//     .then(function (calendars) {
-//       res.status(200).json(calendars);
-//     }, next);
-// });
-
 // GET one
-router.get('/users/:userId/calendars/:calendarId', auth.isAuthenticated(), function (req, res, next) {
+router.get('/calendars/:calendarId', auth.isAuthenticated(), function (req, res, next) {
 
-  var userId = req.params.userId;
+  //console.log('calling route: ' + 'GET /calendars/:calendarId');
+
   var calendarId = req.params.calendarId;
 
-  Calendar.findById(calendarId).exec()
+  Calendar.findOne({
+      _id: calendarId,
+      userId: req.user._id
+    }).exec()
     .then(function (calendar) {
       res.status(200).json(calendar);
     }, next);
 });
 
 // POST create a new calendar
-router.post('/users/:userId/calendars/', auth.isAuthenticated(), function (req, res, next) {
+router.post('/calendars/', auth.isAuthenticated(), function (req, res, next) {
 
-  console.log('calling route: ' + 'POST /users/:userId/calendars/');
+  //console.log('calling route: ' + 'POST /calendars/');
 
-  var userId = req.params.userId;
-  var calendarType = 'user';
   var title = req.body.title || 'Default';
+  var config = req.body.config;
 
-  if(userId !== req.user.id) {
-    console.log('param id: ' + userId + ' authenticated userId: ' + req.user.id);
-    return next(exceptionMessages.error('permission_denied'));
-  }
+  //console.log(config);
 
   var calendar = new Calendar({
-    userId: userId,
-    calendarType: calendarType,
-    title: title
+    userId: req.user._id,
+    title: title,
+    config: config
   });
 
-  // TODO: when saving calendar need to validate that only one calendar for user
-  // is set default:true
+  //console.log('new calendar');
+  //console.log(calendar);
+
   calendar.save()
     .then(function (calendar) {
       res.status(200).json(calendar);
     }, next);
 });
 
-// PUT update a calendar. will update title, default, eventTypeColors, not events.
-router.put('/users/:userId/calendars/:calendarId', auth.isAuthenticated(), function (req, res, next) {
+// PUT update a calendar. will update title, config
+router.put('/calendars/:calendarId', auth.isAuthenticated(), function (req, res, next) {
 
-  console.log('calling route: ' + 'PUT /users/:userId/calendars/:calendarId');
+  // //console.log('calling route: ' + 'PUT /calendars/:calendarId');
 
-  var userId = req.params.userId;
   var calendarId = req.params.calendarId;
-  // var calendarType = 'user';
   var title = req.body.title;
-  var defaultCalendar = req.body.defaultCalendar;
-  var eventTypeColors = req.body.eventTypeColors;
+  var config = req.body.config;
 
-  // TODO: make middleware for IsUpdatingSelfOrIsAdmin
-  if(userId !== req.user.id) {
-    console.log('param id: ' + userId + ' authenticated userId: ' + req.user.id);
-    return next(exceptionMessages.error('permission_denied'));
-  }
+  var where = {
+    _id: calendarId,
+    userId: req.user.id
+  };
 
-  var promise;
-  if(defaultCalendar) {
-    // clear default flag for other calendars if this updated cal is default
-    promise = Calendar.update({
-      userId: userId,
-      _id: {
-        $ne: calendarId
-      }
-    }, {
+  Calendar.findOneAndUpdate(where, {
       $set: {
-        defaultCalendar: false
+        title: title,
+        'config.showEvents': config.showEvents,
+        'config.eventLabelColors': config.eventLabelColors
       }
-
     }, {
-      multi: true
-    }).exec();
-  } else {
-    promise = new mongoose.Promise();
-    promise.fulfill();
-  }
-
-  promise.then(function () {
-      return Calendar.update({
-        _id: calendarId
-      }, {
-        $set: {
-          title: title,
-          defaultCalendar: defaultCalendar,
-          eventTypeColors: eventTypeColors
-        }
-      }, {
-        new: true,
-        runValidators: true
-      });
+      new: true,
+      runValidators: true
+    })
+    .then(function (calendar) {
+      //console.log('calendar not found');
+      if(!calendar) {
+        throw exceptionMessages.error('object_not_found', null, JSON.stringify(where));
+      }
+      return calendar;
     })
     .then(function (calendar) {
       res.status(200).json(calendar);
     }, next);
+
+});
+
+// PUT update a calendar. will update title, config
+router.delete('/calendars/:calendarId', auth.isAuthenticated(), function (req, res, next) {
+
+  // //console.log('calling route: ' + 'DELETE /calendars/:calendarId');
+
+  var calendarId = req.params.calendarId;
+
+  var where = {
+    _id: calendarId,
+    userId: req.user.id
+  };
+
+  Calendar.findOneAndRemove(where)
+    .then(function (calendar) {
+      if(!calendar) {
+        throw exceptionMessages.error('object_not_found', null, JSON.stringify(where));
+      }
+      return calendar;
+    })
+    .then(function (calendar) {
+      res.status(200).json(calendar);
+    }, next);
+
 });

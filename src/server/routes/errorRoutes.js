@@ -1,6 +1,7 @@
 'use strict';
 
 var config = require('../config/environment');
+var exceptionMessages = require('../common/exceptionMessages');
 
 module.exports.notFoundHandler = function (req, res, next) {
 
@@ -18,23 +19,36 @@ module.exports.errorHandler = function (err, req, res, next) {
 
   }
 
+  var isDevOrTest = ['dev', 'test'].indexOf(config.env) !== -1;
   var code = err.statusCode || 500;
   var name = err.name || 'Unspecified Error';
   var msg;
+  var stack;
 
-  if(err.exceptionInfo) {
+  if(err.exceptionInfo &&
+    (err.exceptionInfo.type === exceptionMessages.exceptionTypes.user || isDevOrTest)) {
+    // only show user type exception messages to user unless we are in dev/test
     msg = err.exceptionInfo.message;
+
   } else {
-    // unhandled error. We won't pass the message but we should log it.
+    // Log exception but don't pass real message to web.
     msg = 'Error occurred';
-    // TODO: implement logging system for saving to file and add errors from here
     console.error(err);
+  }
+
+  if(isDevOrTest) {
+    console.log(err);
+    if(err.stack) {
+      stack = err.stack;
+      console.log(err.stack);
+    }
   }
 
   return res
     .status(code)
     .json({
       name: name,
-      message: msg
+      message: msg,
+      stack: stack
     });
 };

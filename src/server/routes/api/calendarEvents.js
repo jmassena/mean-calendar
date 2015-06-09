@@ -2,138 +2,130 @@
 
 var express = require('express');
 var router = express.Router();
-var mongoose = require('mongoose');
-var Calendar = require('../../db-models/calendar.js');
+// var mongoose = require('mongoose');
+// var Calendar = require('../../db-models/calendar.js');
 var CalendarEvent = require('../../db-models/calendarEvent.js');
 // var routeUtils = require('../routeUtils.js');
 var exceptionMessages = require('../../common/exceptionMessages.js');
 var auth = require('../../auth/auth.service');
-var path = require('path');
+// var path = require('path');
 
 module.exports = router;
 
-// POST create a new calendar event
-router.post('/users/:userId/calendars/:calendarId/events/', auth.isAuthenticated(), function (req, res, next) {
+// GET get events for calendar
+router.get('/calendars/:calendarId/events/', auth.isAuthenticated(), function (req, res, next) {
 
-  console.log('calling route: ' + 'POST /users/:userId/calendars/events');
+  console.log('calling route: ' + 'GET /calendars/events');
 
-  var userId = req.params.userId;
   var calendarId = req.params.calendarId;
 
-  if(userId !== req.user.id) {
-    console.log('param id: ' + userId + ' authenticated userId: ' + req.user.id);
-    return next(exceptionMessages.error('permission_denied'));
-  }
-
-  // TODO: This is inefficient getting the document and saving just to do an update.
-  // Either implement the update validator (if you can get set to work when adding to an array on update)
-  // or do the validation manually preferably by calling the CalendarEvent instance validate function
-  // so we can just do an update statement.
-
-  Calendar.findOne({
-      _id: calendarId,
-      userId: userId
-    }).exec()
-    .then(function (calendar) {
-      if(!calendar) {
-        throw exceptionMessages.error('object_not_found_by_id');
-      }
-      // TODO: delete this line. it was just while developing to fix bad data
-      calendar.type = calendar.type || 'user';
-      calendar.events.push(new CalendarEvent(req.body));
-
-      return calendar.save();
+  CalendarEvent.find({
+      calendarId: calendarId,
+      userId: req.user.id
     })
-    .then(function (calendar) {
-      res.status(201).json(calendar);
+    .then(function (events) {
+      res.status(200).json(events);
+    }, next);
+
+});
+
+// POST create a new calendar event
+router.post('/calendars/:calendarId/events/', auth.isAuthenticated(), function (req, res, next) {
+
+  console.log('calling route: ' + 'POST /calendars/events');
+
+  var calendarId = req.params.calendarId;
+
+  var calendarEvent = new CalendarEvent(req.body);
+
+  calendarEvent.calendarId = calendarId;
+  calendarEvent.userId = req.user.id;
+
+  calendarEvent.save()
+    .then(function (event) {
+      res.status(201).json(event);
     }, next);
 
 });
 
 // PUT update a calendar event
-router.put('/users/:userId/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), function (req, res, next) {
+router.put('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), function (req, res, next) {
 
-  console.log('calling route: ' + 'PUT /users/:userId/calendars/events/:eventId');
+  console.log('calling route: ' + 'PUT /calendars/events/:eventId');
 
-  var userId = req.params.userId;
   var calendarId = req.params.calendarId;
   var eventId = req.params.eventId;
-
-  if(userId !== req.user.id) {
-    console.log('param id: ' + userId + ' authenticated userId: ' + req.user.id);
-    return next(exceptionMessages.error('permission_denied'));
-  }
+  var userId = req.user.id;
 
   var where = {
-    _id: calendarId,
-    userId: userId,
-    'events._id': eventId
+    _id: eventId,
+    calendarId: calendarId,
+    userId: userId
   };
 
-  // NOTE: I am updating specific properties of the event so we don't lose the id
-  // but then we return all events so does it even matter if we lose the id?
-  // Think of this as prep for when I
-  Calendar.findOneAndUpdate(where, {
+  // TODO: check if start/end dates are valid dates also.
+  // I think date will be type string.
+
+  var start = Date.parse(req.body.start);
+  var end = Date.parse(req.body.end);
+
+  if(!start || !end) {
+
+    console.log('start: ' + start + ' orig: ' + req.body.start);
+    console.log('end: ' + end + ' orig: ' + req.body.end);
+
+    return next(exceptionMessages.error('system_validation_failure', null,
+      'Start and end dates are required'));
+  }
+
+  CalendarEvent.findOneAndUpdate(where, {
       $set: {
-        'events.$.startDateTime': req.body.startDateTime,
-        'events.$.endDateTime': req.body.endDateTime,
-        'events.$.type': req.body.type,
-        'events.$.title': req.body.title,
-        'events.$.description': req.body.description,
-        'events.$.allDay': req.body.allDay,
+        start: start,
+        end: end,
+        allDay: req.body.allDay,
+        title: req.body.title,
+        notes: req.body.notes,
+        label: req.body.label
       }
     }, {
       new: true,
       runValidators: true
     }).exec()
-    .then(function (calendar) {
-      if(!calendar) {
+    .then(function (event) {
+      if(!event) {
+        // TODO: change error() function to stringify objects/arrays if passed as message args.
         throw exceptionMessages.error('object_not_found', null, JSON.stringify(where));
       }
-      return calendar;
+      return event;
     })
-    .then(function (calendar) {
-      res.status(200).json(calendar);
+    .then(function (event) {
+      res.status(200).json(event);
     }, next);
-
 });
 
-// DELETE create a new calendar event
-router.delete('/users/:userId/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), function (req, res, next) {
+// DELETE calendar event
+router.delete('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), function (req, res, next) {
 
-  console.log('calling route: ' + 'DELETE /users/:userId/calendars/events/:eventId');
+  console.log('calling route: ' + 'DELETE /calendars/events/:eventId');
 
-  var userId = req.params.userId;
   var calendarId = req.params.calendarId;
   var eventId = req.params.eventId;
-
-  if(userId !== req.user.id) {
-    console.log('param id: ' + userId + ' authenticated userId: ' + req.user.id);
-    return next(exceptionMessages.error('permission_denied'));
-  }
+  var userId = req.user.id;
 
   var where = {
-    _id: calendarId,
-    userId: userId,
-    'events._id': eventId
+    _id: eventId,
+    calendarId: calendarId,
+    userId: userId
   };
 
-  Calendar.findOneAndUpdate(where, {
-      $pull: {
-        events: {
-          _id: eventId
-        }
-      }
-    }, {
-      new: true
-    }).exec()
-    .then(function (calendar) {
-      if(!calendar) {
+  CalendarEvent.findOneAndRemove(where).exec()
+    .then(function (event) {
+      if(!event) {
         throw exceptionMessages.error('object_not_found', null, JSON.stringify(where));
       }
-      return calendar;
+      return event;
     })
-    .then(function (calendar) {
-      res.status(200).json(calendar);
+    .then(function (event) {
+      res.status(200).json(event);
     }, next);
 });

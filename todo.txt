@@ -1,5 +1,8 @@
 Calendar todo:
 
+current issue:
+  - when updating event the date validator does not fire.
+  
 
 [] create calendar db model and routes
 

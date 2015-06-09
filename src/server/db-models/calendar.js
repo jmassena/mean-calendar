@@ -1,7 +1,6 @@
 'use strict';
 
 var mongoose = require('mongoose');
-var CalendarEvent = require('./calendarEvent');
 
 var calendarType = ['user', 'holidays'];
 
@@ -10,12 +9,8 @@ if(!mongoose.models.Calendar) {
   var CalendarSchema = new mongoose.Schema({
 
     userId: {
-      type: mongoose.Schema.Types.ObjectId
-    },
-
-    type: {
-      type: String,
-      enum: calendarType,
+      type: mongoose.Schema.Types.ObjectId,
+      index: true,
       required: true
     },
 
@@ -24,43 +19,66 @@ if(!mongoose.models.Calendar) {
       required: true
     },
 
-    defaultCalendar: {
-      type: Boolean
-    },
-
-    eventTypeColors: {}, //  hash of {typeName:color}
-
-    events: {
-      type: [CalendarEvent.schema]
+    config: {
+      showEvents: {
+        type: Boolean
+      },
+      // hash of type:color
+      eventLabelColors: {
+        type: mongoose.Schema.Types.Mixed
+      }
     }
   });
-
-  CalendarSchema.index({
-    'events._id': 1
-  });
-
-  // CalendarSchema.statics.updateCalendarEvent = function (calendarId, eventId, start, end, allDay, type, title,
-  //   description) {
-  //   return this.findOneAndUpdate({
-  //       _id: calendarId,
-  //       'events._id': eventId
-  //     }, {
-  //       '$set': {
-  //         'events.$startDateTime': start,
-  //         'events.$endDateTime': end,
-  //         'events.$allDay': allDay,
-  //         'events.$type': type,
-  //         'events.$title': title,
-  //         'events.$description': description
-  //       }
-  //     }, {
-  //       runValidators: true
-  //     })
-  //     .exec();
-  // };
+  // //
+  // // // validate if this calendar is not default then some other calendar is default
+  // // CalendarSchema
+  // //   .path('defaultCalendar')
+  // //   .validate(function (value, cb) {
+  // //
+  // //     if(value) {
+  // //       return cb(true);
+  // //     }
+  // //
+  // //     mongoose.model('CalendarEvent')
+  // //       .findOne({
+  // //         userId: this.userId,
+  // //         defaultCalendar: true
+  // //       }).exec()
+  // //       .then(function (cal) {
+  // //         if(!cal) {
+  // //           return cb(false);
+  // //         }
+  // //         cb(true);
+  // //       }, function (err) {
+  // //         console.log('error checking for default calendar settings');
+  // //         console.log(err);
+  // //         cb(false);
+  // //       });
+  // //   });
+  //
+  // CalendarSchema.pre('save', defaultCalendarClear);
+  // CalendarSchema.pre('update', defaultCalendarClear);
 
   mongoose.model('Calendar', CalendarSchema);
 
 }
+//
+// function defaultCalendarClear(next) {
+//   /*jshint validthis:true */
+//
+//   if(this.defaultCalendar) {
+//     mongoose.model('CalendarEvent')
+//       .update({
+//         userId: this.userId,
+//         defaultCalendar: true
+//       }, {
+//         $set: {
+//           defaultCalendar: false
+//         }
+//       })
+//       .exec()
+//       .then(next, next);
+//   }
+// }
 
 module.exports = mongoose.model('Calendar');
