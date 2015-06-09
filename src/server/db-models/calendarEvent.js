@@ -33,12 +33,12 @@ if(!mongoose.models.CalendarEvent) {
       required: true
     },
 
-    // arbitrary label so we can color different types of events
-    label: {
+    notes: {
       type: String
     },
 
-    notes: {
+    // arbitrary label so we can color different types of events
+    label: {
       type: String
     }
   });

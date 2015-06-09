@@ -3,7 +3,7 @@
 
 module.exports = {
   mongoose: {
-    dbName: 'login',
-    connectionString: 'mongodb://localhost/login'
+    dbName: 'calendar',
+    connectionString: 'mongodb://localhost/calendar'
   }
 };

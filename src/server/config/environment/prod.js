@@ -8,7 +8,7 @@ if(!process.env.MONGOLAB_URI) {
 
 module.exports = {
   mongoose: {
-    dbName: 'login',
+    dbName: 'calendar',
     mongoUri: mongoUriUtil.formatMongoose(process.env.MONGOLAB_URI)
   }
 };
