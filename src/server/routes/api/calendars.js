@@ -7,10 +7,11 @@ var Calendar = require('../../db-models/calendar.js');
 // var routeUtils = require('../routeUtils.js');
 var exceptionMessages = require('../../common/exceptionMessages.js');
 var auth = require('../../auth/auth.service');
-// var path = require('path');
+var path = require('path');
 
 module.exports = router;
 
+// list
 // GET list for user
 router.get('/calendars/', auth.isAuthenticated(), function (req, res, next) {
 
@@ -28,6 +29,7 @@ router.get('/calendars/', auth.isAuthenticated(), function (req, res, next) {
     }, next);
 });
 
+// get
 // GET one
 router.get('/calendars/:calendarId', auth.isAuthenticated(), function (req, res, next) {
 
@@ -35,21 +37,28 @@ router.get('/calendars/:calendarId', auth.isAuthenticated(), function (req, res,
 
   var calendarId = req.params.calendarId;
 
-  Calendar.findOne({
-      _id: calendarId,
-      userId: req.user._id
-    }).exec()
+  var where = {
+    _id: calendarId,
+    userId: req.user._id
+  };
+
+  Calendar.findOne(where).exec()
     .then(function (calendar) {
+      if(!calendar) {
+        throw exceptionMessages.error('object_not_found', null, JSON.stringify(where));
+      }
       res.status(200).json(calendar);
-    }, next);
+    })
+    .then(null, next);
 });
 
+// insert
 // POST create a new calendar
 router.post('/calendars/', auth.isAuthenticated(), function (req, res, next) {
 
   //console.log('calling route: ' + 'POST /calendars/');
 
-  var title = req.body.title || 'Default';
+  var title = req.body.title;
   var config = req.body.config;
 
   //console.log(config);
@@ -65,10 +74,13 @@ router.post('/calendars/', auth.isAuthenticated(), function (req, res, next) {
 
   calendar.save()
     .then(function (calendar) {
-      res.status(200).json(calendar);
-    }, next);
+      res.location(path.join(req.baseUrl, 'calendars', calendar._id.toString()));
+      res.status(201).json(calendar);
+    })
+    .then(null, next);
 });
 
+// update
 // PUT update a calendar. will update title, config
 router.put('/calendars/:calendarId', auth.isAuthenticated(), function (req, res, next) {
 
@@ -106,7 +118,7 @@ router.put('/calendars/:calendarId', auth.isAuthenticated(), function (req, res,
 
 });
 
-// PUT update a calendar. will update title, config
+// delete
 router.delete('/calendars/:calendarId', auth.isAuthenticated(), function (req, res, next) {
 
   // //console.log('calling route: ' + 'DELETE /calendars/:calendarId');

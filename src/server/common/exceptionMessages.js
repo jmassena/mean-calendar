@@ -65,7 +65,7 @@ exceptionMessages.createError = function (code, userInfo, debugInfo) {
   }
 
   var e = new Error(item.message);
-  e.status = item.statusCode;
+  e.statusCode = item.statusCode;
   e.exceptionMessages = item;
   return e;
 };

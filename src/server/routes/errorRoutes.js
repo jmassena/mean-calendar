@@ -25,6 +25,12 @@ module.exports.errorHandler = function (err, req, res, next) {
   var msg;
   var stack;
 
+  console.log(code);
+
+  if(err.name === 'ValidationError' && !err.statusCode) {
+    code = 422;
+  }
+
   if(err.exceptionInfo &&
     (err.exceptionInfo.type === exceptionMessages.exceptionTypes.user || isDevOrTest)) {
     // only show user type exception messages to user unless we are in dev/test

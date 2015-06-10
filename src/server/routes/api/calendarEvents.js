@@ -19,9 +19,60 @@ router.get('/calendars/:calendarId/events/', auth.isAuthenticated(), function (r
 
   var calendarId = req.params.calendarId;
 
+  var queryStart = req.query.start;
+  var queryEnd = req.query.end;
+
+  if(!queryStart && !queryEnd) {
+    return CalendarEvent.find({
+        calendarId: calendarId,
+        userId: req.user.id
+      })
+      .then(function (events) {
+        res.status(200).json(events);
+      }, next);
+  }
+
+  queryStart = queryStart || new Date(-8640000000000000);
+  queryEnd = queryEnd || new Date(8640000000000000);
+
   CalendarEvent.find({
       calendarId: calendarId,
-      userId: req.user.id
+      userId: req.user.id,
+      // 3 cases: event straddles query start or end. event straddles query start and end.
+      // event start is between query start/end
+      // event end is between query start/end
+      // event end is greater than query end and event start is less than query end
+      $or: [{
+        $and: [{
+          start: {
+            $gte: queryStart
+          }
+        }, {
+          start: {
+            $lt: queryEnd
+          }
+        }]
+      }, {
+        $and: [{
+          end: {
+            $gt: queryStart
+          }
+        }, {
+          end: {
+            $lte: queryEnd
+          }
+        }]
+      }, {
+        $and: [{
+          start: {
+            $lt: queryStart
+          }
+        }, {
+          end: {
+            $gt: queryEnd
+          }
+        }]
+      }]
     })
     .then(function (events) {
       res.status(200).json(events);

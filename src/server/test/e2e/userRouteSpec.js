@@ -1,4 +1,29 @@
 // // src/server/test/e2e/todo.route.spec.js
+
+// var userUrl = {
+//   login: function (user) {
+//     return '/auth/local';
+//   },
+//   getMe: function () {
+//     return path.join(usersRootUri, 'me');
+//   },
+//   get: function (userId) {
+//     return path.join(usersRootUri, userId.toString());
+//   },
+//   list: function () {
+//     return path.join(usersRootUri);
+//   },
+//   insert: function () {
+//     return path.join(usersRootUri);
+//   },
+//   update: function (userId) {
+//     return path.join(usersRootUri, userId.toString());
+//   },
+//   delete: function (userId) {
+//     return path.join(usersRootUri, userId.toString());
+//   }
+// };
+
 // 'use strict';
 //
 // /* global before */
