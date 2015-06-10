@@ -99,7 +99,7 @@ router.put('/calendars/:calendarId', auth.isAuthenticated(), function (req, res,
       $set: {
         title: title,
         'config.showEvents': config.showEvents,
-        'config.eventLabelColors': config.eventLabelColors
+        'config.eventColor': config.eventColor
       }
     }, {
       new: true,

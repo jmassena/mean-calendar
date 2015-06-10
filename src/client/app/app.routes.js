@@ -58,6 +58,20 @@
             controllerAs: 'vm'
           }
         }
+      }).state('calendar', {
+        url: '/calendar',
+        views: {
+          'top-nav': {
+            templateUrl: 'app/layout/top-nav.html',
+            controller: 'MenuCtrl',
+            controllerAs: 'vm'
+          },
+          'main-content': {
+            templateUrl: 'app/calendar/calendar.html',
+            controller: 'CalendarCtrl',
+            controllerAs: 'vm'
+          }
+        }
       });
   }
 })(this.angular);

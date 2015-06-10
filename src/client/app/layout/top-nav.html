@@ -19,7 +19,9 @@
 
   <div class="collapse navbar-collapse" id="navbar-collapse">
     <ul class="nav navbar-nav pull-right">
-
+      <li>
+        <a ng-hide="vm.user===null" ui-sref="calendar">Calendar</a>
+      </li>
       <li>
         <a ng-hide="vm.user===null">{{vm.user.fullName}}</a>
       </li>

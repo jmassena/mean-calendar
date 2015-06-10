@@ -24,9 +24,10 @@ if(!mongoose.models.Calendar) {
         type: Boolean,
         default: true
       },
-      // hash of type:color
-      eventLabelColors: {
-        type: mongoose.Schema.Types.Mixed
+
+      eventColor: {
+        type: String,
+        default: '#9A9CFF'
       }
     }
   });

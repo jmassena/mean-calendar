@@ -277,9 +277,7 @@ describe('Calendar route', function () {
 
         testCalendar.title = 'updated title';
         testCalendar.config.showEvents = false;
-        testCalendar.config.eventLabelColors = {
-          'general': '#ccccee'
-        };
+        testCalendar.config.eventColor = '#ccccee';
 
         request(app)
           .put(calendarUrl.update(testCalendar._id))
@@ -301,8 +299,7 @@ describe('Calendar route', function () {
                 expect(res.body.title).to.equal(testCalendar.title);
                 expect(res.body.config).to.exist;
                 expect(res.body.config.showEvents).to.equal(testCalendar.config.showEvents);
-                expect(res.body.config.eventLabelColors['general']).to.equal(testCalendar.config.eventLabelColors[
-                  'general']);
+                expect(res.body.config.eventColor).to.equal(testCalendar.config.eventColor);
 
                 done();
               });
