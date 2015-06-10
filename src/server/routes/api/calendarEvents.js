@@ -8,21 +8,25 @@ var CalendarEvent = require('../../db-models/calendarEvent.js');
 // var routeUtils = require('../routeUtils.js');
 var exceptionMessages = require('../../common/exceptionMessages.js');
 var auth = require('../../auth/auth.service');
-// var path = require('path');
+var path = require('path');
 
 module.exports = router;
 
 // GET get events for calendar
 router.get('/calendars/:calendarId/events/', auth.isAuthenticated(), function (req, res, next) {
 
-  console.log('calling route: ' + 'GET /calendars/events');
+  //console.log('calling route: ' + 'GET /calendars/events');
 
   var calendarId = req.params.calendarId;
 
   var queryStart = req.query.start;
   var queryEnd = req.query.end;
 
+  // //console.log('query start: ' + queryStart);
+  // //console.log('query end: ' + queryEnd);
+
   if(!queryStart && !queryEnd) {
+    // //console.log('Find events with no date range');
     return CalendarEvent.find({
         calendarId: calendarId,
         userId: req.user.id
@@ -32,46 +36,37 @@ router.get('/calendars/:calendarId/events/', auth.isAuthenticated(), function (r
       }, next);
   }
 
-  queryStart = queryStart || new Date(-8640000000000000);
-  queryEnd = queryEnd || new Date(8640000000000000);
+  if(queryStart) {
+    var tmp = Date.parse(queryStart);
+    if(isNaN(tmp)) {
+      throw exceptionMessages.error('system_validation_failure', null, 'invalid start date: ' + queryStart);
+    }
+  } else {
+    queryStart = new Date(-8640000000000000);
+  }
+
+  if(queryEnd) {
+    var tmp = Date.parse(queryEnd);
+    if(isNaN(tmp)) {
+      throw exceptionMessages.error('system_validation_failure', null, 'invalid end date: ' + queryEnd);
+    }
+    queryEnd = new Date(tmp);
+    //console.log('query end: ' + queryEnd);
+  } else {
+    queryEnd = new Date(8640000000000000);
+  }
 
   CalendarEvent.find({
       calendarId: calendarId,
       userId: req.user.id,
-      // 3 cases: event straddles query start or end. event straddles query start and end.
-      // event start is between query start/end
-      // event end is between query start/end
-      // event end is greater than query end and event start is less than query end
-      $or: [{
-        $and: [{
-          start: {
-            $gte: queryStart
-          }
-        }, {
-          start: {
-            $lt: queryEnd
-          }
-        }]
+      $and: [{
+        start: {
+          $lt: queryEnd
+        }
       }, {
-        $and: [{
-          end: {
-            $gt: queryStart
-          }
-        }, {
-          end: {
-            $lte: queryEnd
-          }
-        }]
-      }, {
-        $and: [{
-          start: {
-            $lt: queryStart
-          }
-        }, {
-          end: {
-            $gt: queryEnd
-          }
-        }]
+        end: {
+          $gt: queryStart
+        }
       }]
     })
     .then(function (events) {
@@ -80,10 +75,37 @@ router.get('/calendars/:calendarId/events/', auth.isAuthenticated(), function (r
 
 });
 
+// GET one event for calendar
+router.get('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), function (req, res, next) {
+
+  //console.log('calling route: ' + 'GET /calendars/events');
+
+  var calendarId = req.params.calendarId;
+  var eventId = req.params.eventId;
+
+  var where = {
+    calendarId: calendarId,
+    userId: req.user.id,
+    _id: eventId
+  };
+
+  CalendarEvent.findOne(where)
+    .then(function (event) {
+      if(!event) {
+        throw exceptionMessages.error('object_not_found', null, JSON.stringify(where));
+      }
+      return event;
+    })
+    .then(function (event) {
+      res.status(200).json(event);
+    }, next);
+
+});
+
 // POST create a new calendar event
 router.post('/calendars/:calendarId/events/', auth.isAuthenticated(), function (req, res, next) {
 
-  console.log('calling route: ' + 'POST /calendars/events');
+  //console.log('calling route: ' + 'POST /calendars/events');
 
   var calendarId = req.params.calendarId;
 
@@ -94,15 +116,18 @@ router.post('/calendars/:calendarId/events/', auth.isAuthenticated(), function (
 
   calendarEvent.save()
     .then(function (event) {
-      res.status(201).json(event);
-    }, next);
+      res.location(path.join(req.baseUrl, 'calendars', calendarId, 'events', event.id));
+      res.status(201).json(
+        event);
+    })
+    .then(null, next);
 
 });
 
 // PUT update a calendar event
 router.put('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), function (req, res, next) {
 
-  console.log('calling route: ' + 'PUT /calendars/events/:eventId');
+  //console.log('calling route: ' + 'PUT /calendars/events/:eventId');
 
   var calendarId = req.params.calendarId;
   var eventId = req.params.eventId;
@@ -122,8 +147,8 @@ router.put('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), fun
 
   if(!start || !end) {
 
-    console.log('start: ' + start + ' orig: ' + req.body.start);
-    console.log('end: ' + end + ' orig: ' + req.body.end);
+    //console.log('start: ' + start + ' orig: ' + req.body.start);
+    //console.log('end: ' + end + ' orig: ' + req.body.end);
 
     return next(exceptionMessages.error('system_validation_failure', null,
       'Start and end dates are required'));
@@ -157,7 +182,7 @@ router.put('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), fun
 // DELETE calendar event
 router.delete('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), function (req, res, next) {
 
-  console.log('calling route: ' + 'DELETE /calendars/events/:eventId');
+  //console.log('calling route: ' + 'DELETE /calendars/events/:eventId');
 
   var calendarId = req.params.calendarId;
   var eventId = req.params.eventId;
@@ -169,7 +194,7 @@ router.delete('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), 
     userId: userId
   };
 
-  CalendarEvent.findOneAndRemove(where).exec()
+  CalendarEvent.findOneAndRemove(where)
     .then(function (event) {
       if(!event) {
         throw exceptionMessages.error('object_not_found', null, JSON.stringify(where));

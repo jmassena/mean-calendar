@@ -26,7 +26,7 @@ var app = require('../../app.js');
 var calendarRootUri = '/api/calendars';
 
 var calendarUrl = {
-  list: function (user) {
+  list: function () {
     return calendarRootUri;
   },
   get: function (calendarId) {
