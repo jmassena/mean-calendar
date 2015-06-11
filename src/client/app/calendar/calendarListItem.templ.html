@@ -1,0 +1,16 @@
+<div class="calendar-item-color-block" ng-class="{'calendar-item-color-block-disabled':!calendar.config.showEvents}"
+ng-style="{'background-color': (calendar.config.showEvents?calendar.config.eventColor:'#ffffff')}"
+ng-click="$emit('calendar.toggleCalendarEvents', calendar)"></div>
+
+<span ng-click="$emit('calendar.toggleCalendarEvents', calendar)" style="cursor:pointer">
+  {{calendar.title}}</span>
+
+<a href="" class="dropdown-toggle" data-toggle="dropdown">
+  <b class="caret"></b>
+</a>
+
+<ul class="dropdown-menu">
+  <li>
+    <a href="#">Set Color (not implemented)</a>
+  </li>
+</ul>

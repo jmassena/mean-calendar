@@ -1,1 +1,17 @@
+.calendar-item-color-block {
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  cursor: pointer;
+}
 
+.calendar-item-color-block.calendar-item-color-block-disabled {
+  background-color: #ffffff;
+  border: solid 1px #ccc;
+}
+
+.calendar-my-calendars-container {}
+
+.calendar-sublist-header {
+  background-color: #eeeeff;
+}

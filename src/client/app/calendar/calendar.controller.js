@@ -4,9 +4,9 @@
   angular.module('app')
     .controller('CalendarCtrl', CalendarCtrl);
 
-  CalendarCtrl.$inject = ['CalendarSvc', 'GlobalNotificationSvc'];
+  CalendarCtrl.$inject = ['$scope', 'CalendarSvc', 'GlobalNotificationSvc'];
 
-  function CalendarCtrl(CalendarSvc, GlobalNotificationSvc) {
+  function CalendarCtrl($scope, CalendarSvc, GlobalNotificationSvc) {
 
     var vm = this;
 
@@ -16,7 +16,7 @@
     vm.calendarEnd;
 
     vm.updateCalendar = updateCalendar;
-    vm.toggleCalendarEvents = toggleCalendarEvents;
+    // vm.toggleCalendarEvents = toggleCalendarEvents;
 
     activate();
 
@@ -46,10 +46,11 @@
           });
     }
 
-    function toggleCalendarEvents(calendar) {
+    $scope.$on('calendar.toggleCalendarEvents', function toggleCalendarEvents(event, calendar) {
+      event.stopPropagation();
       calendar.config.showEvents = !calendar.config.showEvents;
       updateCalendar(calendar);
-    }
+    });
 
     function updateCalendar(calendar) {
       CalendarSvc.updateCalendar(calendar)

@@ -1,21 +1,6 @@
 Calendar todo:
 
-current issue:
-  - when updating event the date validator does not fire.
-  
 
-[] create calendar db model and routes
+[] create jm-my-calendar directive for individual calendars
 
-  [] design calendar routes
-
-  [] design calendar model
-
-
-- test updating calendar events if validation fires
-
-- use postman to test this
-
-- create route to
-    create calendar
-    add event
-    update event
+[] add 'create new' action to 'my calendars' container dropdown

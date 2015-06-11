@@ -1,15 +1,2 @@
-__v: 0,
-    userId: 55787f33ce3e2b3457c369f8,
-    calendarId: 55787f33ce3e2b3457c36a00,
-    title: 'valid event: within range',
-    start: Sun Nov 15 2015 00:00:00 GMT-0800 (PST),
-    end: Mon Nov 16 2015 00:00:00 GMT-0800 (PST),
-    _id: 55787f33ce3e2b3457c36a05 },
-
-
-query start: Thu Oct 01 2015 00:00:00 GMT-0700 (PDT)
-query end: Sun Nov 01 2015 00:00:00 GMT-0700 (PDT)
-
-is event.start < end?
-  Sun Nov 15 2015 00:00:00 GMT-0800 (PST)
-  Sun Nov 01 2015 00:00:00 GMT-0700 (PDT)
+<div ng-show="calendar.config.showEvents" class="calendar-item-color-block" ng-style="{'background-color': calendar.config.eventColor}" ng-click="vm.toggleCalendarEvents(calendar)"></div>
+<div ng-hide="calendar.config.showEvents" class="calendar-item-color-block"  ng-click="vm.toggleCalendarEvents(calendar)"></div>

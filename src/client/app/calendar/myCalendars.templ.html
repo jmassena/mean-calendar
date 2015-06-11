@@ -1,0 +1,12 @@
+<div class="calendar-my-calendars-container">
+  <div class="calendar-sublist-header">My calendars</div>
+  <ul class="list-unstyled">
+
+    <!-- TODO: make directive for calendarList items so we can have popup settings -->
+    <li ng-repeat="calendar in calendarList">
+
+      <calendar-list-item calendar="calendar"></calendar-list-item>
+
+    </li>
+  </ul>
+</div>
