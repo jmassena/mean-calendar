@@ -10,7 +10,9 @@
 
     var vm = this;
 
-    vm.calendarList;
+    vm.calendarList = {
+      items: []
+    };
     vm.calendar;
     vm.calendarStart;
     vm.calendarEnd;
@@ -27,12 +29,12 @@
       CalendarSvc.getCalendarList()
         .then(function (res) {
           if(res.data && res.data.length > 0) {
-            vm.calendarList = res.data;
+            vm.calendarList.items = res.data;
           } else {
             return CalendarSvc.createCalendar('My calendar')
               .then(function (res) {
                 if(res && res.data) {
-                  vm.calendarList = [res.data];
+                  vm.calendarList.items = [res.data];
                 } else {
                   throw new Error('Error creating calendar');
                 }
@@ -52,18 +54,37 @@
       updateCalendar(calendar);
     });
 
+    $scope.$on('mycalendar.create', function handleCalendarCreate(event, title) {
+      event.stopPropagation();
+      createCalendar(title);
+    });
+
+    function createCalendar(title) {
+      CalendarSvc.createCalendar(title)
+        .then(function (res) {
+          if(!res.data) {
+            GlobalNotificationSvc.addError('Calendar create failed');
+          }
+          vm.calendarList.items.push(res.data);
+        })
+        .then(null,
+          function (res) {
+            console.error(res);
+            GlobalNotificationSvc.addError(res.data.message);
+          });
+    }
+
     function updateCalendar(calendar) {
       CalendarSvc.updateCalendar(calendar)
         .then(function (res) {
-          // TODO: check how this works in the error handler code which expects a response object....
           if(!res.data) {
-            throw new Error('Calendar update failed');
+            GlobalNotificationSvc.addError('Calendar update failed');
           }
           // TODO: do i really need to update he local calendar from db when it was changed locally first?
           var cal = res.data;
-          for(var i = 0; i < vm.calendarList.length; i++) {
-            if(vm.calendarList[i]._id === cal._id) {
-              vm.calendarList[i] = cal;
+          for(var i = 0; i < vm.calendarList.items.length; i++) {
+            if(vm.calendarList.items[i]._id === cal._id) {
+              vm.calendarList.items[i] = cal;
               break;
             }
           }

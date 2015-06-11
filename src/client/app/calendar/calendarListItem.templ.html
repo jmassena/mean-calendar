@@ -1,16 +1,21 @@
-<div class="calendar-item-color-block" ng-class="{'calendar-item-color-block-disabled':!calendar.config.showEvents}"
-ng-style="{'background-color': (calendar.config.showEvents?calendar.config.eventColor:'#ffffff')}"
-ng-click="$emit('calendar.toggleCalendarEvents', calendar)"></div>
+<div class="calendar-item-container">
 
-<span ng-click="$emit('calendar.toggleCalendarEvents', calendar)" style="cursor:pointer">
-  {{calendar.title}}</span>
+  <!-- <button type="button" ng-click="$emit('calendar.toggleCalendarEvents', calendar)" class="btn btn-default">Toggle</button> -->
 
-<a href="" class="dropdown-toggle" data-toggle="dropdown">
-  <b class="caret"></b>
-</a>
+  <div class="calendar-item-title-container" ng-click="$emit('calendar.toggleCalendarEvents', calendar)">
+    <div class="calendar-item-color-block" ng-class="{'calendar-item-color-block-disabled':!calendar.config.showEvents}" ng-style="{'background-color': (calendar.config.showEvents?calendar.config.eventColor:'#ffffff')}"></div>
 
-<ul class="dropdown-menu">
-  <li>
-    <a href="#">Set Color (not implemented)</a>
-  </li>
-</ul>
+    <span class="calendar-item-title"> {{calendar.title}}</span>
+  </div>
+
+  <a href="" class="dropdown-toggle" data-toggle="dropdown">
+    <b class="caret"></b>
+  </a>
+
+  <ul class="dropdown-menu">
+    <li>
+      <a href="#">Set Color (not implemented)</a>
+
+    </li>
+  </ul>
+</div>

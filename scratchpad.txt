@@ -1,2 +1,8 @@
-<div ng-show="calendar.config.showEvents" class="calendar-item-color-block" ng-style="{'background-color': calendar.config.eventColor}" ng-click="vm.toggleCalendarEvents(calendar)"></div>
-<div ng-hide="calendar.config.showEvents" class="calendar-item-color-block"  ng-click="vm.toggleCalendarEvents(calendar)"></div>
+,function documentClickHandler(event) {
+  if(event.target === element || element.find(event.target).length === 0) {
+    return;
+  } else {
+    $document.off('click', '*', documentClickHandler);
+    element.find('#btnCancelCreateCalendar').click();
+  }
+}

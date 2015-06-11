@@ -1,3 +1,28 @@
+.my-calendars-container {
+  position: relative;
+}
+
+.my-calendars-header {
+  position: relative;
+  display: inline-block;
+  background-color: #eeeeff;
+}
+
+.my-calendars-create-dialog {
+  position: absolute;
+  z-index: 100;
+  min-width: 200px;
+  min-height: 150px;
+  left: 125px;
+  top: 0px;
+  border: solid 1px #aaa;
+  padding: 20px;
+  /*background-color: #eee;*/
+  border: 1px solid rgba(0, 0, 0, .15);
+  border-radius: 4px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+}
+
 .calendar-item-color-block {
   width: 10px;
   height: 10px;
@@ -10,8 +35,11 @@
   border: solid 1px #ccc;
 }
 
-.calendar-my-calendars-container {}
+.calendar-item-container {
+  position: relative;
+}
 
-.calendar-sublist-header {
-  background-color: #eeeeff;
+.calendar-item-title-container {
+  cursor: pointer;
+  display: inline-block;
 }
