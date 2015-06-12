@@ -30,7 +30,7 @@
   cursor: pointer;
 }
 
-.calendar-item-color-block.calendar-item-color-block-disabled {
+.calendar-item-color-block-disabled {
   background-color: #ffffff;
   border: solid 1px #ccc;
 }
