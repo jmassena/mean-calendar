@@ -17,6 +17,16 @@
         calendar: '='
       },
 
+      controller: function ($scope) {
+        $scope.deleteCalendar = function (calendar) {
+          // give bootstrapcs a chance to close modal?
+
+          $timeout(function () {
+            $scope.$emit('mycalendar.delete', calendar._id);
+          });
+        };
+      },
+
       link: function (scope, element, attrs) {
 
       }

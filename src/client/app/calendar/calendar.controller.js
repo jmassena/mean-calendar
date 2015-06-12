@@ -59,6 +59,27 @@
       createCalendar(title);
     });
 
+    $scope.$on('mycalendar.delete', function handleCalendarDelete(event, calendarId) {
+      event.stopPropagation();
+      deleteCalendar(calendarId);
+    });
+
+    function deleteCalendar(calendarId) {
+      CalendarSvc.deleteCalendar(calendarId)
+        .then(function (res) {
+          for(var i = 0; i < vm.calendarList.items.length; i++) {
+            if(vm.calendarList.items[i]._id === calendarId) {
+              vm.calendarList.items.splice(i, 1);
+            }
+          }
+        })
+        .then(null,
+          function (res) {
+            console.error(res);
+            GlobalNotificationSvc.addError(res.data.message);
+          });
+    }
+
     function createCalendar(title) {
       CalendarSvc.createCalendar(title)
         .then(function (res) {

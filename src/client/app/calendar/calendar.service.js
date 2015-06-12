@@ -32,6 +32,10 @@
       return $http.put(calendarUrl.update(calendar._id), calendar);
     }
 
+    function deleteCalendar(calendarId) {
+      return $http.delete(calendarUrl.delete(calendarId));
+    }
+
     var calendarUrl = {
       list: function () {
         return calendarBaseUrl;
@@ -98,7 +102,8 @@
     return {
       getCalendarList: getCalendarList,
       createCalendar: createCalendar,
-      updateCalendar: updateCalendar
+      updateCalendar: updateCalendar,
+      deleteCalendar: deleteCalendar
     };
 
   }
