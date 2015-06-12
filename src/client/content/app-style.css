@@ -1,9 +1,13 @@
 /*a.link{
   cursor:pointer;
 }*/
+
+
 /*.inline {
   display: inline;
 }*/
+
+
 /*
 @charset "UTF-8";
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak, .ng-hide {
@@ -18,36 +22,25 @@ ng\:form {
   transition: 0s all!important;
   -webkit-transition: 0s all!important;
 }*/
+
+
 /* show the element during a show/hide animation when the
  * animation is ongoing, but the .ng-hide class is active */
+
+
 /*.ng-hide-add-active, .ng-hide-remove {
   display: block!important;
 }*/
-
-/*TODO: user-message/removed not used anymore so remove */
-div.user-message {
-  position: absolute;
-  top: 50px;
-  right: 10px;
-  z-index: 2;
-  min-width: 400px;
-  max-width: 600px;
-  /*-webkit-transition: all ease .5s;
-  -o-transition: all ease .5s;*/
-
-  transition: all ease 1.5s;
-}
 
 div.removed {
   position: absolute;
   top: 50px;
   right: 10px;
   z-index: 1;
-  min-width: 400px;
-  max-width: 600px;
+  /*min-width: 400px;
+  max-width: 600px;*/
   /*-webkit-transition: all ease .5s;
   -o-transition: all ease .5s;*/
-
   opacity: 0;
   transition: all ease 1.5s;
 }
@@ -58,7 +51,7 @@ body>div[ui-view="main-content"] {
 }
 
 div.form-container-med {
-  width: 800px;
+  max-width: 500px;
 }
 
 div.form-button-row {
@@ -78,16 +71,17 @@ div.invalid-message>span {
   border-color: #a94442
 }
 
+img.google-login {
+  width: 120px;
+  height: 40px;
+  cursor: pointer;
+  content: url("/content/img/Red signin_Google_44dp/Red-signin_Google_base_44dp.png");
+}
 
-img.google-login{
-width: 120px;
-height: 40px;
-cursor:pointer;
-content:url("/content/img/Red signin_Google_44dp/Red-signin_Google_base_44dp.png");
+img.google-login:hover {
+  content: url("/content/img/Red signin_Google_44dp/Red-signin_Google_hover_44dp.png");
 }
-img.google-login:hover{
-  content:url("/content/img/Red signin_Google_44dp/Red-signin_Google_hover_44dp.png");
-}
-img.google-login:active{
-  content:url("/content/img/Red signin_Google_44dp/Red-signin_Google_press_44dp.png");
+
+img.google-login:active {
+  content: url("/content/img/Red signin_Google_44dp/Red-signin_Google_press_44dp.png");
 }
