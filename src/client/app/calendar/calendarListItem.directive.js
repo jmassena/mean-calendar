@@ -4,9 +4,9 @@
   angular.module('app')
     .directive('calendarListItem', calendarListItem);
 
-  calendarListItem.$inject = ['$timeout'];
+  calendarListItem.$inject = ['$timeout', 'ModalSvc'];
 
-  function calendarListItem($timeout) {
+  function calendarListItem($timeoutm, ModalSvc) {
 
     // renders the calendar name, color, dropdown arrow for setting properties
     // emits events to communicate with calendar controller for setting color or deactivating calendar.
@@ -18,12 +18,17 @@
       },
 
       controller: function ($scope) {
-        $scope.deleteCalendar = function (calendar) {
-          // give bootstrapcs a chance to close modal?
 
-          $timeout(function () {
-            $scope.$emit('mycalendar.delete', calendar._id);
-          });
+        $scope.delete = function (calendar) {
+          ModalSvc.open({
+              bodyContent: 'Delete "' + calendar.title + '"?'
+            })
+            .result
+            .then(function (okVal) {
+              $scope.$emit('mycalendar.delete', calendar._id);
+            }, function (cancelVal) {
+              console.log('Cancelled modal val: ' + cancelVal);
+            });
         };
       },
 
