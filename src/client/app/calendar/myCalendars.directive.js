@@ -4,9 +4,9 @@
   angular.module('app')
     .directive('myCalendars', myCalendars);
 
-  myCalendars.$inject = ['$timeout', '$document'];
+  myCalendars.$inject = ['$timeout', '$document', '$modal'];
 
-  function myCalendars($timeout, $document) {
+  function myCalendars($timeout, $document, $modal) {
 
     // renders the calendar name, color, dropdown arrow for setting properties
     // emits events to communicate with calendar controller for setting color or deactivating calendar.
@@ -17,46 +17,39 @@
         calendarList: '='
       },
 
-      controller: function ($scope) {
-        $scope.createCalendar = function () {
-          $scope.$emit('mycalendar.create', $scope.calendarList.newCalendarTitle);
-          $scope.clearCreateCalendarForm();
-        };
+      controller: function ($scope, $modal) {
 
-        $scope.clearCreateCalendarForm = function () {
-          $scope.calendarList.newCalendarTitle = null;
-          $scope.calendarList.showCreateDialog = false;
-        };
-      },
+        $scope.openCreateDialog = function () {
+          var modalInstance = $modal.open({
+            animation: true,
+            size: 'sm',
+            // resolve: {
+            //   modalData: function () {
+            //     return 'hello';
+            //   }
+            // },
+            scope: $scope,
 
-      link: function (scope, element, attrs) {
+            templateUrl: './app/calendar/modal-new-calendar.templ.html',
 
-        function documentClickHandler(event) {
-          var dialog = element.find('.my-calendars-create-dialog');
-          if(event.target === dialog[0] || dialog.find(event.target).length > 0) {
-            return;
-          } else {
-            $document.off('click', '*', documentClickHandler);
-            element.find('#btnCancelCreateCalendar').click();
-          }
-        }
+            controller: function ($scope, $modalInstance) {
 
-        scope.$watch(function () {
-            return scope.calendarList.showCreateDialog;
-          },
-          function (newVal, oldVal) {
-            if(newVal) {
-              $timeout(function () {
-                $document.on('click', '*', documentClickHandler);
-              });
+              // $scope.form = {};
+
+              $scope.submit = function () {
+                if($scope.form.newCalendar.$valid) {
+                  $scope.$emit('mycalendar.create', $scope.calendarTitle);
+                  $modalInstance.close();
+                }
+              };
+              $scope.cancel = function () {
+                $modalInstance.dismiss();
+              };
             }
           });
-      }
+        };
+      },
     };
-  }
-
-  function documentClickHandler(e, element, $document) {
-
   }
 
 }(this.angular));

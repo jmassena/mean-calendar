@@ -32,6 +32,13 @@ ng\:form {
   display: block!important;
 }*/
 
+
+/* Style for angular-ui elements with empty href but still need cursor */
+
+.nav, .pagination, .carousel, .panel-title a {
+  cursor: pointer;
+}
+
 div.removed {
   position: absolute;
   top: 50px;
@@ -60,6 +67,10 @@ div.form-button-row {
 
 div.invalid-message {
   margin-top: 5px;
+}
+
+p.invalid-message {
+  color: #a94442;
 }
 
 div.invalid-message>span {

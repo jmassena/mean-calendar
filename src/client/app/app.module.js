@@ -2,7 +2,7 @@
   'use strict';
 
   angular
-    .module('app', ['ui.router', 'ngCookies']);
+    .module('app', ['ui.router', 'ui.bootstrap', 'ngCookies']);
 
   angular.module('app')
     .factory('authInterceptor', authInterceptor);
