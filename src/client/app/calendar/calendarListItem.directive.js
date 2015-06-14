@@ -19,22 +19,23 @@
 
       controller: function ($scope) {
 
-        $scope.delete = function (calendar) {
-          ModalSvc.open({
-              bodyContent: 'Delete "' + calendar.title + '"?'
-            })
-            .result
-            .then(function (okVal) {
-              $scope.$emit('mycalendar.delete', calendar._id);
-            }, function (cancelVal) {
-              console.log('Cancelled modal val: ' + cancelVal);
-            });
-        };
-      },
-
-      link: function (scope, element, attrs) {
-
-      }
+          $scope.delete = function (calendar) {
+            ModalSvc.open({
+                bodyContent: 'Delete "' + calendar.title + '"?'
+              })
+              .result
+              .then(function (okVal) {
+                $scope.$emit('mycalendar.delete', calendar._id);
+              }, function (cancelVal) {
+                console.log('Cancelled modal val: ' + cancelVal);
+              });
+          };
+        }
+        // ,
+        //
+        // link: function (scope, element, attrs) {
+        //
+        // }
 
     };
   }
