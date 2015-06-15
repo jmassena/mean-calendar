@@ -1,22 +1,21 @@
 Calendar todo:
 
 
-[] create jm-my-calendar directive for individual calendars
+only handle monthly view for now
 
-[] add 'create new' action to 'my calendars' container dropdown
+  create base calendar with no events for some time period
 
+  get calendar details for some period
 
+  add details to base calendar
 
-- popup options
-  - create separate modal for each use case.
-     for repeating items this will mean a modal for each on the page.
-
-     try creating this and if it is workable make a directive for it so we can transclude content.
+  render base calendar
 
 
-  - create global popup
-    on click of element call service to ask modal to show:
-     - buttons with function to call when clicked.
-     - title (if any).
-     - form elements {type,name,placeholder}
-     - position?
+
+when view range changes
+
+  check if we have that range in all calendars
+    if not then get the missing ranges and add them to the base calendar
+
+    

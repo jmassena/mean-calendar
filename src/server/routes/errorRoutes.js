@@ -20,12 +20,12 @@ module.exports.errorHandler = function (err, req, res, next) {
   }
 
   var isDevOrTest = ['dev', 'test'].indexOf(config.env) !== -1;
-  var code = err.statusCode || 500;
+  var code = err.status || err.statusCode || 500;
   var name = err.name || 'Unspecified Error';
   var msg;
   var stack;
 
-  console.log(code);
+  console.log('isDevOrTest: ' + isDevOrTest);
 
   if(err.name === 'ValidationError' && !err.statusCode) {
     code = 422;
@@ -36,6 +36,8 @@ module.exports.errorHandler = function (err, req, res, next) {
     // only show user type exception messages to user unless we are in dev/test
     msg = err.exceptionInfo.message;
 
+  } else if(code === 401) {
+    msg = err.message;
   } else {
     // Log exception but don't pass real message to web.
     msg = 'Error occurred';

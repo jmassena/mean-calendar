@@ -34,7 +34,7 @@ function isAuthenticated() {
     })
     // Attach user to request
     .use(function (req, res, next) {
-      //console.log('running isAuthenticated.getById');
+      console.log('running isAuthenticated.getById');
 
       console.log('authentication getting user ' + req.user._id);
 
