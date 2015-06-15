@@ -6,7 +6,7 @@
 
   calendarListItem.$inject = ['$timeout', 'ModalSvc'];
 
-  function calendarListItem($timeoutm, ModalSvc) {
+  function calendarListItem($timeout, ModalSvc) {
 
     // renders the calendar name, color, dropdown arrow for setting properties
     // emits events to communicate with calendar controller for setting color or deactivating calendar.

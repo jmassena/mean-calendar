@@ -1,0 +1,22 @@
+<div class=".container calendar-monthly">
+  <div class="row" class="calendar-monthly-header">
+    <div class="col-xs-1">Sun</div>
+    <div class="col-xs-1">Mon</div>
+    <div class="col-xs-1">Tue</div>
+    <div class="col-xs-1">Wed</div>
+    <div class="col-xs-1">Thur</div>
+    <div class="col-xs-1">Fri</div>
+    <div class="col-xs-1">Sat</div>
+  </div>
+
+  <!-- vm.monthViewEvents.weeks.dates.dayInfo
+  vm.monthViewEvents.weeks.dates.events -->
+
+  <div class="row" ng-repeat="week in monthViewEvents.weeks">
+    <div class="col-xs-1 calendar-monthly-date" ng-repeat="day in week.days">
+      <div> {{day.date.calendarDisplayDate()}}</div>
+      <div class="calendar-event" ng-repeat="event in day.events">{{event.displayString()}}</div>
+    </div>
+  </div>
+
+</div>

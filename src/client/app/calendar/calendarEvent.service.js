@@ -15,8 +15,24 @@
 
     var calendarBaseUrl = '/api/calendars/';
 
+    function deserializeEventDates(event) {
+      event.start = new Date(event.start);
+      event.end = new Date(event.end);
+    }
+
     function getEventsList(calendarId, start, end) {
-      return $http.get(eventUrl.list(calendarId, start, end));
+      return $http.get(eventUrl.list(calendarId, start, end))
+        .then(function (res) {
+
+          // convert date strings to date objects
+          var data = res.data;
+          if(data && data.length > 0) {
+            for(var i = 0; i < data.length; i++) {
+              deserializeEventDates(data[i]);
+            }
+          }
+          return res;
+        });
     }
 
     function createEvent(calendarId, calendarEvent) {

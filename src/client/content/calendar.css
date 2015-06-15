@@ -43,3 +43,45 @@
   cursor: pointer;
   display: inline-block;
 }
+
+.calendar-monthly {
+  /*border: 1px solid;*/
+}
+
+.calendar-monthly>div>div {
+  /*border: 1px solid;*/
+}
+
+.calendar-monthly-header {}
+
+.calendar-monthly-header>div {
+  border: 1px solid;
+}
+
+.calendar-monthly-date {
+  border: 1px solid;
+  min-height: 100px;
+  max-height: 300px;
+  min-width: 100px;
+  max-width: 14%;
+}
+
+
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/

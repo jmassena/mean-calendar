@@ -14,6 +14,7 @@
       items: []
     };
     vm.calendarEvents = [];
+    vm.monthViewEvents = {};
     vm.calendar;
     vm.calendarStart;
     vm.calendarEnd;
@@ -23,9 +24,151 @@
 
     activate();
 
-    function getMonthViewStartEndDates(year, month) {
+    function createMonthView() {
+      // merge all events into one list ordered by start date;
+      // generate all month dates and for each date add events
+      // from merged list.
+      // for now assume all dates are within a single day.
+      var allEvents = [];
+      for(var i = 0; i < vm.calendarEvents.length; i++) {
+        allEvents = allEvents.concat(vm.calendarEvents[i]);
+      }
 
+      allEvents.sort(function (a, b) {
+        return a.start - b.start;
+      });
+
+      // if date spans days then
+      //   if start.daynum + days > sat.daynum
+      //     set colspan to
+
+      // vm.monthViewEvents.weeks.dates.day
+      // vm.monthViewEvents.weeks.dates.events
+      //
+      vm.monthViewEvents.weeks = [];
+
+      var week;
+      var eventIdx = 0;
+
+      // create week object with day object with events
+      for(var d = vm.calendarStart; d < vm.calendarEnd; d.setDate(d.getDate() + 1)) {
+
+        if(d.getDay() === 0) {
+          week = {};
+          week.days = [];
+          vm.monthViewEvents.weeks.push(week);
+        }
+
+        var day = {
+          date: new DateWrapper(d),
+          events: []
+        };
+
+        week.days.push(day);
+
+        var nextDay = new Date(d);
+        nextDay.setDate(d.getDate() + 1);
+
+        //while next event is on today
+        // NOTE: this will not handle events spanning days
+        while(eventIdx < allEvents.length && allEvents[eventIdx].start >= d && allEvents[eventIdx].start < nextDay) {
+          day.events.push(new EventWrapper(allEvents[eventIdx]));
+          eventIdx++;
+        }
+      }
     }
+
+    function EventWrapper(event) {
+      this.event = event;
+    }
+
+    EventWrapper.prototype.startTimeString = function () {
+      return this.event.start.getHours() >= 12 ? (this.event.start.getHours() - 12) + 'p' : this.event.start.getHours();
+    };
+
+    EventWrapper.prototype.displayString = function () {
+      return this.startTimeString() + ' ' + this.event.title;
+    };
+
+    function DateWrapper(d) {
+      this.date = new Date(d);
+    }
+
+    DateWrapper.prototype.dayName = function () {
+      return this.dayNames[this.date.getDate()];
+    };
+    DateWrapper.prototype.monthName = function () {
+      return this.monthNames[this.date.getMonth()];
+    };
+
+    DateWrapper.prototype.calendarDisplayDate = function () {
+      var x = this.date.getDate() === 0 ?
+        this.monthName().abbreviated + ' ' + this.date.getDate() :
+        this.date.getDate();
+
+      return x;
+    };
+
+    DateWrapper.prototype.monthNames = [{
+      full: 'January',
+      abbreviated: 'Jan'
+    }, {
+      full: 'February',
+      abbreviated: 'Feb'
+    }, {
+      full: 'March',
+      abbreviated: 'Mar'
+    }, {
+      full: 'April',
+      abbreviated: 'Apr'
+    }, {
+      full: 'May',
+      abbreviated: 'May'
+    }, {
+      full: 'June',
+      abbreviated: 'Jun'
+    }, {
+      full: 'July',
+      abbreviated: 'Jul'
+    }, {
+      full: 'August',
+      abbreviated: 'Aug'
+    }, {
+      full: 'September',
+      abbreviated: 'Sep'
+    }, {
+      full: 'October',
+      abbreviated: 'Oct'
+    }, {
+      full: 'November',
+      abbreviated: 'Nov'
+    }, {
+      full: 'December',
+      abbreviated: 'Dec'
+    }];
+
+    DateWrapper.prototype.dayNames = [{
+      full: 'Sunday',
+      abbreviated: 'Sun'
+    }, {
+      full: 'Monday',
+      abbreviated: 'Mon'
+    }, {
+      full: 'Tuesday',
+      abbreviated: 'Tues'
+    }, {
+      full: 'Wednesday',
+      abbreviated: 'Wed'
+    }, {
+      full: 'Thursday',
+      abbreviated: 'Thurs'
+    }, {
+      full: 'Friday',
+      abbreviated: 'Fri'
+    }, {
+      full: 'Saturday',
+      abbreviated: 'Sat'
+    }];
 
     function activate() {
 
@@ -44,8 +187,8 @@
 
       var lastDay = new Date(year, month + 1, 1);
       if(lastDay.getDay() !== 0) {
-        // move to next sunday if necessary (end date is exclusive)
-        lastDay.setDate(lastDay.getDate() + (6 - lastDay.getDay()));
+        // move to next monday (this is exclusive)
+        lastDay.setDate(lastDay.getDate() + (7 - lastDay.getDay()));
       }
 
       vm.calendarStart = firstDay;
@@ -81,8 +224,14 @@
           calendarIds = ['5578aa2b64a546cc922efb43'];
 
           return getCalendarEvents(calendarIds, vm.calendarStart, vm.calendarEnd)
-            .then(null, function (res) {
+            .then(function () {
+              createMonthView();
+            }, function (res) {
               throw new Error(res.data.message);
+            })
+            .then(null, function (err) {
+              GlobalNotificationSvc.addError(err.message);
+              throw err;
             });
         })
         .then(null,
@@ -102,7 +251,7 @@
         .then(function (results) {
           vm.calendarEvents = [];
           for(var i = 0; i < results.length; i++) {
-            vm.calendarEvents.push(results[i]);
+            vm.calendarEvents.push(results[i].data);
           }
         }, function (res) {
           throw new Error(res.data.message);
