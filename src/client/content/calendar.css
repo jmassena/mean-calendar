@@ -44,26 +44,41 @@
   display: inline-block;
 }
 
-.calendar-monthly {
-  /*border: 1px solid;*/
-}
 
-.calendar-monthly>div>div {
-  /*border: 1px solid;*/
-}
-
-.calendar-monthly-header {}
-
-.calendar-monthly-header>div {
+/*.calendar-monthly {
   border: 1px solid;
-}
+}*/
 
-.calendar-monthly-date {
+
+/*.calendar-monthly>div>div {
   border: 1px solid;
-  min-height: 100px;
-  max-height: 300px;
+}*/
+
+.calendar-cell {
+  border: 1px solid;
   min-width: 100px;
   max-width: 14%;
+  padding: 0;
+  overflow: hidden;
+}
+
+
+/*.calendar-monthly-header>div {}*/
+
+
+/*.calendar-monthly-header>div {
+  border: 1px solid;
+}*/
+
+.calendar-monthly-date {
+  min-height: 100px;
+  max-height: 300px;
+}
+
+.calendar-event {
+  background-color: #eeffee;
+  border: solid 1px #cccccc;
+  cursor: pointer;
 }
 
 

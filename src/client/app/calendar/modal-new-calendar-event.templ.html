@@ -5,18 +5,50 @@
   <h4 class="modal-title">New Calendar</h4>
 </div>
 
-<form name="form.newCalendar" ng-submit="submit()" auto-focus>
-  <div class="modal-body">
+<form name="form.newEvent" novalidate ng-submit="submit()" auto-focus>
 
+  <div class="modal-body">
     <div class="form-group">
-      <label for="calendar-title">Name</label>
-      <input id="calendar-title" ng-model="calendarTitle" name="calendarTitle" type="text" class="form-control" placeholder="Calendar Name" required/>
-      <p ng-show="form.newCalendar.calendarTitle.$invalid && form.newCalendar.calendarTitle.$touched" class="invalid-message">Calendar name is required.</p>
+      <label for="event-title">Name</label>
+      <input id="event-title" ng-model="newEvent.title" name="title" type="text" class="form-control" placeholder="Event Name" required/>
+      <p ng-show="form.newEvent.$submitted && form.newEvent.title.$invalid " class="invalid-message">Event name is required.</p>
     </div>
 
+    <div class="form-group">
+      <label for="event-notes">Notes</label>
+      <input id="event-notes" ng-model="newEvent.notes" name="notes" type="text" class="form-control" placeholder="Notes" />
+    </div>
+
+    <div class="form-group">
+      <label for="event-all-day">Calendar</label>
+      <select ng-init="newEvent.calendar = calendarList.items[0]" ng-model="newEvent.calendar" ng-options="item as item.title for item in calendarList.items">
+      </select>
+    </div>
+
+    <div class="checkbox">
+      <label>
+        <input type="checkbox" ng-model="newEvent.allDay" name="allDay">All Day
+      </label>
+    </div>
+
+    <div class="form-group">
+      <label for="event-start">Start</label>
+      <input type='date' id="event-start" ng-model="newEvent.start" name="start" type="text" class="form-control" placeholder="Start" required/>
+
+      <p ng-show="form.newEvent.$submitted && form.newEvent.start.$invalid " class="invalid-message">Start is required.</p>
+    </div>
+
+    <div class="form-group">
+      <label for="event-end">End</label>
+      <input type='date' id="event-end" ng-model="newEvent.end" name="end" type="text" class="form-control" placeholder="End" required/>
+      <p ng-show="form.newEvent.$submitted && form.newEvent.end.$invalid" class="invalid-message">End is required.</p>
+    </div>
   </div>
+
   <div class="modal-footer">
-    <button type="button" class="btn btn-primary" ng-disabled="form.newCalendar.$invalid" ng-click="submit()">Submit</button>
+    <!-- <button type="button" class="btn btn-primary" ng-disabled="form.newEvent.$invalid" ng-click="submit()">Submit</button> -->
+    <!-- <button type="submit" class="btn btn-primary" ng-disabled="form.newEvent.$invalid">Submit</button> -->
+    <button type="submit" class="btn btn-primary">Submit</button>
     <button type="button" class="btn btn-warning" ng-click="cancel()">Cancel</button>
   </div>
 </form>

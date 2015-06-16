@@ -114,6 +114,8 @@ router.post('/calendars/:calendarId/events/', auth.isAuthenticated(), function (
   calendarEvent.calendarId = calendarId;
   calendarEvent.userId = req.user.id;
 
+  console.log(calendarEvent);
+
   calendarEvent.save()
     .then(function (event) {
       res.location(path.join(req.baseUrl, 'calendars', calendarId, 'events', event.id));

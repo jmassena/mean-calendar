@@ -36,10 +36,7 @@
     }
 
     function createEvent(calendarId, calendarEvent) {
-      console.log('calling: ' + eventUrl.insert());
-      return $http.post(eventUrl.insert(calendarId), {
-        title: title
-      });
+      return $http.post(eventUrl.insert(calendarId), calendarEvent);
     }
 
     function updateEvent(calendarId, calendarEvent) {

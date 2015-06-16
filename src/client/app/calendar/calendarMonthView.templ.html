@@ -1,21 +1,21 @@
 <div class=".container calendar-monthly">
-  <div class="row" class="calendar-monthly-header">
-    <div class="col-xs-1">Sun</div>
-    <div class="col-xs-1">Mon</div>
-    <div class="col-xs-1">Tue</div>
-    <div class="col-xs-1">Wed</div>
-    <div class="col-xs-1">Thur</div>
-    <div class="col-xs-1">Fri</div>
-    <div class="col-xs-1">Sat</div>
+  <div class="row calendar-monthly-header">
+    <div class="col-xs-1 calendar-cell">Sun</div>
+    <div class="col-xs-1 calendar-cell">Mon</div>
+    <div class="col-xs-1 calendar-cell">Tue</div>
+    <div class="col-xs-1 calendar-cell">Wed</div>
+    <div class="col-xs-1 calendar-cell">Thur</div>
+    <div class="col-xs-1 calendar-cell">Fri</div>
+    <div class="col-xs-1 calendar-cell">Sat</div>
   </div>
 
   <!-- vm.monthViewEvents.weeks.dates.dayInfo
   vm.monthViewEvents.weeks.dates.events -->
 
   <div class="row" ng-repeat="week in monthViewEvents.weeks">
-    <div class="col-xs-1 calendar-monthly-date" ng-repeat="day in week.days">
+    <div class="col-xs-1 calendar-monthly-date calendar-cell" ng-repeat="day in week.days" ng-click="openCreateDialog(day.date.value)">
       <div> {{day.date.calendarDisplayDate()}}</div>
-      <div class="calendar-event" ng-repeat="event in day.events">{{event.displayString()}}</div>
+      <div class="calendar-event" ng-repeat="event in day.events" ng-click="openEditDialog(event)">{{event.displayString()}}</div>
     </div>
   </div>
 

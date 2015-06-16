@@ -51,7 +51,7 @@
       var eventIdx = 0;
 
       // create week object with day object with events
-      for(var d = vm.calendarStart; d < vm.calendarEnd; d.setDate(d.getDate() + 1)) {
+      for(var d = new Date(vm.calendarStart); d < vm.calendarEnd; d.setDate(d.getDate() + 1)) {
 
         if(d.getDay() === 0) {
           week = {};
@@ -78,33 +78,54 @@
       }
     }
 
-    function EventWrapper(event) {
-      this.event = event;
+    function EventWrapper(calendarEvent) {
+      this.event = calendarEvent;
     }
 
     EventWrapper.prototype.startTimeString = function () {
-      return this.event.start.getHours() >= 12 ? (this.event.start.getHours() - 12) + 'p' : this.event.start.getHours();
+      var hours = this.event.start.getHours();
+      var minutes = this.event.start.getMinutes();
+      var amPm;
+
+      if(hours >= 12) {
+        amPm = 'p';
+      }
+
+      if(hours === 0) {
+        hours = 12;
+      } else if(hours >= 13) {
+        hours -= 12;
+      }
+
+      if(minutes > 0) {
+        minutes = ':' + minutes;
+      }
+
+      return hours + minutes + amPm;
     };
 
     EventWrapper.prototype.displayString = function () {
+      if(this.event.allDay) {
+        return this.event.title;
+      }
       return this.startTimeString() + ' ' + this.event.title;
     };
 
     function DateWrapper(d) {
-      this.date = new Date(d);
+      this.value = new Date(d);
     }
 
     DateWrapper.prototype.dayName = function () {
-      return this.dayNames[this.date.getDate()];
+      return this.dayNames[this.value.getDate()];
     };
     DateWrapper.prototype.monthName = function () {
-      return this.monthNames[this.date.getMonth()];
+      return this.monthNames[this.value.getMonth()];
     };
 
     DateWrapper.prototype.calendarDisplayDate = function () {
-      var x = this.date.getDate() === 0 ?
-        this.monthName().abbreviated + ' ' + this.date.getDate() :
-        this.date.getDate();
+      var x = this.value.getDate() === 0 ?
+        this.monthName().abbreviated + ' ' + this.value.getDate() :
+        this.value.getDate();
 
       return x;
     };
@@ -242,6 +263,24 @@
           });
     }
 
+    function getViewCalendarEvents() {
+
+      var calendarIds = vm.calendarList.items.map(function (calendar) {
+        return calendar._id;
+      });
+
+      return getCalendarEvents(calendarIds, vm.calendarStart, vm.calendarEnd)
+        .then(function () {
+          createMonthView();
+        }, function (res) {
+          throw new Error(res.data.message);
+        })
+        .then(null, function (err) {
+          GlobalNotificationSvc.addError(err.message);
+          throw err;
+        });
+    }
+
     function getCalendarEvents(calendarIdList, start, end) {
       var promises = calendarIdList.map(function (calendarId) {
         return CalendarEventSvc.getEventsList(calendarId, start, end);
@@ -264,21 +303,33 @@
           });
     }
 
-    $scope.$on('calendar.toggleCalendarEvents', function toggleCalendarEvents(event, calendar) {
+    $scope.$on('calendar.toggleCalendarEvents', function (event, calendar) {
       event.stopPropagation();
       calendar.config.showEvents = !calendar.config.showEvents;
       updateCalendar(calendar);
     });
 
-    $scope.$on('mycalendar.create', function handleCalendarCreate(event, title) {
+    $scope.$on('mycalendar.create', function (event, title) {
       event.stopPropagation();
       createCalendar(title);
     });
 
-    $scope.$on('mycalendar.delete', function handleCalendarDelete(event, calendarId) {
+    $scope.$on('mycalendar.delete', function (event, calendarId) {
       event.stopPropagation();
       deleteCalendar(calendarId);
     });
+
+    $scope.$on('calendarEvent.create', function (event, calendarId, calendarEvent) {
+      event.stopPropagation();
+      createCalendarEvent(calendarId, calendarEvent);
+    });
+
+    function createCalendarEvent(calendarId, calendarEvent) {
+      CalendarEventSvc.createEvent(calendarId, calendarEvent)
+        .then(function () {
+          getViewCalendarEvents();
+        });
+    }
 
     function deleteCalendar(calendarId) {
       CalendarSvc.deleteCalendar(calendarId)
