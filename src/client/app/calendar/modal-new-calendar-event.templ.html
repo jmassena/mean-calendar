@@ -21,7 +21,7 @@
 
     <div class="form-group">
       <label for="event-all-day">Calendar</label>
-      <select ng-init="newEvent.calendar = calendarList.items[0]" ng-model="newEvent.calendar" ng-options="item as item.title for item in calendarList.items">
+      <select ng-init="newEvent.calendar =  newEvent.calendar || calendarList.items[0]" ng-model="newEvent.calendar" ng-options="item as item.title for item in calendarList.items">
       </select>
     </div>
 
@@ -48,6 +48,8 @@
   <div class="modal-footer">
     <!-- <button type="button" class="btn btn-primary" ng-disabled="form.newEvent.$invalid" ng-click="submit()">Submit</button> -->
     <!-- <button type="submit" class="btn btn-primary" ng-disabled="form.newEvent.$invalid">Submit</button> -->
+    <button ng-show="newEvent.forUpdate" type="button" class="btn btn-danger pull-left" ng-click="delete()">Delete</button>
+
     <button type="submit" class="btn btn-primary">Submit</button>
     <button type="button" class="btn btn-warning" ng-click="cancel()">Cancel</button>
   </div>

@@ -137,7 +137,8 @@ router.put('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), fun
 
   var where = {
     _id: eventId,
-    calendarId: calendarId,
+    // in case we move event from one calendar to another we can't look it up by calendar id
+    // calendarId: calendarId,
     userId: userId
   };
 
@@ -158,6 +159,7 @@ router.put('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), fun
 
   CalendarEvent.findOneAndUpdate(where, {
       $set: {
+        calendarId: calendarId,
         start: start,
         end: end,
         allDay: req.body.allDay,

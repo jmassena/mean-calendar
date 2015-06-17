@@ -85,7 +85,7 @@
     EventWrapper.prototype.startTimeString = function () {
       var hours = this.event.start.getHours();
       var minutes = this.event.start.getMinutes();
-      var amPm;
+      var amPm = '';
 
       if(hours >= 12) {
         amPm = 'p';
@@ -99,6 +99,8 @@
 
       if(minutes > 0) {
         minutes = ':' + minutes;
+      } else {
+        minutes = '';
       }
 
       return hours + minutes + amPm;
@@ -118,6 +120,7 @@
     DateWrapper.prototype.dayName = function () {
       return this.dayNames[this.value.getDate()];
     };
+
     DateWrapper.prototype.monthName = function () {
       return this.monthNames[this.value.getMonth()];
     };
@@ -324,8 +327,32 @@
       createCalendarEvent(calendarId, calendarEvent);
     });
 
+    $scope.$on('calendarEvent.update', function (event, calendarId, calendarEvent) {
+      event.stopPropagation();
+      updateCalendarEvent(calendarId, calendarEvent);
+    });
+
+    $scope.$on('calendarEvent.delete', function (event, calendarId, calendarEventId) {
+      event.stopPropagation();
+      deleteCalendarEvent(calendarId, calendarEventId);
+    });
+
     function createCalendarEvent(calendarId, calendarEvent) {
       CalendarEventSvc.createEvent(calendarId, calendarEvent)
+        .then(function () {
+          getViewCalendarEvents();
+        });
+    }
+
+    function updateCalendarEvent(calendarId, calendarEvent) {
+      CalendarEventSvc.updateEvent(calendarId, calendarEvent)
+        .then(function () {
+          getViewCalendarEvents();
+        });
+    }
+
+    function deleteCalendarEvent(calendarId, calendarEventId) {
+      CalendarEventSvc.deleteEvent(calendarId, calendarEventId)
         .then(function () {
           getViewCalendarEvents();
         });

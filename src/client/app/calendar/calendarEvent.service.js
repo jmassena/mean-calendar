@@ -44,7 +44,7 @@
     }
 
     function deleteEvent(calendarId, eventId) {
-      return $http.delete(eventUrl.delete(calendarId, calendarId));
+      return $http.delete(eventUrl.delete(calendarId, eventId));
     }
 
     var eventUrl = {

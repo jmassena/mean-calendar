@@ -1,4 +1,4 @@
-<div class=".container calendar-monthly">
+<div class="container calendar-monthly">
   <div class="row calendar-monthly-header">
     <div class="col-xs-1 calendar-cell">Sun</div>
     <div class="col-xs-1 calendar-cell">Mon</div>
@@ -13,9 +13,9 @@
   vm.monthViewEvents.weeks.dates.events -->
 
   <div class="row" ng-repeat="week in monthViewEvents.weeks">
-    <div class="col-xs-1 calendar-monthly-date calendar-cell" ng-repeat="day in week.days" ng-click="openCreateDialog(day.date.value)">
+    <div class="col-xs-1 calendar-monthly-date calendar-cell" ng-repeat="day in week.days" ng-click="openCreateDialog($event, day.date.value)">
       <div> {{day.date.calendarDisplayDate()}}</div>
-      <div class="calendar-event" ng-repeat="event in day.events" ng-click="openEditDialog(event)">{{event.displayString()}}</div>
+      <div class="calendar-event" ng-repeat="event in day.events" ng-click="openCreateDialog($event, null, event.event)">{{event.displayString()}}</div>
     </div>
   </div>
 
