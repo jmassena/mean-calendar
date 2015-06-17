@@ -1,21 +1,14 @@
 Calendar todo:
 
 
-only handle monthly view for now
+Need a time combo that shows times in .5 hour increments like:
 
-  create base calendar with no events for some time period
+12:00am
+12:30am
+...
 
-  get calendar details for some period
-
-  add details to base calendar
-
-  render base calendar
-
+but user can edit value like:
+12:05am
 
 
-when view range changes
-
-  check if we have that range in all calendars
-    if not then get the missing ranges and add them to the base calendar
-
-    
+So, make timeCombo directive that has list of times in a bootstrap dropdown.
