@@ -1,11 +1,12 @@
-<div class="input-group input-append">
-  <input type="text" id="timeInput" class="form-control" ng-model="vm.selectedTimeString">
+<div class="input-group input-append btn-block">
 
-  <div class="input-group-btn">
-    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="dropDownButton">
+  <div class="input-group-btn ">
+    <input type="text" id="timeInput" class="form-control dropdown-toggle" data-toggle="dropdown" ng-model="vm.selectedTimeString">
+    <!-- <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" data-target="#timedropdown" id="dropDownButton"> -->
+    <!-- <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="dropDownButton">
       <span class="caret"></span>
-    </button>
-    <ul id="time-dropdown-menu" style="width:100%" class="dropdown-menu dropdown-menu-right  time-dropdown" role="menu">
+    </button> -->
+    <ul style="width:100%" class="dropdown-menu dropdown-menu-right  time-dropdown" role="menu">
       <li ng-repeat="timeString in vm.timesList"><a href="#" ng-click="vm.selectedTimeString = timeString">{{timeString}}</a></li>
     </ul>
   </div>

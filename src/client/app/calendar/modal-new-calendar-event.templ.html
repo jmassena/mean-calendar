@@ -32,21 +32,25 @@
     </div>
 
     <div class="form-group">
-      <label for="event-start">Start</label>
+      <label for="event-start">Start Date</label>
       <input type='date' id="event-start" ng-model="newEvent.start" name="start" type="text" class="form-control" placeholder="Start" required/>
-
       <p ng-show="form.newEvent.$submitted && form.newEvent.start.$invalid " class="invalid-message">Start is required.</p>
     </div>
 
-    <div class="form-group" ng-hide="newEvent.allDay">
+    <div ng-hide="newEvent.allDay" class="form-group">
       <label for="event-start-time">Start Time</label>
       <time-combo id="event-start-time" date-time="newEvent.start"></time-combo>
     </div>
 
     <div class="form-group">
-      <label for="event-end">End</label>
+      <label for="event-end">End Date</label>
       <input type='date' id="event-end" ng-model="newEvent.end" name="end" type="text" class="form-control" placeholder="End" required/>
       <p ng-show="form.newEvent.$submitted && form.newEvent.end.$invalid" class="invalid-message">End is required.</p>
+    </div>
+
+    <div ng-hide="newEvent.allDay" class="form-group">
+      <label for="event-end-time">End Time</label>
+      <time-combo id="event-end-time" date-time="newEvent.end"></time-combo>
     </div>
   </div>
 

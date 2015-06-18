@@ -22,29 +22,30 @@
 
       controller: function () {
 
-        var vm = this;
-        var timesList = [];
-        var tempDate = new Date();
-        tempDate.setHours(0);
-        tempDate.setMinutes(0);
-        tempDate.setSeconds(0);
-        tempDate.setMilliseconds(0);
+          var vm = this;
+          var timesList = [];
+          var tempDate = new Date();
+          tempDate.setHours(0);
+          tempDate.setMinutes(0);
+          tempDate.setSeconds(0);
+          tempDate.setMilliseconds(0);
 
-        var tomorrow = new Date(tempDate);
-        tomorrow.setDate(tomorrow.getDate() + 1);
+          var tomorrow = new Date(tempDate);
+          tomorrow.setDate(tomorrow.getDate() + 1);
 
-        while(tempDate < tomorrow) {
-          timesList.push(dateToTimeString(tempDate));
-          tempDate.setMinutes(tempDate.getMinutes() + 30);
+          while(tempDate < tomorrow) {
+            timesList.push(dateToTimeString(tempDate));
+            tempDate.setMinutes(tempDate.getMinutes() + 30);
+          }
+
+          vm.timesList = timesList;
+
+          if(vm.dateTime) {
+            vm.selectedTimeString = dateToTimeString(vm.dateTime);
+          }
+
         }
-
-        vm.timesList = timesList;
-
-        if(vm.dateTime) {
-          vm.selectedTimeString = dateToTimeString(vm.dateTime);
-        }
-
-      },
+        // ,
 
       // link: function (scope, element, attrs) {
       //   element.find('#dropDownButton')
@@ -56,8 +57,6 @@
     };
 
     return dir;
-
-    function setInputValue(timeString, targetElement) {};
 
     function dateToTimeString(d) {
       var hours = d.getHours(),

@@ -26,7 +26,7 @@
 
           var modalInstance = $modal.open({
             animation: true,
-            size: 'sm',
+            size: 'md',
             // resolve: {
             //   // calendarEvent: function () {
             //   //   return calendarEvent;
