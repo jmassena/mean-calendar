@@ -1,12 +1,9 @@
 <div class="input-group input-append btn-block">
 
-  <div class="input-group-btn ">
-    <input type="text" id="timeInput" class="form-control dropdown-toggle" data-toggle="dropdown" ng-model="vm.selectedTimeString">
-    <!-- <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" data-target="#timedropdown" id="dropDownButton"> -->
-    <!-- <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" id="dropDownButton">
-      <span class="caret"></span>
-    </button> -->
-    <ul style="width:100%" class="dropdown-menu dropdown-menu-right  time-dropdown" role="menu">
+  <div class="input-group-btn">
+    <input type="text" class="form-control dropdown-toggle" data-toggle="dropdown" ng-model="vm.selectedTimeString">
+
+    <ul class="dropdown-menu  dropdown-list-short" role="menu">
       <li ng-repeat="timeString in vm.timesList"><a href="#" ng-click="vm.selectedTimeString = timeString">{{timeString}}</a></li>
     </ul>
   </div>

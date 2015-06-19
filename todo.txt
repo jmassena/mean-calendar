@@ -1,14 +1,17 @@
 Calendar todo:
 
+timeCombo
 
-Need a time combo that shows times in .5 hour increments like:
+- needs to modify a model date object
 
-12:00am
-12:30am
-...
+- save previous value to controller model so we can compare if anything changed
+  and if value is invalid we can restore last good value.
 
-but user can edit value like:
-12:05am
+- listen for enter key when textbox gets focus. remove listener on blur.
 
-
-So, make timeCombo directive that has list of times in a bootstrap dropdown.
+- when item is selected from list OR input textbox is blurred or enter pressed in textbox
+  if current value is different from previous value
+    try to parse string into hours, minutes and set to model date object.
+    
+    if parse fails... add regex validator to verify that time is of format (0-24):
+    maybe set input to previous value
