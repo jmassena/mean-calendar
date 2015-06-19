@@ -1,4 +1,19 @@
 .dropdown-list-short {
+  height: auto;
+  overflow-x: hidden;
   max-height: 150px;
-  overflow-y: scroll;
+  /*overflow-y: scroll;*/
 }
+
+.dropdown-menu li.selected {
+  background-color: #eee;
+}
+
+
+/*
+
+.scrollable-menu {
+    height: auto;
+    max-height: 200px;
+    overflow-x: hidden;
+}*/

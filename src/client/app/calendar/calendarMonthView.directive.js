@@ -52,12 +52,6 @@
                 });
 
                 $scope.newEvent.calendar = cal[0];
-                // $scope.newEvent._id = calendarEvent._id;
-                // $scope.newEvent.allDay = calendarEvent.allDay;
-                // $scope.newEvent.start = calendarEvent.start;
-                // $scope.newEvent.end = calendarEvent.end;
-                // $scope.newEvent.title = calendarEvent.title;
-                // $scope.newEvent.notes = calendarEvent.notes;
                 angular.extend($scope.newEvent, calendarEvent);
 
               } else {

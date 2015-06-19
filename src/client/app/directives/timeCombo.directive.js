@@ -24,33 +24,43 @@
 
         var vm = this;
 
+        // build combo list
         var timesList = [];
-        var tempDate = new Date();
-        tempDate.setHours(0);
-        tempDate.setMinutes(0);
-        tempDate.setSeconds(0);
-        tempDate.setMilliseconds(0);
+        var today = new Date();
+        today.setHours(0);
+        today.setMinutes(0);
+        today.setSeconds(0);
+        today.setMilliseconds(0);
 
-        var tomorrow = new Date(tempDate);
+        var tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
 
-        while(tempDate < tomorrow) {
-          timesList.push(dateToTimeString(tempDate));
-          tempDate.setMinutes(tempDate.getMinutes() + 30);
+        while(today < tomorrow) {
+          timesList.push(dateToTimeString(today));
+          today.setMinutes(today.getMinutes() + 30);
         }
 
         vm.timesList = timesList;
 
         if(vm.dateTime) {
           vm.selectedTimeString = dateToTimeString(vm.dateTime);
+        } else {
+          vm.dateTime = new Date(today);
+          vm.dateTime.setHours(10);
+          vm.selectedTimeString = dateToTimeString(vm.dateTime);
         }
 
+        // vm.setSelected = function ($event, timeString) {
+        //   vm.selectedTimeString = timeString;
+        //   element.find('.dropdown')
+        // }
       },
 
       link: function (scope, element, attrs) {
 
         var vm = scope.vm;
         // add blur, enter/tab listeners when textbox has focus
+
         element.find('input[type="text"]')
           .on('focus', function (evt) {
             $(this).on('keypress', function (evt) {
@@ -63,6 +73,29 @@
             $(this).off('keypress');
             updateModelTime(this, vm);
           });
+
+        element.find('.dropdown')
+          .on('shown.bs.dropdown', function () {
+            if(vm.selectedTimeString) {
+              // to create an extension for this filter to match exact string.
+              // $.expr[":"].containsExact = function (obj, index, meta, stack) {
+              //   return (obj.textContent || obj.innerText || $(obj).text() || "") == meta[3];
+              // };
+
+              $(this).find('.dropdown-menu li a').filter(function () {
+                  return $(this).text() === vm.selectedTimeString;
+                })
+                // want to scroll to the item but don't want focus set on it.
+                .focus().blur();
+            }
+          });
+
+        // element.find('.dropdown-menu')
+        //   .on('click', 'a', function (evt) {
+        //     vm.selectedTimeString = $(this).text();
+        //     // $(this).closest('.dropdown-menu').find('li.selected').removeClass('selected');
+        //     // $(this).closest('li').addClass('selected');
+        //   });
       }
     };
 
@@ -80,10 +113,12 @@
         vm.selectedTimeString = dateToTimeString(vm.dateTime);
       } else {
         // can we manually set the form element to invalid?
+        var test = 'can we manually set the form element to invalid?';
       }
     }
 
     function timeStringParse(timeString) {
+      /*jshint maxcomplexity:15*/
       var ret = {
         hours: 0,
         minutes: 0,

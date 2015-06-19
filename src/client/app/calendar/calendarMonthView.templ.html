@@ -15,7 +15,7 @@
   <div class="row" ng-repeat="week in monthViewEvents.weeks">
     <div class="col-xs-1 calendar-monthly-date calendar-cell" ng-repeat="day in week.days" ng-click="openCreateDialog($event, day.date.value)">
       <div> {{day.date.calendarDisplayDate()}}</div>
-      <div class="calendar-event" ng-repeat="event in day.events" ng-click="openCreateDialog($event, null, event.event)">{{event.displayString()}}</div>
+      <div class="calendar-event" ng-repeat="event in day.events" ng-click="openCreateDialog($event, null, event)">{{event.displayString()}}</div>
     </div>
   </div>
 

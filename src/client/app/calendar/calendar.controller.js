@@ -79,12 +79,28 @@
     }
 
     function EventWrapper(calendarEvent) {
-      this.event = calendarEvent;
+
+      angular.extend(this, calendarEvent);
+
+      this.startTime = this.allDay ? null : new Date(this.start);
+      this.endTime = this.allDay ? null : new Date(this.end);
     }
 
     EventWrapper.prototype.startTimeString = function () {
-      var hours = this.event.start.getHours();
-      var minutes = this.event.start.getMinutes();
+      return this.timeString(this.startTime);
+    };
+
+    EventWrapper.prototype.endTimeString = function () {
+      return this.timeString(this.endTime);
+    };
+
+    EventWrapper.prototype.timeString = function (dt) {
+      if(!dt) {
+        return '';
+      }
+
+      var hours = dt.getHours();
+      var minutes = dt.getMinutes();
       var amPm = '';
 
       if(hours >= 12) {
@@ -107,10 +123,10 @@
     };
 
     EventWrapper.prototype.displayString = function () {
-      if(this.event.allDay) {
-        return this.event.title;
+      if(this.allDay) {
+        return this.title;
       }
-      return this.startTimeString() + ' ' + this.event.title;
+      return this.startTimeString() + ' ' + this.title;
     };
 
     function DateWrapper(d) {
