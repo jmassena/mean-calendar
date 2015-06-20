@@ -82,8 +82,8 @@
 
       angular.extend(this, calendarEvent);
 
-      this.startTime = this.allDay ? null : new Date(this.start);
-      this.endTime = this.allDay ? null : new Date(this.end);
+      // this.startTime = this.allDay ? null : new Date(this.start);
+      // this.endTime = this.allDay ? null : new Date(this.end);
     }
 
     EventWrapper.prototype.startTimeString = function () {

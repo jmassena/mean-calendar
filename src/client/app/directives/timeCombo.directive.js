@@ -15,7 +15,8 @@
       restrict: 'E',
       templateUrl: './app/directives/timeCombo.templ.html',
       scope: {
-        dateTime: '='
+        dateTime: '=',
+        minTime: '='
       },
       controllerAs: 'vm',
       bindToController: true,
@@ -24,30 +25,18 @@
 
         var vm = this;
 
+        // if(vm.minTime) {
+        //   vm.minTime = new Date(vm.minTime);
+        // }
         // build combo list
-        var timesList = [];
-        var today = new Date();
-        today.setHours(0);
-        today.setMinutes(0);
-        today.setSeconds(0);
-        today.setMilliseconds(0);
-
-        var tomorrow = new Date(today);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-
-        while(today < tomorrow) {
-          timesList.push(dateToTimeString(today));
-          today.setMinutes(today.getMinutes() + 30);
-        }
-
-        vm.timesList = timesList;
+        vm.timesList = createTimeList(vm.minTime);
 
         if(vm.dateTime) {
           vm.selectedTimeString = dateToTimeString(vm.dateTime);
         } else {
-          vm.dateTime = new Date(today);
-          vm.dateTime.setHours(10);
-          vm.selectedTimeString = dateToTimeString(vm.dateTime);
+          // vm.dateTime = getStartOfToday();
+          // vm.dateTime.setHours(10);
+          // vm.selectedTimeString = dateToTimeString(vm.dateTime);
         }
 
         // vm.setSelected = function ($event, timeString) {
@@ -59,19 +48,50 @@
       link: function (scope, element, attrs) {
 
         var vm = scope.vm;
-        // add blur, enter/tab listeners when textbox has focus
+
+        // when minTime changes update the combo list and set min allowable time to textbox
+        scope.$watch(function () {
+          return vm.minTime ? vm.minTime.getTime() : vm.minTime;
+        }, function (newVal) {
+          if(newVal) {
+            vm.timesList = createTimeList(vm.minTime, vm.dateTime);
+            if(vm.minTime > vm.dateTime) {
+
+              vm.dateTime.setHours(vm.minTime.getHours() + 1);
+              vm.dateTime.setMinutes(vm.minTime.getMinutes());
+
+              vm.selectedTimeString = dateToTimeString(vm.dateTime);
+            }
+          }
+        });
+
+        scope.$watch(function () {
+          return vm.dateTime ? vm.dateTime.getTime() : vm.dateTime;
+        }, function (newVal, oldVal) {
+          // if time date changed then recalculate list
+          if(newVal && vm.minTime) {
+
+            var minTimeNextDay = getStartOfDate(vm.minTime, 1);
+
+            if(oldVal && new Date(oldVal) < minTimeNextDay ||
+              vm.dateTime < minTimeNextDay) {
+              // list was modified before or should be modified now so regenerate it
+              vm.timesList = createTimeList(vm.minTime, vm.dateTime);
+            }
+          }
+        });
 
         element.find('input[type="text"]')
           .on('focus', function (evt) {
             $(this).on('keypress', function (evt) {
               if(evt.which === 13 || evt.which === 9) {
-                updateModelTime(this, vm);
+                updateModelTime($(this).val(), vm);
               }
             });
           })
           .on('blur', function (evt) {
             $(this).off('keypress');
-            updateModelTime(this, vm);
+            updateModelTime($(this).val(), vm);
           });
 
         element.find('.dropdown')
@@ -90,6 +110,12 @@
             }
           });
 
+        element.find('.dropdown-menu')
+          .on('click', 'li a', function (evt) {
+            updateModelTime($(this).text(), vm);
+            // scope.$digest();
+          });
+
         // element.find('.dropdown-menu')
         //   .on('click', 'a', function (evt) {
         //     vm.selectedTimeString = $(this).text();
@@ -101,8 +127,45 @@
 
     return dir;
 
-    function updateModelTime(el, vm) {
-      var timeString = $(el).val();
+    function getStartOfDate(dt, addDays, addHours, addMinutes) {
+      var ret = new Date(dt);
+      if(addDays) {
+        ret.setDate(ret.getDate() + addDays);
+      }
+
+      ret.setHours(addHours || 0);
+      ret.setMinutes(addMinutes || 0);
+      ret.setSeconds(0);
+      ret.setMilliseconds(0);
+      return ret;
+    }
+
+    function getStartOfToday() {
+      return getStartOfDate(new Date());
+    }
+
+    function createTimeList(minTime, modelDateTime) {
+      var timesList = [];
+      var today = getStartOfToday();
+
+      var tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      if(minTime && modelDateTime && getStartOfDate(minTime).getTime() === getStartOfDate(modelDateTime).getTime()) {
+        // if minTime is in same day as model date then set list start to min hours/minutes
+        today.setHours(minTime.getHours());
+        today.setMinutes(minTime.getMinutes());
+      }
+
+      while(today < tomorrow) {
+        timesList.push(dateToTimeString(today));
+        today.setMinutes(today.getMinutes() + 30);
+      }
+
+      return timesList;
+    }
+
+    function updateModelTime(timeString, vm) {
 
       // parse time string;
       var time = timeStringParse(timeString);

@@ -54,13 +54,23 @@
                 $scope.newEvent.calendar = cal[0];
                 angular.extend($scope.newEvent, calendarEvent);
 
+                if($scope.newEvent.allDay) {
+                  // set default start hour in case user wants to set time.
+                  if($scope.newEvent.start.getTime() === $scope.newEvent.end.getTime()) {
+                    $scope.newEvent.start.setHours(10);
+                    $scope.newEvent.end.setHours(11);
+                  } else {
+                    $scope.newEvent.start.setHours(10);
+                  }
+                }
+
               } else {
                 // new event
                 $scope.newEvent.calendar = null;
                 $scope.newEvent.allDay = true;
                 var d = dayDate ? new Date(dayDate) : new Date();
-                $scope.newEvent.start = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-                $scope.newEvent.end = new Date($scope.newEvent.start);
+                $scope.newEvent.start = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 10);
+                $scope.newEvent.end = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 11);
               }
 
               $scope.form = {};
@@ -68,12 +78,12 @@
               $scope.submit = function () {
                 if($scope.form.newEvent.$valid) {
 
-                  // var calendarEvent = {};
-                  // calendarEvent.title = $scope.newEvent.title;
-                  // calendarEvent.notes = $scope.newEvent.notes;
-                  // calendarEvent.allDay = $scope.newEvent.allDay;
-                  // calendarEvent.start = $scope.newEvent.start;
-                  // calendarEvent.end = $scope.newEvent.end;
+                  if($scope.newEvent.allDay) {
+                    $scope.newEvent.start.setHours(0);
+                    $scope.newEvent.start.setMinutes(0);
+                    $scope.newEvent.end.setHours(0);
+                    $scope.newEvent.end.setMinutes(0);
+                  }
 
                   if($scope.newEvent.forUpdate) {
                     $scope.$emit('calendarEvent.update', $scope.newEvent.calendar._id, $scope.newEvent);

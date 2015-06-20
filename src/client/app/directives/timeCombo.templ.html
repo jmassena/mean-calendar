@@ -4,7 +4,7 @@
     <input type="text" class="form-control dropdown-toggle" data-toggle="dropdown" ng-model="vm.selectedTimeString">
 
     <ul class="dropdown-menu  dropdown-list-short" role="menu">
-      <li ng-class="{selected:(timeString === vm.selectedTimeString)}" ng-repeat="timeString in vm.timesList"><a href="#" ng-click="vm.selectedTimeString=timeString">{{timeString}}</a></li>
+      <li ng-class="{selected:(timeString === vm.selectedTimeString)}" ng-repeat="timeString in vm.timesList"><a href="#">{{timeString}}</a></li>
     </ul>
   </div>
 
