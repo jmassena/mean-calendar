@@ -1,17 +1,4 @@
 Calendar todo:
 
-timeCombo
-
-- needs to modify a model date object
-
-- save previous value to controller model so we can compare if anything changed
-  and if value is invalid we can restore last good value.
-
-- listen for enter key when textbox gets focus. remove listener on blur.
-
-- when item is selected from list OR input textbox is blurred or enter pressed in textbox
-  if current value is different from previous value
-    try to parse string into hours, minutes and set to model date object.
-    
-    if parse fails... add regex validator to verify that time is of format (0-24):
-    maybe set input to previous value
+When setting start date/time move end date/time to same (+ 1hour for time).
+Can make this a startTimeMinuteOffset on directive.

@@ -25,24 +25,21 @@
 
         var vm = this;
 
-        // if(vm.minTime) {
-        //   vm.minTime = new Date(vm.minTime);
-        // }
         // build combo list
-        vm.timesList = createTimeList(vm.minTime);
+        vm.timesList = createTimeList(vm.minTime, vm.dateTime);
 
         if(vm.dateTime) {
           vm.selectedTimeString = dateToTimeString(vm.dateTime);
-        } else {
-          // vm.dateTime = getStartOfToday();
-          // vm.dateTime.setHours(10);
-          // vm.selectedTimeString = dateToTimeString(vm.dateTime);
         }
 
-        // vm.setSelected = function ($event, timeString) {
-        //   vm.selectedTimeString = timeString;
-        //   element.find('.dropdown')
-        // }
+        vm.setSelected = function (selectedDateTime) {
+          updateModelDateTime(selectedDateTime, vm);
+          var selectedTime = selectedDateTime.getTime();
+
+          vm.timesList.forEach(function (item) {
+            item.selected = item.value.getTime() === selectedTime;
+          });
+        };
       },
 
       link: function (scope, element, attrs) {
@@ -57,10 +54,11 @@
             vm.timesList = createTimeList(vm.minTime, vm.dateTime);
             if(vm.minTime > vm.dateTime) {
 
-              vm.dateTime.setHours(vm.minTime.getHours() + 1);
-              vm.dateTime.setMinutes(vm.minTime.getMinutes());
-
-              vm.selectedTimeString = dateToTimeString(vm.dateTime);
+              // vm.dateTime.setHours(vm.minTime.getHours() + 1);
+              // vm.dateTime.setMinutes(vm.minTime.getMinutes());
+              //
+              // vm.selectedTimeString = dateToTimeString(vm.dateTime);
+              vm.setSelected(vm.minTime);
             }
           }
         });
@@ -85,13 +83,13 @@
           .on('focus', function (evt) {
             $(this).on('keypress', function (evt) {
               if(evt.which === 13 || evt.which === 9) {
-                updateModelTime($(this).val(), vm);
+                updateModelFromTimeString($(this).val(), vm);
               }
             });
           })
           .on('blur', function (evt) {
             $(this).off('keypress');
-            updateModelTime($(this).val(), vm);
+            updateModelFromTimeString($(this).val(), vm);
           });
 
         element.find('.dropdown')
@@ -102,19 +100,46 @@
               //   return (obj.textContent || obj.innerText || $(obj).text() || "") == meta[3];
               // };
 
-              $(this).find('.dropdown-menu li a').filter(function () {
-                  return $(this).text() === vm.selectedTimeString;
-                })
-                // want to scroll to the item but don't want focus set on it.
-                .focus().blur();
+              // $(this).find('.dropdown-menu li a').filter(function () {
+              //     // list text must start with selectedTimeString
+              //     // return $(this).text() === vm.selectedTimeString;
+              //     return $(this).text().indexOf(vm.selectedTimeString) === 0;
+              //
+              //   })
+              //   // want to scroll to the item but don't want focus set on it so set focus then blur.
+              //   .focus().blur();
+
+              // $(this).find('.dropdown-menu li.selected a').focus().blur();
+              // // want to scroll to the item but don't want focus set on it so set focus then blur.
+              //
+              // $(this).find('.dropdown-menu li a').filter(function () {
+              //     // list text must start with selectedTimeString
+              //     return $(this).text().indexOf(vm.selectedTimeString) === 0;
+              //   })
+              //   // want to scroll to the item but don't want focus set on it so set focus then blur.
+              //   .focus().blur();
+              var selectedElement = $(this).find('.dropdown-menu li.selected');
+
+              if(selectedElement.length > 0) {
+                var firstElement = $(this).find('.dropdown-menu li:first');
+                // $('.dropdown-menu')
+                //   .animate({
+                //     scrollTop: selectedElement.position().top - firstElement.position().top
+                //   });
+
+                $('.dropdown-menu')
+                  .scrollTop(
+                    selectedElement.position().top - firstElement.position().top
+                  );
+              }
             }
           });
 
-        element.find('.dropdown-menu')
-          .on('click', 'li a', function (evt) {
-            updateModelTime($(this).text(), vm);
-            // scope.$digest();
-          });
+        // element.find('.dropdown-menu')
+        //   .on('click', 'li a', function (evt) {
+        //     updateModelFromTimeString($(this).text(), vm);
+        //     // scope.$digest();
+        //   });
 
         // element.find('.dropdown-menu')
         //   .on('click', 'a', function (evt) {
@@ -140,32 +165,58 @@
       return ret;
     }
 
-    function getStartOfToday() {
-      return getStartOfDate(new Date());
-    }
+    // function getStartOfToday() {
+    //   return getStartOfDate(new Date());
+    // }
 
     function createTimeList(minTime, modelDateTime) {
       var timesList = [];
-      var today = getStartOfToday();
+
+      var today = getStartOfDate(modelDateTime || minTime || new Date());
 
       var tomorrow = new Date(today);
       tomorrow.setDate(tomorrow.getDate() + 1);
 
-      if(minTime && modelDateTime && getStartOfDate(minTime).getTime() === getStartOfDate(modelDateTime).getTime()) {
+      if(minTime && modelDateTime && getStartOfDate(minTime).getTime() === today.getTime()) {
         // if minTime is in same day as model date then set list start to min hours/minutes
         today.setHours(minTime.getHours());
         today.setMinutes(minTime.getMinutes());
       }
 
+      var previousTime = today;
       while(today < tomorrow) {
-        timesList.push(dateToTimeString(today));
+
+        // TODO: show hours like '10:00am (2.5 hours)' and have 24 hour time range
+        // add selected time to list if not in there already
+        if(modelDateTime && previousTime < modelDateTime && modelDateTime < today) {
+          timesList.push({
+            text: dateToTimeString(modelDateTime),
+            value: new Date(modelDateTime),
+            selected: true
+          });
+        }
+
+        timesList.push({
+          text: dateToTimeString(today),
+          value: new Date(today),
+          selected: modelDateTime && today.getTime() === modelDateTime.getTime()
+        });
+
+        previousTime = new Date(today);
         today.setMinutes(today.getMinutes() + 30);
       }
 
       return timesList;
     }
 
-    function updateModelTime(timeString, vm) {
+    function updateModelDateTime(dt, vm) {
+      if(dt) {
+        vm.dateTime.setTime(dt.getTime());
+        vm.selectedTimeString = dateToTimeString(dt);
+      }
+    }
+
+    function updateModelFromTimeString(timeString, vm) {
 
       // parse time string;
       var time = timeStringParse(timeString);

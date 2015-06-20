@@ -26,7 +26,7 @@
 
           var modalInstance = $modal.open({
             animation: true,
-            size: 'md',
+            size: 'sm',
             // resolve: {
             //   // calendarEvent: function () {
             //   //   return calendarEvent;
@@ -73,10 +73,31 @@
                 $scope.newEvent.end = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 11);
               }
 
-              $scope.form = {};
+              // if user sets start date after end date then adjust end date to be same as start.
+              $scope.$watch(function () {
+                  return $scope.newEvent.start ? $scope.newEvent.start.getTime() : null;
+                  // return $scope.newEvent.notes;
+                },
+                function (newVal, oldVal) {
+                  if(newVal && $scope.newEvent.end && $scope.newEvent.start > $scope.newEvent.end) {
+                    $scope.newEvent.end = new Date($scope.newEvent.start);
+
+                    // $scope.newEvent.end.setTime($scope.newEvent.start.getTime());
+
+                    // // Grrrr, updateing model is not updating control it is bound to.
+                    // //test code
+                    // $scope.newEvent.start.setDate($scope.newEvent.start.getDate() - 5);
+                    // $scope.newEvent.start.setHours(23);
+                    //
+                    // $scope.newEvent.allDay = false;
+                    // $scope.newEvent.title = 'Test if scope updates go to control';
+                  }
+                });
+
+              // $scope.eventForm = {};
 
               $scope.submit = function () {
-                if($scope.form.newEvent.$valid) {
+                if($scope.eventForm.$valid) {
 
                   if($scope.newEvent.allDay) {
                     $scope.newEvent.start.setHours(0);
