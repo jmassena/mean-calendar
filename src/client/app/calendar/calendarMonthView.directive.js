@@ -54,56 +54,105 @@
                 $scope.newEvent.calendar = cal[0];
                 angular.extend($scope.newEvent, calendarEvent);
 
-                if($scope.newEvent.allDay) {
-                  // set default start hour in case user wants to set time.
-                  if($scope.newEvent.start.getTime() === $scope.newEvent.end.getTime()) {
-                    $scope.newEvent.start.setHours(10);
-                    $scope.newEvent.end.setHours(11);
-                  } else {
-                    $scope.newEvent.start.setHours(10);
-                  }
+                if(!$scope.newEvent.allDay) {
+                  $scope.newEvent.startTime = getTimeFromDate($scope.newEvent.start);
+                  $scope.newEvent.endTime = getTimeFromDate($scope.newEvent.end);
+
+                  $scope.newEvent.minEndTime = getMinimumEndTime($scope.newEvent.start, $scope.newEvent.end,
+                    $scope.newEvent.startTime);
                 }
+
+                setToStartOfDate($scope.newEvent.start);
+                setToStartOfDate($scope.newEvent.end);
 
               } else {
                 // new event
                 $scope.newEvent.calendar = null;
                 $scope.newEvent.allDay = true;
                 var d = dayDate ? new Date(dayDate) : new Date();
-                $scope.newEvent.start = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 10);
-                $scope.newEvent.end = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 11);
+                $scope.newEvent.start = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+                $scope.newEvent.end = new Date(d.getFullYear(), d.getMonth(), d.getDate());
               }
 
-              // // if user sets start date after end date then adjust end date to be same as start.
-              // $scope.$watch(function () {
-              //     return $scope.newEvent.start ? $scope.newEvent.start.getTime() : null;
-              //     // return $scope.newEvent.notes;
-              //   },
-              //   function (newVal, oldVal) {
-              //     if(newVal && $scope.newEvent.end && $scope.newEvent.start > $scope.newEvent.end) {
-              //       $scope.newEvent.end = new Date($scope.newEvent.start);
-              //
-              //       // $scope.newEvent.end.setTime($scope.newEvent.start.getTime());
-              //
-              //       // // Grrrr, updateing model is not updating control it is bound to.
-              //       // //test code
-              //       // $scope.newEvent.start.setDate($scope.newEvent.start.getDate() - 5);
-              //       // $scope.newEvent.start.setHours(23);
-              //       //
-              //       // $scope.newEvent.allDay = false;
-              //       // $scope.newEvent.title = 'Test if scope updates go to control';
-              //     }
-              //   });
+              $scope.newEvent.defaultStartTime = {
+                hours: 10,
+                minutes: 0
+              };
+              $scope.newEvent.defaultEndTime = {
+                hours: 11,
+                minutes: 0
+              };
+
+              // $scope.newEvent.start
+              // if user sets start date after end date then adjust end date to be same as start.
+              $scope.$watch(function () {
+                  return $scope.newEvent.start ? $scope.newEvent.start.getTime() : null;
+                },
+                function (newVal, oldVal) {
+                  // move end date by same number of days.
+                  if(newVal && newVal !== oldVal && $scope.newEvent.end) {
+                    if($scope.newEvent.start > $scope.newEvent.end) {
+                      $scope.newEvent.end = new Date($scope.newEvent.start);
+
+                    }
+                    $scope.newEvent.minEndTime = getMinimumEndTime($scope.newEvent.start, $scope.newEvent
+                      .end, $scope.newEvent.startTime);
+                  }
+                });
+
+              // $scope.newEvent.startTime
+              $scope.$watch(function () {
+                  return $scope.newEvent.startTime ? $scope.newEvent.startTime.hours + ':' + $scope.newEvent
+                    .startTime.minutes : null;
+                },
+                function (newVal, oldVal) {
+                  if(newVal && newVal !== oldVal) {
+                    if(oldVal && $scope.newEvent.endTime) {
+                      // move end time same distance that start time moved
+                      var newTime = parseTimeString(newVal);
+                      var oldTime = parseTimeString(oldVal);
+
+                      var hoursDiff = (newTime.hours - oldTime.hours);
+                      var daysDiff = (newTime.minutes - oldTime.minutes);
+                      $scope.newEvent.endTime.hours += hoursDiff;
+                      $scope.newEvent.endTime.minutes += daysDiff;
+
+                      if($scope.newEvent.endTime.minutes > 59) {
+                        $scope.newEvent.endTime.minutes %= 60;
+                        $scope.newEvent.endTime.hours++;
+                      } else if($scope.newEvent.endTime.minutes < 0) {
+                        $scope.newEvent.endTime.minutes %= 60;
+                        // to get positive number from negative mod result
+                        $scope.newEvent.endTime.minutes += 60;
+                        $scope.newEvent.endTime.hours--;
+                      }
+
+                      if($scope.newEvent.endTime.hours > 23) {
+                        $scope.newEvent.endTime.hours %= 24;
+                        $scope.newEvent.end = dateAdd($scope.newEvent.end, 1);
+                      } else if($scope.newEvent.endTime.hours < 0) {
+                        $scope.newEvent.endTime.hours %= 24;
+                        // to get positive number from negative mod result
+                        $scope.newEvent.endTime.hours += 24;
+                        $scope.newEvent.end = dateAdd($scope.newEvent.end, -1);
+                      }
+                    }
+
+                    $scope.newEvent.minEndTime = getMinimumEndTime($scope.newEvent.start, $scope.newEvent
+                      .end, $scope.newEvent.startTime);
+                  }
+                });
 
               // $scope.eventForm = {};
 
               $scope.submit = function () {
                 if($scope.eventForm.$valid) {
 
-                  if($scope.newEvent.allDay) {
-                    $scope.newEvent.start.setHours(0);
-                    $scope.newEvent.start.setMinutes(0);
-                    $scope.newEvent.end.setHours(0);
-                    $scope.newEvent.end.setMinutes(0);
+                  if(!$scope.newEvent.allDay) {
+                    $scope.newEvent.start.setHours($scope.newEvent.startTime.hours);
+                    $scope.newEvent.start.setMinutes($scope.newEvent.startTime.minutes);
+                    $scope.newEvent.end.setHours($scope.newEvent.endTime.hours);
+                    $scope.newEvent.end.setMinutes($scope.newEvent.endTime.minutes);
                   }
 
                   if($scope.newEvent.forUpdate) {
@@ -127,6 +176,59 @@
               $scope.cancel = function () {
                 $modalInstance.dismiss();
               };
+
+              function parseTimeString(s) {
+                var parsed = s.split(':');
+                return {
+                  hours: Number(parsed[0]),
+                  minutes: Number(parsed[1])
+                };
+              }
+
+              function dateAdd(dt, days, hours, minutes) {
+
+                var ret = new Date(dt);
+
+                if(days) {
+                  ret.setDate(dt.getDate() + days);
+                }
+
+                if(hours) {
+                  ret.setHours(dt.getHours() + hours);
+                }
+
+                if(minutes) {
+                  ret.setMinutes(dt.getMinutes() + minutes);
+                }
+
+                return ret;
+              }
+
+              function setToStartOfDate(dt) {
+                dt.setHours(0);
+                dt.setMinutes(0);
+                dt.setSeconds(0);
+                dt.setMilliseconds(0);
+              }
+
+              function getTimeFromDate(dt) {
+                if(!dt) {
+                  return null;
+                }
+                return {
+                  hours: dt.getHours(),
+                  minutes: dt.getMinutes()
+                };
+              }
+
+              function getMinimumEndTime(startDate, endDate, startTime) {
+
+                if(startDate.getTime() === endDate.getTime()) {
+                  return angular.copy(startTime);
+                }
+
+                return null;
+              }
             }
           });
         };

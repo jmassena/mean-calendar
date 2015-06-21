@@ -15,8 +15,9 @@
       restrict: 'E',
       templateUrl: './app/directives/timeCombo.templ.html',
       scope: {
-        dateTime: '=',
-        minTime: '='
+        time: '=',
+        minTime: '=',
+        defaultTime: '='
       },
       controllerAs: 'vm',
       bindToController: true,
@@ -25,19 +26,21 @@
 
         var vm = this;
 
-        // build combo list
-        vm.timesList = createTimeList(vm.minTime, vm.dateTime);
+        if(!vm.time) {
+          vm.time = angular.copy(vm.defaultTime);
+        }
+        // build initial combo list
+        vm.timesList = createTimeList(vm.minTime, vm.time);
 
-        if(vm.dateTime) {
-          vm.selectedTimeString = dateToTimeString(vm.dateTime);
+        if(vm.time) {
+          vm.selectedTimeString = timeToDisplayString(vm.time);
         }
 
-        vm.setSelected = function (selectedDateTime) {
-          updateModelDateTime(selectedDateTime, vm);
-          var selectedTime = selectedDateTime.getTime();
+        vm.setSelected = function (time) {
+          updateModelTime(time, vm);
 
           vm.timesList.forEach(function (item) {
-            item.selected = item.value.getTime() === selectedTime;
+            item.selected = item.value.hours === time.hours && item.value.minutes === time.minutes;
           });
         };
       },
@@ -45,187 +48,136 @@
       link: function (scope, element, attrs) {
 
         var vm = scope.vm;
-
-        // when minTime changes
-        // update the dateTime if out of order
-        // and recalc list if necessary
+        // vm.time
         scope.$watch(function () {
-          return vm.minTime ? vm.minTime.getTime() : vm.minTime;
-        }, function (newVal) {
-          if(newVal) {
-            if(vm.minTime > vm.dateTime) {
-              // this will trigger the other watch to regenerate list if necessary
-              vm.dateTime = new Date(vm.minTime);
-              // vm.setSelected(vm.minTime);
-            } else {
-              vm.timesList = createTimeList(vm.minTime, vm.dateTime);
+            return vm.time ? vm.time.hours + ':' + vm.time.minutes : null;
+          },
+          function (newVal, oldVal) {
+            if(newVal && newVal !== oldVal) {
+              vm.selectedTimeString = timeToDisplayString(vm.time);
             }
-          }
-        });
+          });
 
-        // when dateTime changes
-        // check if we are or were on same date as minDate
-        // and if so recalc list.
+        // vm.minTime
         scope.$watch(function () {
-          return vm.dateTime ? vm.dateTime.getTime() : vm.dateTime;
-        }, function (newVal, oldVal) {
-          // if time date changed then recalculate list
-          if(newVal) {
-            // updateModelDateTime(vm.dateTime, vm);
-            vm.selectedTimeString = dateToTimeString(vm.dateTime);
-            vm.timesList = createTimeList(vm.minTime, vm.dateTime);
-          }
-        });
+            return vm.minTime ? vm.minTime.hours + ':' + vm.minTime.minutes : null;
+          },
+          function (newVal, oldVal) {
+            if(newVal !== oldVal) {
+              vm.timesList = createTimeList(vm.minTime, vm.time);
+            }
+          });
 
+        // convert textbox input to time
         element.find('input[type="text"]')
           .on('focus', function (evt) {
+
             $(this).on('keypress', function (evt) {
               if(evt.which === 13 || evt.which === 9) {
-                updateModelFromTimeString($(this).val(), vm);
+                updateModelTimeFromString($(this).val(), vm);
               }
             });
           })
           .on('blur', function (evt) {
+
             $(this).off('keypress');
-            updateModelFromTimeString($(this).val(), vm);
+
+            var inputVal = $(this).val();
+            if(inputVal !== vm.selectedTimeString) {
+              updateModelTimeFromString($(this).val(), vm);
+            }
           });
 
+        // scroll to selected element when combo opened
         element.find('.dropdown')
           .on('shown.bs.dropdown', function () {
+
             if(vm.selectedTimeString) {
-              // to create an extension for this filter to match exact string.
-              // $.expr[":"].containsExact = function (obj, index, meta, stack) {
-              //   return (obj.textContent || obj.innerText || $(obj).text() || "") == meta[3];
-              // };
-
-              // $(this).find('.dropdown-menu li a').filter(function () {
-              //     // list text must start with selectedTimeString
-              //     // return $(this).text() === vm.selectedTimeString;
-              //     return $(this).text().indexOf(vm.selectedTimeString) === 0;
-              //
-              //   })
-              //   // want to scroll to the item but don't want focus set on it so set focus then blur.
-              //   .focus().blur();
-
-              // $(this).find('.dropdown-menu li.selected a').focus().blur();
-              // // want to scroll to the item but don't want focus set on it so set focus then blur.
-              //
-              // $(this).find('.dropdown-menu li a').filter(function () {
-              //     // list text must start with selectedTimeString
-              //     return $(this).text().indexOf(vm.selectedTimeString) === 0;
-              //   })
-              //   // want to scroll to the item but don't want focus set on it so set focus then blur.
-              //   .focus().blur();
               var selectedElement = $(this).find('.dropdown-menu li.selected');
 
               if(selectedElement.length > 0) {
                 var firstElement = $(this).find('.dropdown-menu li:first');
-                // $('.dropdown-menu')
-                //   .animate({
-                //     scrollTop: selectedElement.position().top - firstElement.position().top
-                //   });
 
                 $('.dropdown-menu')
-                  .scrollTop(
-                    selectedElement.position().top - firstElement.position().top
-                  );
+                  .scrollTop(selectedElement.position().top - firstElement.position().top);
               }
             }
           });
-
-        // element.find('.dropdown-menu')
-        //   .on('click', 'li a', function (evt) {
-        //     updateModelFromTimeString($(this).text(), vm);
-        //     // scope.$digest();
-        //   });
-
-        // element.find('.dropdown-menu')
-        //   .on('click', 'a', function (evt) {
-        //     vm.selectedTimeString = $(this).text();
-        //     // $(this).closest('.dropdown-menu').find('li.selected').removeClass('selected');
-        //     // $(this).closest('li').addClass('selected');
-        //   });
       }
     };
 
     return dir;
 
-    function getStartOfDate(dt, addDays, addHours, addMinutes) {
-      var ret = new Date(dt);
-      if(addDays) {
-        ret.setDate(ret.getDate() + addDays);
+    function timeAsNumberGet(time) {
+      if(!time) {
+        return null;
       }
 
-      ret.setHours(addHours || 0);
-      ret.setMinutes(addMinutes || 0);
-      ret.setSeconds(0);
-      ret.setMilliseconds(0);
-      return ret;
+      return Number(time.hours) * 100 + Number(time.minutes);
     }
 
-    // function getStartOfToday() {
-    //   return getStartOfDate(new Date());
-    // }
-
-    function createTimeList(minTime, modelDateTime) {
+    function createTimeList(minTime, modelTime) {
       var timesList = [];
 
-      var today = getStartOfDate(modelDateTime || minTime || new Date());
-
-      var tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate() + 1);
-
-      if(minTime && modelDateTime && getStartOfDate(minTime).getTime() === today.getTime()) {
-        // if minTime is in same day as model date then set list start to min hours/minutes
-        today.setHours(minTime.getHours());
-        today.setMinutes(minTime.getMinutes());
+      if(!minTime) {
+        minTime = {
+          hours: 0,
+          minutes: 0
+        };
       }
 
-      var previousTime = today;
-      while(today < tomorrow) {
+      var modelTimeValue = timeAsNumberGet(modelTime);
+      var previousTimeValue = timeAsNumberGet(minTime);
+      var currentTime = minTime;
 
-        // TODO: show hours like '10:00am (2.5 hours)' and have 24 hour time range
-        // add selected time to list if not in there already
-        if(modelDateTime && previousTime < modelDateTime && modelDateTime < today) {
+      // TODO: show hours like '10:00am (2.5 hours)' and have 24 hour time range
+      for(var i = 0; i < 48; i++) {
+
+        var currentTimeValue = timeAsNumberGet(currentTime);
+
+        if(modelTime && previousTimeValue < modelTimeValue && modelTimeValue < currentTimeValue) {
           timesList.push({
-            text: dateToTimeString(modelDateTime),
-            value: new Date(modelDateTime),
+            text: timeToDisplayString(modelTime),
+            value: modelTime,
             selected: true
           });
         }
 
         timesList.push({
-          text: dateToTimeString(today),
-          value: new Date(today),
-          selected: modelDateTime && today.getTime() === modelDateTime.getTime()
+          text: timeToDisplayString(currentTime),
+          value: currentTime,
+          selected: modelTime && currentTimeValue === modelTimeValue
         });
 
-        previousTime = new Date(today);
-        today.setMinutes(today.getMinutes() + 30);
+        previousTimeValue = currentTimeValue;
+
+        // increment time by 30 minutes
+        currentTime = angular.copy(currentTime);
+        currentTime.minutes += 30;
+        if(currentTime.minutes > 59) {
+          currentTime.minutes %= 60;
+          currentTime.hours++;
+        }
       }
 
       return timesList;
     }
 
-    function updateModelDateTime(dt, vm) {
-      if(dt) {
+    function updateModelTime(time, vm) {
+      if(time) {
         // need to reassign date so any input[date] that shares the model will see the change
-        vm.dateTime = new Date(dt);
-        vm.selectedTimeString = dateToTimeString(dt);
+        vm.time = time;
+        vm.selectedTimeString = timeToDisplayString(time);
       }
     }
 
-    function updateModelFromTimeString(timeString, vm) {
+    function updateModelTimeFromString(timeString, vm) {
 
       // parse time string;
       var time = timeStringParse(timeString);
 
       if(!time.invalid) {
-        // need to reassign date so any input[date] that shares the model will see the change
-        vm.dateTime = new Date(vm.dateTime);
-        vm.dateTime.setHours(time.hours);
-        vm.dateTime.setMinutes(time.minutes);
-        vm.selectedTimeString = dateToTimeString(vm.dateTime);
+        updateModelTime(time, vm);
       } else {
         // can we manually set the form element to invalid?
         var test = 'can we manually set the form element to invalid?';
@@ -304,9 +256,9 @@
       return ret;
     }
 
-    function dateToTimeString(d) {
-      var hours = d.getHours(),
-        minutes = String(d.getMinutes()),
+    function timeToDisplayString(time) {
+      var hours = time.hours,
+        minutes = time.minutes,
         amPm = 'am';
 
       if(hours >= 12) {
@@ -319,7 +271,7 @@
         hours -= 12;
       }
 
-      if(minutes.length < 2) {
+      if(String(minutes).length < 2) {
         minutes = '0' + minutes;
       }
 

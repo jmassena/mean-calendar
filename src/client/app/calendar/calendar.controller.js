@@ -87,11 +87,11 @@
     }
 
     EventWrapper.prototype.startTimeString = function () {
-      return this.timeString(this.startTime);
+      return this.timeString(this.start);
     };
 
     EventWrapper.prototype.endTimeString = function () {
-      return this.timeString(this.endTime);
+      return this.timeString(this.end);
     };
 
     EventWrapper.prototype.timeString = function (dt) {

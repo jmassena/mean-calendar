@@ -1,4 +1,10 @@
 Calendar todo:
 
-When setting start date/time move end date/time to same (+ 1hour for time).
-Can make this a startTimeMinuteOffset on directive.
+
+make timecombo return an object with hours/minutes for selection.
+it will have min-hours min-minutes on the directive.
+
+
+parent controller will manage date manipulation and validation
+
+timeCombo will still handle parsing combo manual input into hours/minutes.

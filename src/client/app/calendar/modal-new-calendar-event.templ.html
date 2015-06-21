@@ -46,11 +46,11 @@
 
       <div ng-hide="newEvent.allDay" class="form-group">
         <label for="event-start-time">Start Time</label>
-        <time-combo id="event-start-time" date-time="newEvent.start"></time-combo>
+        <time-combo id="event-start-time" time="newEvent.startTime" default-time="newEvent.defaultStartTime"></time-combo>
       </div>
       <div ng-hide="newEvent.allDay" class="form-group">
         <label for="event-end-time">End Time</label>
-        <time-combo id="event-end-time" date-time="newEvent.end" min-time="newEvent.start"></time-combo>
+        <time-combo id="event-end-time" time="newEvent.endTime" min-time="newEvent.minEndTime" default-time="newEvent.defaultEndTime"></time-combo>
       </div>
     </div>
 

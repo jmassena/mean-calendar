@@ -1,37 +1,49 @@
-'<div class="modal" tabindex="-1">' +
-'  <div class="modal-dialog">' +
-'    <div class="modal-content">' +
-'      <div class="modal-header">' +
-'        <button type="button" class="close" ng-click="cancel()" aria-label="Close">' +
-'          <span aria-hidden="true">&times;</span>' +
-'        </button>' +
-'        <h4 class="modal-title">{{title}}</h4>' +
-'      </div>' +
-'      <div class="modal-body">' +
-'        <p>{{bodyContent}}</p>' +
-'      </div>' +
-'      <div class="modal-footer">' +
-'        <button type="button" class="btn btn-default" ng-click="cancel()>No</button>' +
-'        <button type="button" class="btn btn-primary" ng-click="ok()>Yes</button>' +
-'      </div>' +
-'    </div>' +
-'  </div>' +
-'</div>' +
+function getStartOfDate(dt, addDays, addHours, addMinutes) {
+  var ret = new Date(dt);
+  if(addDays) {
+    ret.setDate(ret.getDate() + addDays);
+  }
+
+  ret.setHours(addHours || 0);
+  ret.setMinutes(addMinutes || 0);
+  ret.setSeconds(0);
+  ret.setMilliseconds(0);
+  return ret;
+}
+
+// function getStartOfToday() {
+//   return getStartOfDate(new Date());
+// }
 
 
 
-'    <div class="modal-content">' +
-'      <div class="modal-header">' +
-'        <button type="button" class="close" ng-click="cancel()" aria-label="Close">' +
-'          <span aria-hidden="true">&times;</span>' +
-'        </button>' +
-'        <h4 class="modal-title">{{title}}</h4>' +
-'      </div>' +
-'      <div class="modal-body">' +
-'        <p>{{bodyContent}}</p>' +
-'      </div>' +
-'      <div class="modal-footer">' +
-'        <button type="button" class="btn btn-default" ng-click="cancel()>No</button>' +
-'        <button type="button" class="btn btn-primary" ng-click="ok()>Yes</button>' +
-'      </div>' +
-'    </div>' +
+// when minTime changes
+// update the dateTime if out of order
+// and recalc list if necessary
+scope.$watch(function () {
+  return vm.minTime ? vm.minTime.getTime() : vm.minTime;
+}, function (newVal) {
+  if(newVal) {
+    if(vm.minTime > vm.dateTime) {
+      // this will trigger the other watch to regenerate list if necessary
+      vm.dateTime = new Date(vm.minTime);
+      // vm.setSelected(vm.minTime);
+    } else {
+      vm.timesList = createTimeList(vm.minTime, vm.dateTime);
+    }
+  }
+});
+
+// when dateTime changes
+// check if we are or were on same date as minDate
+// and if so recalc list.
+scope.$watch(function () {
+  return vm.dateTime ? vm.dateTime.getTime() : vm.dateTime;
+}, function (newVal, oldVal) {
+  // if time date changed then recalculate list
+  if(newVal) {
+    // updateModelTime(vm.dateTime, vm);
+    vm.selectedTimeString = timeToDisplayString(vm.dateTime);
+    vm.timesList = createTimeList(vm.minTime, vm.dateTime);
+  }
+});
