@@ -46,36 +46,34 @@
 
         var vm = scope.vm;
 
-        // when minTime changes update the combo list and set min allowable time to textbox
+        // when minTime changes
+        // update the dateTime if out of order
+        // and recalc list if necessary
         scope.$watch(function () {
           return vm.minTime ? vm.minTime.getTime() : vm.minTime;
         }, function (newVal) {
           if(newVal) {
-            vm.timesList = createTimeList(vm.minTime, vm.dateTime);
             if(vm.minTime > vm.dateTime) {
-
-              // vm.dateTime.setHours(vm.minTime.getHours() + 1);
-              // vm.dateTime.setMinutes(vm.minTime.getMinutes());
-              //
-              // vm.selectedTimeString = dateToTimeString(vm.dateTime);
-              vm.setSelected(vm.minTime);
+              // this will trigger the other watch to regenerate list if necessary
+              vm.dateTime = new Date(vm.minTime);
+              // vm.setSelected(vm.minTime);
+            } else {
+              vm.timesList = createTimeList(vm.minTime, vm.dateTime);
             }
           }
         });
 
+        // when dateTime changes
+        // check if we are or were on same date as minDate
+        // and if so recalc list.
         scope.$watch(function () {
           return vm.dateTime ? vm.dateTime.getTime() : vm.dateTime;
         }, function (newVal, oldVal) {
           // if time date changed then recalculate list
-          if(newVal && vm.minTime) {
-
-            var minTimeNextDay = getStartOfDate(vm.minTime, 1);
-
-            if(oldVal && new Date(oldVal) < minTimeNextDay ||
-              vm.dateTime < minTimeNextDay) {
-              // list was modified before or should be modified now so regenerate it
-              vm.timesList = createTimeList(vm.minTime, vm.dateTime);
-            }
+          if(newVal) {
+            // updateModelDateTime(vm.dateTime, vm);
+            vm.selectedTimeString = dateToTimeString(vm.dateTime);
+            vm.timesList = createTimeList(vm.minTime, vm.dateTime);
           }
         });
 
@@ -211,7 +209,8 @@
 
     function updateModelDateTime(dt, vm) {
       if(dt) {
-        vm.dateTime.setTime(dt.getTime());
+        // need to reassign date so any input[date] that shares the model will see the change
+        vm.dateTime = new Date(dt);
         vm.selectedTimeString = dateToTimeString(dt);
       }
     }
@@ -222,6 +221,8 @@
       var time = timeStringParse(timeString);
 
       if(!time.invalid) {
+        // need to reassign date so any input[date] that shares the model will see the change
+        vm.dateTime = new Date(vm.dateTime);
         vm.dateTime.setHours(time.hours);
         vm.dateTime.setMinutes(time.minutes);
         vm.selectedTimeString = dateToTimeString(vm.dateTime);
