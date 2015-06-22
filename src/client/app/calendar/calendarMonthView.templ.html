@@ -1,4 +1,4 @@
-<div class="container calendar-monthly">
+<!-- <div class="container calendar-monthly">
   <div class="row calendar-monthly-header">
     <div class="col-xs-1 calendar-cell">Sun</div>
     <div class="col-xs-1 calendar-cell">Mon</div>
@@ -9,8 +9,6 @@
     <div class="col-xs-1 calendar-cell">Sat</div>
   </div>
 
-  <!-- vm.monthViewEvents.weeks.dates.dayInfo
-  vm.monthViewEvents.weeks.dates.events -->
 
   <div class="row" ng-repeat="week in monthViewEvents.weeks">
     <div class="col-xs-1 calendar-monthly-date calendar-cell" ng-repeat="day in week.days" ng-click="openCreateDialog($event, day.date.value)">
@@ -18,5 +16,36 @@
       <div class="calendar-event" ng-repeat="event in day.events" ng-click="openCreateDialog($event, null, event)">{{event.displayString()}}</div>
     </div>
   </div>
+
+</div> -->
+<div class="calendar-month-container">
+
+  <table class="calendar-day-names-table">
+    <tbody>
+      <tr>
+        <th class="day-names-cell" ng-repeat="dayName in ['Sun', 'Mon', 'Tue','Wed','Thur', 'Fri', 'Sat']">{{dayName}}</th>
+      </tr>
+    </tbody>
+  </table>
+
+  <div ng-repeat="week in monthViewEvents.weeks" class="calendar-week-container">
+    <table class="calendar-week-table">
+      <thead>
+        <tr>
+          <th ng-repeat="day in week.days">{{day.date.calendarDisplayDate()}}</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td ng-repeat="day in week.days">
+            <div class="calendar-event" ng-repeat="event in day.events" ng-click="openCreateDialog($event, null, event)">{{event.displayString()}}</div>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+  <br/>
 
 </div>
