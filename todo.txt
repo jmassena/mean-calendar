@@ -1,10 +1,4 @@
 Calendar todo:
 
-
-make timecombo return an object with hours/minutes for selection.
-it will have min-hours min-minutes on the directive.
-
-
-parent controller will manage date manipulation and validation
-
-timeCombo will still handle parsing combo manual input into hours/minutes.
+Since i am not setting table rows to a percentage of some container then
+I might as well use a single table instead of tables in divs.

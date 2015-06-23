@@ -32,13 +32,16 @@
     <table class="calendar-week-table">
       <thead>
         <tr>
-          <th ng-repeat="day in week.days">{{day.date.calendarDisplayDate()}}</th>
+          <th ng-repeat="day in week.days" ng-click="openCreateDialog($event, day.date.value)">{{day.date.calendarDisplayDate()}}</th>
         </tr>
       </thead>
 
       <tbody>
+        <!-- here's where I can do column spanning for multi-day events -->
         <tr>
-          <td ng-repeat="day in week.days">
+
+          <td ng-repeat="day in week.days" ng-click="openCreateDialog($event, day.date.value)">
+            <div ng-if="!day.events||day.events.length==0" style="height:44px"></div>
             <div class="calendar-event" ng-repeat="event in day.events" ng-click="openCreateDialog($event, null, event)">{{event.displayString()}}</div>
           </td>
         </tr>

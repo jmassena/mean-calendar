@@ -8,6 +8,13 @@
   background-color: #eeeeff;
 }
 
+@media screen and (max-width: 992px) {
+  .my-calendars-container>ul>li {
+    display: inline-block;
+    margin-right: 1em;
+  }
+}
+
 .my-calendars-create-dialog {
   position: absolute;
   z-index: 100;
@@ -55,13 +62,38 @@
   border-right: solid 1px #aaa;
 }*/
 
-html {
+
+/*@media (max-width: 767px) {
+    .calendar-left-panel {
+        display: inline-block;
+        margin-top: 20px;
+        width: 100%;
+    }
+
+    #content {
+        float:none !important;
+        margin-left:0;
+    }
+}*/
+
+
+/*html {
   height: 100%;
 }
 
 body {
   height: 100%;
-}
+}*/
+
+
+/*div[ui-view="main-content"], .calendar-panel, .calendar-page-container, .calendar-main-content {
+  height: 100%;
+}*/
+
+
+/*div[ui-view="main-content"], .calendar-panel, .calendar-page-container, .calendar-main-content {
+  height: 100%;
+}*/
 
 td, th {
   width: 14%;
@@ -77,15 +109,67 @@ td, th {
   border-right: solid 1px #aaa;
 }
 
+
+/* calendar container needs height so we can set week rows as percentage
+   of height, else cells will size to contents */
+
 .calendar-month-container {
-  height: 500px;
-  /*max-height: 0;*/
+  height: 60vh;
 }
+
+
+/*@media screen and (orientation: landscape) {
+  .calendar-month-container {
+    height: 60vw;
+  }
+}*/
+
+
+/*@media (min-width: 992px) {
+  .calendar-month-container {
+    height: 70vh;
+  }
+}*/
+
+
+/*@media (max-width: 768px) {
+  .col-sm-height {
+    display: table-cell;
+    float: none !important;
+  }
+}*/
+
+
+/*@media (max-width: 320px) {
+  .calendar-month-container {
+    height: 400px;
+  }
+}
+
+@media (max-width: 360px) {
+  .calendar-month-container {
+    height: 400px;
+  }
+}
+
+@media (max-width: 384px) {
+  .calendar-month-container {
+    height: 400px;
+  }
+}*/
+
+
+/*@media (max-height: 960px) and {
+  .calendar-month-container {
+    height: 400px;
+  }
+}*/
 
 .calendar-week-container {
   width: 100%;
-  height: 14%;
-  max-height: 14%;
+  /*min-height: 20%;*/
+  height: 20%;
+  /*max-height: 30%;*/
   overflow: hidden;
   border: solid 1px #aaa;
 }
@@ -103,31 +187,9 @@ td, th {
   background-color: #eeffee;
   border: solid 1px #cccccc;
   cursor: pointer;
-  margin: 2px;
+  margin: 0px 4px 0px 0px;
   white-space: nowrap;
-}
-
-.calendar-cell {
-  /*border: 1px solid;
-  width: 10%;
-  padding: 0;
   overflow: hidden;
-  padding-bottom: 10px;*/
-  border: solid 1px #000000;
-  height: 7%;
-  width: 10%;
-  overflow: hidden;
-  padding: 0px;
-}
-
-.calendar-monthly-header>div {
-  text-align: center;
-  background-color: #eeeeff;
-}
-
-.calendar-monthly-date {
-  /*height: 20%;
-  overflow: hidden;*/
 }
 
 

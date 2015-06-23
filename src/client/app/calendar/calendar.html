@@ -1,16 +1,15 @@
-<div>
+<div class="calendar-page-container">
   <h3>Calendar Page</h3>
 
   <div class="row">
     <div class="calendar-top-nav col-md-12">Navigation controls go here</div>
   </div>
 
-  <div class="row">
+  <div class="row calendar-panel">
     <div class="calendar-left-panel  col-md-2">
       <div>Mini calendar</div>
       <my-calendars calendar-list="vm.calendarList"></my-calendars>
     </div>
-
     <div class="calendar-main-content col-md-8">
       <calendar-month-view month-view-events="vm.monthViewEvents" calendar-list="vm.calendarList"></calendar-month-view>
     </div>
