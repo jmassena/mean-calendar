@@ -1,4 +1,22 @@
 Calendar todo:
 
-Since i am not setting table rows to a percentage of some container then
-I might as well use a single table instead of tables in divs.
+
+This is the hard part.
+
+Create view model that has column span information already calculated.
+
+for each day
+  for each event
+    record daysInWeekSpan for first event in week.
+    repeat event for each day event is on and mark as isInterWeekContinuation
+    so we don't render anything for it.
+
+    repeat event for each week that event is in.
+    record isContinuedFromLastWeek, isContinuedNextWeek, isInterWeekContinuation
+
+
+Then when we render we can use these indicators for:
+  daysInWeekSpan: colspan.
+  isInterWeekContinuation do not render
+  isContinuedNextWeek: style right border like >
+  isContinuedFromLastWeek: style left border like <
