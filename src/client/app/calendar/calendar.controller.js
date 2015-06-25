@@ -50,7 +50,7 @@
       // month view for rendering multi-day events with colspan
       // for each day
       //   for each event
-      //     record daysInWeekSpan for first event in week.
+      //     record daySpanInWeek for first event in week.
       //     repeat event for each day event is on and mark as isInterWeekContinuation
       //     so we don't render anything for it.
       //
@@ -59,7 +59,7 @@
       //
       //
       // Then when we render we can use these indicators for:
-      //   daysInWeekSpan: colspan.
+      //   daySpanInWeek: colspan.
       //   isInterWeekContinuation do not render
       //   isContinuedNextWeek: style right border like >
       //   isContinuedFromLastWeek: style left border like <
@@ -84,10 +84,7 @@
           vm.monthViewEvents.weeks.push(week);
         }
 
-        day = {
-          date: new DateWrapper(d),
-          events: []
-        };
+        day = new Day(d);
 
         week.days.push(day);
       }
@@ -100,17 +97,19 @@
         for(var j = 0; j < week.days.length; j++) {
           day = week.days[j];
 
-          nextDay = new Date(day.date.value);
+          nextDay = new Date(day.date);
           nextDay.setDate(nextDay.getDate() + 1);
 
-          while(eventIdx < allEvents.length && allEvents[eventIdx].start >= day.date.value &&
+          while(eventIdx < allEvents.length && allEvents[eventIdx].start >= day.date &&
             allEvents[eventIdx].start < nextDay) {
 
             var calendarEvent = allEvents[eventIdx];
             if(dateDiffInDays(calendarEvent.start, calendarEvent.end) > 0) {
               addMultiDayEventToMonth(i, j, calendarEvent);
             } else {
-              day.events.push(new EventWrapper(calendarEvent));
+
+              day.setNextAvailableEvent(calendarEvent);
+              // day.events.push(new EventWrapper(calendarEvent));
             }
             eventIdx++;
           }
@@ -137,9 +136,20 @@
 
         week.days.forEach(function (day) {
           day.events.push({
-            spacerEvent: true,
-            rowSpan: week.eventRowsCount - day.events.length
+            fillerEvent: true,
+            lastEvent: true,
+            rowSpan: week.eventRowsCount - day.events.length,
+            date: day.date
           });
+
+          for(var i = 0; i < day.events.length; i++) {
+            if(!day.events[i]) {
+              day.events[i] = {
+                fillerEvent: true,
+                date: day.date
+              };
+            }
+          }
         });
       });
 
@@ -173,19 +183,27 @@
 
       var isEventEnded = false;
 
-      var startNextWeek = new Date(week.days[0].date.value);
+      var startNextWeek = new Date(week.days[0].date);
       startNextWeek.setDate(startNextWeek.getDate() + 7);
 
-      for(var i = dayIdx; i < week.days.length && calendarEvent.end >= week.days[i].date.value; i++) {
+      var dayEventIdx;
+      for(var i = dayIdx; i < week.days.length && calendarEvent.end >= week.days[i].date; i++) {
 
         var day = week.days[i];
         var wrappedEvent = new EventWrapper(calendarEvent);
-        day.events.push(wrappedEvent);
+        // day.events.push(wrappedEvent);
+
+        // when adding event find next available idx and use this for all days that event spans.
+        if(i === dayIdx) {
+          dayEventIdx = day.setNextAvailableEvent(wrappedEvent);
+        } else {
+          day.setEvent(wrappedEvent, dayEventIdx);
+        }
 
         if(i === dayIdx) {
           wrappedEvent.isEventStart = true;
           wrappedEvent.isInterWeekContinuation = calendarEvent.start < week.days[0].date;
-          wrappedEvent.daysInWeekSpan = Math.min(dateDiffInDays(day.date.value, calendarEvent.end) +
+          wrappedEvent.daySpanInWeek = Math.min(dateDiffInDays(day.date, calendarEvent.end) +
             1,
             7 - dayIdx);
         } else if(i === week.length - 1) {
@@ -194,7 +212,7 @@
           wrappedEvent.isIntraWeekContinuation = true;
         }
 
-        var nextDay = new Date(day.date.value);
+        var nextDay = new Date(day.date);
         nextDay.setDate(nextDay.getDate() + 1);
 
         isEventEnded = calendarEvent.end < nextDay;
@@ -278,27 +296,50 @@
       return this.startTimeString() + ' ' + this.title;
     };
 
-    function DateWrapper(d) {
-      this.value = new Date(d);
+    function Day(d) {
+      this.date = new Date(d);
+      this.events = [];
     }
 
-    DateWrapper.prototype.dayName = function () {
-      return this.dayNames[this.value.getDate()];
+    Day.prototype.getNextAvailableEventIndex = function () {
+      for(var i = 0; i < this.events.length; i++) {
+        if(!this.events[i]) {
+          return i;
+        }
+      }
+
+      return this.events.length;
     };
 
-    DateWrapper.prototype.monthName = function () {
-      return this.monthNames[this.value.getMonth()];
+    Day.prototype.setNextAvailableEvent = function (wrappedEvent) {
+
+      var idx = this.getNextAvailableEventIndex();
+      this.events[idx] = wrappedEvent;
+      return idx;
     };
 
-    DateWrapper.prototype.calendarDisplayDate = function () {
-      var x = this.value.getDate() === 0 ?
-        this.monthName().abbreviated + ' ' + this.value.getDate() :
-        this.value.getDate();
+    Day.prototype.setEvent = function (wrappedEvent, idx) {
+
+      this.events[idx] = wrappedEvent;
+    };
+
+    Day.prototype.dayName = function () {
+      return this.dayNames[this.date.getDate()];
+    };
+
+    Day.prototype.monthName = function () {
+      return this.monthNames[this.date.getMonth()];
+    };
+
+    Day.prototype.calendarDisplayDate = function () {
+      var x = this.date.getDate() === 0 ?
+        this.monthName().abbreviated + ' ' + this.date.getDate() :
+        this.date.getDate();
 
       return x;
     };
 
-    DateWrapper.prototype.monthNames = [{
+    Day.prototype.monthNames = [{
       full: 'January',
       abbreviated: 'Jan'
     }, {
@@ -336,7 +377,7 @@
       abbreviated: 'Dec'
     }];
 
-    DateWrapper.prototype.dayNames = [{
+    Day.prototype.dayNames = [{
       full: 'Sunday',
       abbreviated: 'Sun'
     }, {

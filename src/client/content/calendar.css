@@ -52,53 +52,16 @@
 }
 
 .day-names-cell {
-  border: solid 1px #aaa;
+  /*border: solid 1px #aaa;*/
   width: 14%;
 }
 
 .calendar-month-container td {
-  border: solid 1px green;
+  /*border: solid 1px green;*/
 }
 
 
-/*thead th {
-  border-left: solid 1px #aaa;
-  border-right: solid 1px #aaa;
-}*/
-
-
-/*@media (max-width: 767px) {
-    .calendar-left-panel {
-        display: inline-block;
-        margin-top: 20px;
-        width: 100%;
-    }
-
-    #content {
-        float:none !important;
-        margin-left:0;
-    }
-}*/
-
-
-/*html {
-  height: 100%;
-}
-
-body {
-  height: 100%;
-}*/
-
-
-/*div[ui-view="main-content"], .calendar-panel, .calendar-page-container, .calendar-main-content {
-  height: 100%;
-}*/
-
-
-/*div[ui-view="main-content"], .calendar-panel, .calendar-page-container, .calendar-main-content {
-  height: 100%;
-}*/
-
+/*
 td, th {
   width: 14%;
   max-width: 0;
@@ -106,68 +69,19 @@ td, th {
   vertical-align: top;
   height: 100%;
   max-height: 0;
-}
+}*/
 
 td, th {
   border-left: solid 1px #aaa;
   border-right: solid 1px #aaa;
+  width: 14%;
+  max-width: 0;
+  overflow: hidden;
 }
-
-
-/* calendar container needs height so we can set week rows as percentage
-   of height, else cells will size to contents */
 
 .calendar-month-container {
-  height: 60vh;
+  height: 80vh;
 }
-
-
-/*@media screen and (orientation: landscape) {
-  .calendar-month-container {
-    height: 60vw;
-  }
-}*/
-
-
-/*@media (min-width: 992px) {
-  .calendar-month-container {
-    height: 70vh;
-  }
-}*/
-
-
-/*@media (max-width: 768px) {
-  .col-sm-height {
-    display: table-cell;
-    float: none !important;
-  }
-}*/
-
-
-/*@media (max-width: 320px) {
-  .calendar-month-container {
-    height: 400px;
-  }
-}
-
-@media (max-width: 360px) {
-  .calendar-month-container {
-    height: 400px;
-  }
-}
-
-@media (max-width: 384px) {
-  .calendar-month-container {
-    height: 400px;
-  }
-}*/
-
-
-/*@media (max-height: 960px) and {
-  .calendar-month-container {
-    height: 400px;
-  }
-}*/
 
 .calendar-week-container {
   width: 100%;
@@ -187,31 +101,33 @@ td, th {
   width: 100%;
 }
 
-.calendar-event {
+
+/*.calendar-event {
   background-color: #eeffee;
   border: solid 1px #cccccc;
   cursor: pointer;
   margin: 0px 4px 0px 0px;
   white-space: nowrap;
   overflow: hidden;
+}*/
+
+.calendar-month-view-event {
+  white-space: nowrap;
+  height: 1.5em;
+  /*margin-right: .5em;*/
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background-color: #eeeeff;
+  border: solid 1px #aaa;
+  margin: 2px;
 }
 
+.calendar-event-filler {
+  /*height: 100%;*/
+}
 
-/*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+.calendar-event-filler.calendar-event-last-event {
+  height: 100%;
+}
 
 */
