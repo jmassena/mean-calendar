@@ -56,6 +56,10 @@
   width: 14%;
 }
 
+.calendar-month-container td {
+  border: solid 1px green;
+}
+
 
 /*thead th {
   border-left: solid 1px #aaa;

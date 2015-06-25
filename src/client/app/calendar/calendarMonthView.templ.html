@@ -38,11 +38,12 @@
 
       <tbody>
         <!-- here's where I can do column spanning for multi-day events -->
-        <tr>
+        <tr ng-repeat="eventIdx in week.eventRowIndexes">
 
-          <td ng-repeat="day in week.days" ng-click="openCreateDialog($event, day.date.value)">
-            <div ng-if="!day.events||day.events.length==0" style="height:44px"></div>
-            <div class="calendar-event" ng-repeat="event in day.events" ng-click="openCreateDialog($event, null, event)">{{event.displayString()}}</div>
+          <td ng-repeat="event in week.eventsAtIndex(eventIdx)" ng-class="{'calendar-event-spacer':event.spacerEvent}"
+          ng-attr-colspan="{{event.daysInWeekSpan}}" ng-attr-rowspan="{{event.rowSpan>1?event.rowSpan:undefined}}"
+          ng-click="!event.spacerEvent && openCreateDialog($event, null, event)">
+            {{event.spacerEvent? null: event.displayString()}} * {{event.eventRowsCount}}
           </td>
         </tr>
 

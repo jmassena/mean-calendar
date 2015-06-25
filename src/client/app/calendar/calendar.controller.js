@@ -4,10 +4,13 @@
   angular.module('app')
     .controller('CalendarCtrl', CalendarCtrl);
 
-  CalendarCtrl.$inject = ['$scope', 'CalendarSvc', 'CalendarEventSvc', 'GlobalNotificationSvc', '$q'];
+  CalendarCtrl.$inject = ['$scope', 'CalendarSvc', 'CalendarEventSvc', 'GlobalNotificationSvc',
+    '$q'
+  ];
 
   function CalendarCtrl($scope, CalendarSvc, CalendarEventSvc, GlobalNotificationSvc, $q) {
 
+    /* jshint maxstatements:50 */
     var vm = this;
 
     vm.calendarList = {
@@ -29,54 +32,200 @@
       // generate all month dates and for each date add events
       // from merged list.
       // for now assume all dates are within a single day.
-      var allEvents = [];
-      for(var i = 0; i < vm.calendarEvents.length; i++) {
-        allEvents = allEvents.concat(vm.calendarEvents[i]);
-      }
+
+      // for(var i = 0; i < vm.calendarEvents.length; i++) {
+      //   allEvents = allEvents.concat(vm.calendarEvents[i]);
+      // }
+      //
+      // var allEvents = vm.calendarEvents.reduce(function(prev,curr){
+      //   return prev.concat(curr);
+      // });
+
+      var allEvents = Array.prototype.concat.apply([], vm.calendarEvents);
 
       allEvents.sort(function (a, b) {
         return a.start - b.start;
       });
 
-      // if date spans days then
-      //   if start.daynum + days > sat.daynum
-      //     set colspan to
-
-      // vm.monthViewEvents.weeks.dates.day
-      // vm.monthViewEvents.weeks.dates.events
+      // month view for rendering multi-day events with colspan
+      // for each day
+      //   for each event
+      //     record daysInWeekSpan for first event in week.
+      //     repeat event for each day event is on and mark as isInterWeekContinuation
+      //     so we don't render anything for it.
       //
+      //     repeat event for each week that event is in.
+      //     record isContinuedFromLastWeek, isContinuedNextWeek, isInterWeekContinuation
+      //
+      //
+      // Then when we render we can use these indicators for:
+      //   daysInWeekSpan: colspan.
+      //   isInterWeekContinuation do not render
+      //   isContinuedNextWeek: style right border like >
+      //   isContinuedFromLastWeek: style left border like <
+
+      // create monthView with all days. Mark prev/nextMonth days as such so we can style them differently.
+      // iterate over events in date order and add them to the days.
+      // if event goes spans multiple days then call function to add it to all days it spans.
+
       vm.monthViewEvents.weeks = [];
 
       var week;
-      var eventIdx = 0;
+      var day;
+      var nextDay;
+      var i;
 
-      // create week object with day object with events
+      // create week object with days
       for(var d = new Date(vm.calendarStart); d < vm.calendarEnd; d.setDate(d.getDate() + 1)) {
 
         if(d.getDay() === 0) {
-          week = {};
-          week.days = [];
+          // new week
+          week = new Week();
           vm.monthViewEvents.weeks.push(week);
         }
 
-        var day = {
+        day = {
           date: new DateWrapper(d),
           events: []
         };
 
         week.days.push(day);
+      }
 
-        var nextDay = new Date(d);
-        nextDay.setDate(d.getDate() + 1);
+      // add events to days.
+      var eventIdx = 0;
+      for(i = 0; i < vm.monthViewEvents.weeks.length; i++) {
+        week = vm.monthViewEvents.weeks[i];
 
-        //while next event is on today
-        // NOTE: this will not handle events spanning days
-        while(eventIdx < allEvents.length && allEvents[eventIdx].start >= d && allEvents[eventIdx].start < nextDay) {
-          day.events.push(new EventWrapper(allEvents[eventIdx]));
-          eventIdx++;
+        for(var j = 0; j < week.days.length; j++) {
+          day = week.days[j];
+
+          nextDay = new Date(day.date.value);
+          nextDay.setDate(nextDay.getDate() + 1);
+
+          while(eventIdx < allEvents.length && allEvents[eventIdx].start >= day.date.value &&
+            allEvents[eventIdx].start < nextDay) {
+
+            var calendarEvent = allEvents[eventIdx];
+            if(dateDiffInDays(calendarEvent.start, calendarEvent.end) > 0) {
+              addMultiDayEventToMonth(i, j, calendarEvent);
+            } else {
+              day.events.push(new EventWrapper(calendarEvent));
+            }
+            eventIdx++;
+          }
+        }
+      }
+
+      // make all days have same number of events.
+      // or at least if day event count is less than max
+      // then add an empty event with rowSpan value of max - day.events.count - 1;
+
+      // add spacer event (last row) to each day
+
+      vm.monthViewEvents.weeks.forEach(function (week) {
+
+        // max events in a day + 1 row for spacer.
+        week.eventRowsCount = week.days.reduce(function (prev, current) {
+          return Math.max(prev, current.events.length);
+        }, 0) + 1;
+
+        week.eventRowIndexes = [];
+        for(i = 0; i < week.eventRowsCount; i++) {
+          week.eventRowIndexes.push(i);
+        }
+
+        week.days.forEach(function (day) {
+          day.events.push({
+            spacerEvent: true,
+            rowSpan: week.eventRowsCount - day.events.length
+          });
+        });
+      });
+
+    }
+
+    function addMultiDayEventToMonth(weekIdx, dayIdx, calendarEvent) {
+      // do while event is in current week range.
+      for(var i = weekIdx; i < vm.monthViewEvents.weeks.length; i++) {
+        var week = vm.monthViewEvents.weeks[i];
+
+        var isEventEnded = addMultiDayEventToWeek(week, dayIdx, calendarEvent);
+
+        if(isEventEnded) {
+          break;
         }
       }
     }
+
+    var _MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+    // a and b are javascript Date objects
+    function dateDiffInDays(a, b) {
+      // Discard the time and time-zone information.
+      var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+      var utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+
+      return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+    }
+
+    function addMultiDayEventToWeek(week, dayIdx, calendarEvent) {
+
+      var isEventEnded = false;
+
+      var startNextWeek = new Date(week.days[0].date.value);
+      startNextWeek.setDate(startNextWeek.getDate() + 7);
+
+      for(var i = dayIdx; i < week.days.length && calendarEvent.end >= week.days[i].date.value; i++) {
+
+        var day = week.days[i];
+        var wrappedEvent = new EventWrapper(calendarEvent);
+        day.events.push(wrappedEvent);
+
+        if(i === dayIdx) {
+          wrappedEvent.isEventStart = true;
+          wrappedEvent.isInterWeekContinuation = calendarEvent.start < week.days[0].date;
+          wrappedEvent.daysInWeekSpan = Math.min(dateDiffInDays(day.date.value, calendarEvent.end) +
+            1,
+            7 - dayIdx);
+        } else if(i === week.length - 1) {
+          wrappedEvent.isInterWeekContinued = calendarEvent.end >= startNextWeek;
+        } else {
+          wrappedEvent.isIntraWeekContinuation = true;
+        }
+
+        var nextDay = new Date(day.date.value);
+        nextDay.setDate(nextDay.getDate() + 1);
+
+        isEventEnded = calendarEvent.end < nextDay;
+        wrappedEvent.isEventEnd = isEventEnded;
+
+        if(isEventEnded) {
+          break;
+        }
+      }
+
+      return isEventEnded;
+    }
+
+    function Week() {
+      this.days = [];
+    }
+
+    Week.prototype.eventsAtIndex = function (idx) {
+      // return this.days.filter(function (day) {
+      //   return day.events[idx] && !day.events[idx].isIntraWeekContinuation;
+      // });
+      var ret = [];
+
+      this.days.forEach(function (day) {
+        if(day.events[idx] && !day.events[idx].isIntraWeekContinuation) {
+          ret.push(day.events[idx]);
+        }
+      });
+
+      return ret;
+    };
 
     function EventWrapper(calendarEvent) {
 
