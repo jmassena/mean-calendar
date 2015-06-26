@@ -2,7 +2,7 @@ Calendar todo:
 
 [x] Calendar edit modal should show edit/create in title as appropriate.
 
-Clicking on event shows event details with 'edit', 'delete' links.
+[*] Clicking on event shows event details with 'edit', 'delete' links.
 
 When events don't fit into calendar view show 'more events' element.
 
@@ -32,3 +32,5 @@ Enable collapsing of left/right panels.
 Can we put start/end time on same line?
 
 Make bootstrap selector for calendar edit 'Calendar' select.
+
+Make event text not show | cursor when hovered over. I think this is done by making it not selectable in css.
