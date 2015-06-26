@@ -104,12 +104,12 @@
             allEvents[eventIdx].start < nextDay) {
 
             var calendarEvent = allEvents[eventIdx];
+
             if(dateDiffInDays(calendarEvent.start, calendarEvent.end) > 0) {
               addMultiDayEventToMonth(i, j, calendarEvent);
             } else {
 
               day.setNextAvailableEvent(calendarEvent);
-              // day.events.push(new EventWrapper(calendarEvent));
             }
             eventIdx++;
           }
@@ -164,6 +164,8 @@
 
         if(isEventEnded) {
           break;
+        } else {
+          dayIdx = 0;
         }
       }
     }
@@ -186,28 +188,26 @@
       var startNextWeek = new Date(week.days[0].date);
       startNextWeek.setDate(startNextWeek.getDate() + 7);
 
-      var dayEventIdx;
+      var wrappedEvent;
       for(var i = dayIdx; i < week.days.length && calendarEvent.end >= week.days[i].date; i++) {
 
         var day = week.days[i];
-        var wrappedEvent = new EventWrapper(calendarEvent);
-        // day.events.push(wrappedEvent);
 
-        // when adding event find next available idx and use this for all days that event spans.
         if(i === dayIdx) {
-          dayEventIdx = day.setNextAvailableEvent(wrappedEvent);
+          // when adding event to start day find next available idx and use this for all days that event spans.
+          wrappedEvent = day.setNextAvailableEvent(calendarEvent);
         } else {
-          day.setEvent(wrappedEvent, dayEventIdx);
+          wrappedEvent = day.setEvent(calendarEvent, wrappedEvent.index);
         }
 
         if(i === dayIdx) {
           wrappedEvent.isEventStart = true;
-          wrappedEvent.isInterWeekContinuation = calendarEvent.start < week.days[0].date;
-          wrappedEvent.daySpanInWeek = Math.min(dateDiffInDays(day.date, calendarEvent.end) +
+          wrappedEvent.isInterWeekContinuation = wrappedEvent.start < week.days[0].date;
+          wrappedEvent.daySpanInWeek = Math.min(dateDiffInDays(day.date, wrappedEvent.end) +
             1,
             7 - dayIdx);
         } else if(i === week.length - 1) {
-          wrappedEvent.isInterWeekContinued = calendarEvent.end >= startNextWeek;
+          wrappedEvent.isInterWeekContinued = wrappedEvent.end >= startNextWeek;
         } else {
           wrappedEvent.isIntraWeekContinuation = true;
         }
@@ -215,7 +215,7 @@
         var nextDay = new Date(day.date);
         nextDay.setDate(nextDay.getDate() + 1);
 
-        isEventEnded = calendarEvent.end < nextDay;
+        isEventEnded = wrappedEvent.end < nextDay;
         wrappedEvent.isEventEnd = isEventEnded;
 
         if(isEventEnded) {
@@ -311,16 +311,18 @@
       return this.events.length;
     };
 
-    Day.prototype.setNextAvailableEvent = function (wrappedEvent) {
+    Day.prototype.setNextAvailableEvent = function (calendarEvent) {
 
       var idx = this.getNextAvailableEventIndex();
-      this.events[idx] = wrappedEvent;
-      return idx;
+      return this.setEvent(calendarEvent, idx);
     };
 
-    Day.prototype.setEvent = function (wrappedEvent, idx) {
+    Day.prototype.setEvent = function (calendarEvent, idx) {
 
+      var wrappedEvent = new EventWrapper(calendarEvent);
+      wrappedEvent.index = idx;
       this.events[idx] = wrappedEvent;
+      return wrappedEvent;
     };
 
     Day.prototype.dayName = function () {

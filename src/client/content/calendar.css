@@ -89,7 +89,11 @@ td, th {
   height: 20%;
   /*max-height: 30%;*/
   overflow: hidden;
-  border: solid 1px #aaa;
+  border-top: solid 1px #aaa;
+}
+
+.calendar-week-container:last-of-type {
+  border-bottom: solid 1px #aaa;
 }
 
 .calendar-week-table {
@@ -119,7 +123,9 @@ td, th {
   text-overflow: ellipsis;
   background-color: #eeeeff;
   border: solid 1px #aaa;
-  margin: 2px;
+  border-left: 0px;
+  margin-right: 2px;
+  padding-left: .1em;
 }
 
 .calendar-event-filler {
