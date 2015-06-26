@@ -1,6 +1,6 @@
 Calendar todo:
 
-Calendar edit modal should show edit/create in title as appropriate.
+[x] Calendar edit modal should show edit/create in title as appropriate.
 
 Clicking on event shows event details with 'edit', 'delete' links.
 

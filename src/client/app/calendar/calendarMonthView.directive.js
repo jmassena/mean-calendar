@@ -43,6 +43,10 @@
 
               $scope.newEvent = {};
 
+              $scope.modal = {
+                title: calendarEvent ? 'Edit Event' : 'Create Event'
+              };
+
               if(calendarEvent != null) {
                 // edit event
                 $scope.newEvent.forUpdate = true;

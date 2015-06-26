@@ -2,7 +2,7 @@
   <button type="button" class="close" ng-click="cancel()" aria-label="Close">
     <span aria-hidden="true">&times;</span>
   </button>
-  <h4 class="modal-title">New Calendar</h4>
+  <h4 class="modal-title">{{modal.title}}</h4>
 </div>
 
 <form name="eventForm" novalidate ng-submit="submit()" auto-focus>
@@ -10,18 +10,21 @@
   <div class="modal-body">
     <div class="form-group">
       <label for="event-title">Name</label>
-      <input id="event-title" ng-model="newEvent.title" name="title" type="text" class="form-control" placeholder="Event Name" required/>
+      <input id="event-title" ng-model="newEvent.title" name="title" type="text" class="form-control" placeholder="Event Name"
+      required/>
       <p ng-show="eventForm.$submitted && eventForm.title.$invalid " class="invalid-message">Event name is required.</p>
     </div>
 
     <div class="form-group">
       <label for="event-notes">Notes</label>
-      <input id="event-notes" ng-model="newEvent.notes" name="notes" type="text" class="form-control" placeholder="Notes" />
+      <input id="event-notes" ng-model="newEvent.notes" name="notes" type="text" class="form-control" placeholder="Notes"
+      />
     </div>
 
     <div class="form-group">
       <label for="event-all-day">Calendar</label>
-      <select ng-init="newEvent.calendar =  newEvent.calendar || calendarList.items[0]" ng-model="newEvent.calendar" ng-options="item as item.title for item in calendarList.items">
+      <select ng-init="newEvent.calendar =  newEvent.calendar || calendarList.items[0]" ng-model="newEvent.calendar"
+      ng-options="item as item.title for item in calendarList.items">
       </select>
     </div>
 
@@ -29,12 +32,14 @@
 
       <div class="form-group">
         <label for="event-start">Start Date</label>
-        <input type='date' id="event-start" ng-model="newEvent.start" name="start" type="text" class="form-control" placeholder="Start" required/>
+        <input type='date' id="event-start" ng-model="newEvent.start" name="start" type="text" class="form-control"
+        placeholder="Start" required/>
         <p ng-show="eventForm.$submitted && eventForm.start.$invalid " class="invalid-message">Start is required.</p>
       </div>
       <div class="form-group">
         <label for="event-end">End Date</label>
-        <input type='date' id="event-end" ng-model="newEvent.end" name="end" type="text" class="form-control" placeholder="End" required/>
+        <input type='date' id="event-end" ng-model="newEvent.end" name="end" type="text" class="form-control"
+        placeholder="End" required/>
         <p ng-show="eventForm.$submitted && eventForm.end.$invalid" class="invalid-message">End is required.</p>
       </div>
 
