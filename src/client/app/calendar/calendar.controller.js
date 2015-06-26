@@ -4,11 +4,12 @@
   angular.module('app')
     .controller('CalendarCtrl', CalendarCtrl);
 
-  CalendarCtrl.$inject = ['$scope', 'CalendarSvc', 'CalendarEventSvc', 'GlobalNotificationSvc',
-    '$q'
+  CalendarCtrl.$inject = ['$scope', '$q', 'CalendarSvc', 'CalendarEventSvc',
+    'GlobalNotificationSvc', 'UtilitySvc'
   ];
 
-  function CalendarCtrl($scope, CalendarSvc, CalendarEventSvc, GlobalNotificationSvc, $q) {
+  function CalendarCtrl($scope, $q, CalendarSvc, CalendarEventSvc, GlobalNotificationSvc,
+    UtilitySvc) {
 
     /* jshint maxstatements:50 */
     var vm = this;
@@ -97,8 +98,12 @@
         for(var j = 0; j < week.days.length; j++) {
           day = week.days[j];
 
-          nextDay = new Date(day.date);
-          nextDay.setDate(nextDay.getDate() + 1);
+          // nextDay = new Date(day.date);
+          // nextDay.setDate(nextDay.getDate() + 1);
+
+          nextDay = UtilitySvc.dateAdd(day.date, {
+            days: 1
+          });
 
           while(eventIdx < allEvents.length && allEvents[eventIdx].start >= day.date &&
             allEvents[eventIdx].start < nextDay) {
@@ -212,8 +217,11 @@
           wrappedEvent.isIntraWeekContinuation = true;
         }
 
-        var nextDay = new Date(day.date);
-        nextDay.setDate(nextDay.getDate() + 1);
+        // var nextDay = new Date(day.date);
+        // nextDay.setDate(nextDay.getDate() + 1);
+        var nextDay = UtilitySvc.dateAdd(day.date, {
+          days: 1
+        });
 
         isEventEnded = wrappedEvent.end < nextDay;
         wrappedEvent.isEventEnd = isEventEnded;
