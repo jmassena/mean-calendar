@@ -8,7 +8,7 @@
     </tbody>
   </table>
 
-  <div ng-repeat="week in monthViewEvents.weeks" class="calendar-week-container">
+  <div ng-repeat="week in trimmedMonthViewEvents.weeks" class="calendar-week-container">
     <table class="calendar-week-table">
       <thead>
         <tr>
@@ -23,7 +23,10 @@
           ng-attr-colspan="{{event.daySpanInWeek>1?event.daySpanInWeek:undefined}}" ng-attr-rowspan="{{event.rowSpan>1?event.rowSpan:undefined}}"
           ng-click="!event.fillerEvent?openDetailsDialog($event, event): openCreateDialog($event, event.date)">
 
-            <div ng-if="!event.fillerEvent" class="calendar-month-view-event">{{event.displayString()}}</div>
+            <div ng-if="!event.fillerEvent && !event.moreEventsCount" class="calendar-month-view-event">{{event.displayString()}}</div>
+
+            <div ng-if="event.moreEventsCount" class="calendar-month-view-more-events">+ {{event.moreEventsCount}} more</div>
+
           </td>
         </tr>
 
