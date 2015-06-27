@@ -136,4 +136,11 @@ td, th {
   height: 100%;
 }
 
-*/
+.calendar-details-title {
+  font-size: larger;
+  font-weight: bold;
+}
+
+.calendar-details-dates {
+  margin-top: 1em;
+}

@@ -35,6 +35,17 @@
         .substring(1);
     }
 
+    var _MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+    // a and b are javascript Date objects
+    function dateDiffInDays(start, end) {
+      // Discard the time and time-zone information.
+      var utc1 = Date.UTC(start.getFullYear(), start.getMonth(), start.getDate());
+      var utc2 = Date.UTC(end.getFullYear(), end.getMonth(), end.getDate());
+
+      return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+    }
+
     /*
       Returns the input date with the time components set to 0.
     */
@@ -48,6 +59,7 @@
       Does not modify input date.
     */
     function dateAdd(d, config) {
+      /*jshint maxcomplexity:10*/
       var ret = new Date(d);
 
       if(config) {
@@ -77,11 +89,83 @@
       return ret;
     }
 
+    var monthNames = [{
+      full: 'January',
+      abbreviated: 'Jan'
+    }, {
+      full: 'February',
+      abbreviated: 'Feb'
+    }, {
+      full: 'March',
+      abbreviated: 'Mar'
+    }, {
+      full: 'April',
+      abbreviated: 'Apr'
+    }, {
+      full: 'May',
+      abbreviated: 'May'
+    }, {
+      full: 'June',
+      abbreviated: 'Jun'
+    }, {
+      full: 'July',
+      abbreviated: 'Jul'
+    }, {
+      full: 'August',
+      abbreviated: 'Aug'
+    }, {
+      full: 'September',
+      abbreviated: 'Sep'
+    }, {
+      full: 'October',
+      abbreviated: 'Oct'
+    }, {
+      full: 'November',
+      abbreviated: 'Nov'
+    }, {
+      full: 'December',
+      abbreviated: 'Dec'
+    }];
+
+    var dayNames = [{
+      full: 'Sunday',
+      abbreviated: 'Sun'
+    }, {
+      full: 'Monday',
+      abbreviated: 'Mon'
+    }, {
+      full: 'Tuesday',
+      abbreviated: 'Tues'
+    }, {
+      full: 'Wednesday',
+      abbreviated: 'Wed'
+    }, {
+      full: 'Thursday',
+      abbreviated: 'Thurs'
+    }, {
+      full: 'Friday',
+      abbreviated: 'Fri'
+    }, {
+      full: 'Saturday',
+      abbreviated: 'Sat'
+    }];
+
+    function getDayName(d) {
+      return dayNames[d.getDay()];
+    }
+
+    function getMonthName(d) {
+      return monthNames[d.getMonth()];
+    }
+
     return {
       guid: guid,
       shortId: shortId,
       dateAdd: dateAdd,
-      startOfDate: startOfDate
+      startOfDate: startOfDate,
+      getDayName: getDayName,
+      getMonthName: getMonthName,
+      dateDiffInDays: dateDiffInDays
     };
   }
 

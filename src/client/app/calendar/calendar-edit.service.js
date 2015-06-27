@@ -174,7 +174,7 @@
 
             $scope.newEvent.end.setHours($scope.newEvent.endTime.hours);
             $scope.newEvent.end.setMinutes($scope.newEvent.endTime.minutes);
-          } else {}
+          }
 
           var result = {};
           result.action = $scope.newEvent.forUpdate ? 'update' : 'create';

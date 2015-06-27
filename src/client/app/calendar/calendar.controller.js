@@ -24,7 +24,6 @@
     vm.calendarEnd;
 
     vm.updateCalendar = updateCalendar;
-    // vm.toggleCalendarEvents = toggleCalendarEvents;
 
     activate();
 
@@ -98,9 +97,6 @@
         for(var j = 0; j < week.days.length; j++) {
           day = week.days[j];
 
-          // nextDay = new Date(day.date);
-          // nextDay.setDate(nextDay.getDate() + 1);
-
           nextDay = UtilitySvc.dateAdd(day.date, {
             days: 1
           });
@@ -110,7 +106,7 @@
 
             var calendarEvent = allEvents[eventIdx];
 
-            if(dateDiffInDays(calendarEvent.start, calendarEvent.end) > 0) {
+            if(UtilitySvc.dateDiffInDays(calendarEvent.start, calendarEvent.end) > 0) {
               addMultiDayEventToMonth(i, j, calendarEvent);
             } else {
 
@@ -175,17 +171,6 @@
       }
     }
 
-    var _MS_PER_DAY = 1000 * 60 * 60 * 24;
-
-    // a and b are javascript Date objects
-    function dateDiffInDays(a, b) {
-      // Discard the time and time-zone information.
-      var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
-      var utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
-
-      return Math.floor((utc2 - utc1) / _MS_PER_DAY);
-    }
-
     function addMultiDayEventToWeek(week, dayIdx, calendarEvent) {
 
       var isEventEnded = false;
@@ -208,7 +193,7 @@
         if(i === dayIdx) {
           wrappedEvent.isEventStart = true;
           wrappedEvent.isInterWeekContinuation = wrappedEvent.start < week.days[0].date;
-          wrappedEvent.daySpanInWeek = Math.min(dateDiffInDays(day.date, wrappedEvent.end) +
+          wrappedEvent.daySpanInWeek = Math.min(UtilitySvc.dateDiffInDays(day.date, wrappedEvent.end) +
             1,
             7 - dayIdx);
         } else if(i === week.length - 1) {
@@ -239,9 +224,6 @@
     }
 
     Week.prototype.eventsAtIndex = function (idx) {
-      // return this.days.filter(function (day) {
-      //   return day.events[idx] && !day.events[idx].isIntraWeekContinuation;
-      // });
       var ret = [];
 
       this.days.forEach(function (day) {
@@ -256,9 +238,6 @@
     function EventWrapper(calendarEvent) {
 
       angular.extend(this, calendarEvent);
-
-      // this.startTime = this.allDay ? null : new Date(this.start);
-      // this.endTime = this.allDay ? null : new Date(this.end);
     }
 
     EventWrapper.prototype.startTimeString = function () {
@@ -334,11 +313,14 @@
     };
 
     Day.prototype.dayName = function () {
-      return this.dayNames[this.date.getDate()];
+      // return this.dayNames[this.date.getDate()];
+      return UtilitySvc.getDayName(this.date);
+
     };
 
     Day.prototype.monthName = function () {
-      return this.monthNames[this.date.getMonth()];
+      // return this.monthNames[this.date.getMonth()];
+      return UtilitySvc.getMonthName(this.date);
     };
 
     Day.prototype.calendarDisplayDate = function () {
@@ -348,67 +330,6 @@
 
       return x;
     };
-
-    Day.prototype.monthNames = [{
-      full: 'January',
-      abbreviated: 'Jan'
-    }, {
-      full: 'February',
-      abbreviated: 'Feb'
-    }, {
-      full: 'March',
-      abbreviated: 'Mar'
-    }, {
-      full: 'April',
-      abbreviated: 'Apr'
-    }, {
-      full: 'May',
-      abbreviated: 'May'
-    }, {
-      full: 'June',
-      abbreviated: 'Jun'
-    }, {
-      full: 'July',
-      abbreviated: 'Jul'
-    }, {
-      full: 'August',
-      abbreviated: 'Aug'
-    }, {
-      full: 'September',
-      abbreviated: 'Sep'
-    }, {
-      full: 'October',
-      abbreviated: 'Oct'
-    }, {
-      full: 'November',
-      abbreviated: 'Nov'
-    }, {
-      full: 'December',
-      abbreviated: 'Dec'
-    }];
-
-    Day.prototype.dayNames = [{
-      full: 'Sunday',
-      abbreviated: 'Sun'
-    }, {
-      full: 'Monday',
-      abbreviated: 'Mon'
-    }, {
-      full: 'Tuesday',
-      abbreviated: 'Tues'
-    }, {
-      full: 'Wednesday',
-      abbreviated: 'Wed'
-    }, {
-      full: 'Thursday',
-      abbreviated: 'Thurs'
-    }, {
-      full: 'Friday',
-      abbreviated: 'Fri'
-    }, {
-      full: 'Saturday',
-      abbreviated: 'Sat'
-    }];
 
     function activate() {
 
@@ -457,22 +378,24 @@
           throw new Error(res.data.message);
         })
         .then(function () {
-          var calendarIds = vm.calendarList.items.map(function (calendar) {
-            return calendar._id;
-          });
+          // var calendarIds = vm.calendarList.items.map(function (calendar) {
+          //   return calendar._id;
+          // });
 
-          calendarIds = ['5578aa2b64a546cc922efb43'];
+          // calendarIds = ['5578aa2b64a546cc922efb43'];
 
-          return getCalendarEvents(calendarIds, vm.calendarStart, vm.calendarEnd)
-            .then(function () {
-              createMonthView();
-            }, function (res) {
-              throw new Error(res.data.message);
-            })
-            .then(null, function (err) {
-              GlobalNotificationSvc.addError(err.message);
-              throw err;
-            });
+          // return getCalendarEvents(calendarIds, vm.calendarStart, vm.calendarEnd)
+          //   .then(function () {
+          //     createMonthView();
+          //   }, function (res) {
+          //     throw new Error(res.data.message);
+          //   })
+          //   .then(null, function (err) {
+          //     GlobalNotificationSvc.addError(err.message);
+          //     throw err;
+          //   });
+
+          return getAndRenderMonthViewCalendarEvents();
         })
         .then(null,
           function (err) {
@@ -482,7 +405,7 @@
           });
     }
 
-    function getViewCalendarEvents() {
+    function getAndRenderMonthViewCalendarEvents() {
 
       var calendarIds = vm.calendarList.items.map(function (calendar) {
         return calendar._id;
@@ -490,7 +413,8 @@
 
       return getCalendarEvents(calendarIds, vm.calendarStart, vm.calendarEnd)
         .then(function () {
-          createMonthView();
+          // trying to get initial calendar data to render on android. This seems to fix it.
+          $scope.$evalAsync(createMonthView);
         }, function (res) {
           throw new Error(res.data.message);
         })
@@ -556,21 +480,21 @@
     function createCalendarEvent(calendarId, calendarEvent) {
       CalendarEventSvc.createEvent(calendarId, calendarEvent)
         .then(function () {
-          getViewCalendarEvents();
+          getAndRenderMonthViewCalendarEvents();
         });
     }
 
     function updateCalendarEvent(calendarId, calendarEvent) {
       CalendarEventSvc.updateEvent(calendarId, calendarEvent)
         .then(function () {
-          getViewCalendarEvents();
+          getAndRenderMonthViewCalendarEvents();
         });
     }
 
     function deleteCalendarEvent(calendarId, calendarEventId) {
       CalendarEventSvc.deleteEvent(calendarId, calendarEventId)
         .then(function () {
-          getViewCalendarEvents();
+          getAndRenderMonthViewCalendarEvents();
         });
     }
 
