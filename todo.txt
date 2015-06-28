@@ -2,9 +2,13 @@ Calendar todo:
 
 [x] Calendar edit modal should show edit/create in title as appropriate.
 
-[*] Clicking on event shows event details with 'edit', 'delete' links.
+[x] Clicking on event shows event details with 'edit', 'delete' links.
 
-When events don't fit into calendar view show 'more events' element.
+[x]When events don't fit into calendar view show 'more events' element.
+
+[*] create popup for more events
+  - show popup with all events listed as links to the normal edit/delete popup.
+  - show all days first with border then show partials with time/title.
 
 Can I move the monthly calendar view model code into the monthly calendar directive?
 

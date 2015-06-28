@@ -2,17 +2,20 @@
   <button type="button" class="close" ng-click="cancel()" aria-label="Close">
     <span aria-hidden="true">&times;</span>
   </button>
+
+  <h4 class="modal-title">{{day.date | date:'fullDate'}}</h4>
+
 </div>
 
 <div class="modal-body">
-  <div class="calendar-details-title">{{calendarEvent.title}}</div>
-  <div class="calendar-details-dates">{{calendarEvent.getDateRangeSummary()}}</div>
+  <div ng-repeat="calendarEvent in day.getVisibleEvents()" ng-click="openDetails($event, calendarEvent)"
+  ng-class="{'calendar-event-all-day':(calendarEvent.allDay|| calendarEvent.getDurationDays())}" class="calendar-day-events-title">{{calendarEvent.displayString()}}</div>
 </div>
 
-<div class="modal-footer">
+<!-- <div class="modal-footer">
   <button ng-show="newEvent.forUpdate" type="button" class="btn btn-danger pull-left" ng-click="delete()">Delete</button>
 
   <button type="button" class="btn btn-danger pull-left" ng-click="delete(calendarEvent)">Delete</button>
   <button type="button" class="btn btn-success" ng-click="edit($event, calendarEvent)">Edit</button>
   <button type="button" class="btn btn-primary" ng-click="cancel()">Close</button>
-</div>
+</div> -->

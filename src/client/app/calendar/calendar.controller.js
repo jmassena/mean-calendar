@@ -240,6 +240,10 @@
       angular.extend(this, calendarEvent);
     }
 
+    EventWrapper.prototype.getDurationDays = function () {
+      return UtilitySvc.dateDiffInDays(this.start, this.end);
+    };
+
     EventWrapper.prototype.startTimeString = function () {
       return this.timeString(this.start);
     };
@@ -248,32 +252,45 @@
       return this.timeString(this.end);
     };
 
-    EventWrapper.prototype.timeString = function (dt) {
-      if(!dt) {
+    EventWrapper.prototype.timeString = function (d) {
+      if(!d) {
         return '';
       }
 
-      var hours = dt.getHours();
-      var minutes = dt.getMinutes();
       var amPm = '';
-
-      if(hours >= 12) {
+      var hour = d.getHours();
+      if(hour >= 12) {
         amPm = 'p';
+        if(hour > 13) {
+          hour -= 13;
+        }
+        if(hour === 0) {
+          hour = '12';
+        }
       }
 
-      if(hours === 0) {
-        hours = 12;
-      } else if(hours >= 13) {
-        hours -= 12;
+      return hour + (d.getMinutes() > 0 ? ':' + d.getMinutes() : '') + amPm;
+    };
+
+    EventWrapper.prototype.getCompleteTimeString = function (d) {
+
+      if(!d) {
+        return '';
       }
 
-      if(minutes > 0) {
-        minutes = ':' + minutes;
-      } else {
-        minutes = '';
+      var amPm = 'am';
+      var hour = d.getHours();
+      if(hour >= 12) {
+        amPm = 'pm';
+        if(hour > 13) {
+          hour -= 13;
+        }
+        if(hour === 0) {
+          hour = '12';
+        }
       }
 
-      return hours + minutes + amPm;
+      return hour + (d.getMinutes() > 0 ? ':' + d.getMinutes() : '') + amPm;
     };
 
     EventWrapper.prototype.displayString = function () {
@@ -283,10 +300,45 @@
       return this.startTimeString() + ' ' + this.title;
     };
 
+    EventWrapper.prototype.getDateRangeSummary = function () {
+
+      var datesSummary = UtilitySvc.getMonthName(this.start).abbreviated + ' ' + this.start.getDate();
+
+      if(UtilitySvc.startOfDate(this.start).getTime() === UtilitySvc.startOfDate(this.end).getTime()) {
+
+        if(!this.allDay) {
+          datesSummary += ', ' + this.getCompleteTimeString(this.start);
+          datesSummary += ' - ' + this.getCompleteTimeString(this.end);
+        }
+
+      } else {
+
+        if(!this.allDay) {
+          datesSummary += ', ' + this.getCompleteTimeString(this.start);
+        }
+
+        datesSummary += ' - ' + UtilitySvc.getMonthName(this.end).abbreviated + ' ' + this.end.getDate();
+        if(!this.allDay) {
+          datesSummary += ', ' + this.getCompleteTimeString(this.end);
+        }
+      }
+
+      return datesSummary;
+    };
+
     function Day(d) {
       this.date = new Date(d);
       this.events = [];
     }
+
+    Day.prototype.getVisibleEvents = function () {
+
+      var ret = this.events.filter(function (event) {
+        return !event.fillerEvent && !event.moreEventsCount;
+      });
+
+      return ret;
+    };
 
     Day.prototype.getNextAvailableEventIndex = function () {
       for(var i = 0; i < this.events.length; i++) {

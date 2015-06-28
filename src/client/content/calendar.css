@@ -132,6 +132,8 @@ td, th {
   /*height: 100%;*/
 }
 
+.calendar-event-all-day {}
+
 .calendar-event-filler.calendar-event-last-event {
   height: 100%;
 }

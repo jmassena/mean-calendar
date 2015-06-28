@@ -19,48 +19,14 @@
       },
 
       link: function (scope, element, attrs) {
-        // trimDayEvents();
 
-        // scope.$watch(function () {
-        //     return $window.innerHeight + 'px';
-        //   },
-        //   function (newVal, oldVal) {
-        //     console.log('window height: ' + newVal);
-        //   });
-
-        $(window).resize(function () {
-          // console.log('JQ window height: ' + window.innerHeight);
+        $(window).on('resize.monthview', function () {
           scope.trimDayEvents(window.innerHeight, true);
         });
 
-        // $(window).on('resize.monthView', function () {
-        //   // console.log('JQ window height: ' + window.innerHeight);
-        //   scope.trimDayEvents(window.innerHeight);
-        // });
-        //
-        // scope.$on('$destroy', function () {
-        //   $(window).off('resize.monthView');
-        // });
-
-        // function trimDayEvents(viewHeight) {
-        //   viewHeight = viewHeight || $window.innerHeight;
-        //   var containerHeight = 0.8 * viewHeight;
-        //   var weekHeight = 0.2 * containerHeight;
-        //
-        //   // for now this will be static but later can change this based on browser zoom and actual font-size I hope.
-        //   var eventHeight = 21;
-        //   var maxEvents = Math.floor((weekHeight - 20) / eventHeight);
-        //
-        //   // This is working better than I expected! Only issue is with sweet Nexus 5 items
-        //   // innerHeight reads 640 but body height is actually 750?
-        //   console.log('');
-        //   console.log('max events: ' + maxEvents);
-        //   console.log('viewHeight: ' + viewHeight);
-        //   console.log('containerHeight: ' + containerHeight);
-        //   console.log('weekHeight: ' + weekHeight);
-        //   console.log('eventHeight: ' + eventHeight);
-        //
-        // }
+        scope.$on('$destroy', function () {
+          $(window).off('resize.monthview');
+        });
 
       },
 
@@ -150,6 +116,56 @@
           }
         }
 
+        $scope.openDayEventsDialog = function ($event, date) {
+
+          $event.stopPropagation();
+
+          var day;
+          for(var i = 0; i < $scope.monthViewEvents.weeks.length; i++) {
+            var week = $scope.monthViewEvents.weeks[i];
+
+            for(var j = 0; j < week.days.length; j++) {
+
+              if(week.days[j].date.getTime() === date.getTime()) {
+                day = week.days[j];
+                break;
+              }
+            }
+          }
+
+          if(!day) {
+            throw new Error('Day for date not found. Date: ' + date.toString());
+          }
+
+          var modalInstance = $modal.open({
+            windowClass: 'modal fade in',
+            size: 'sm',
+            scope: $scope,
+            resolve: {
+              day: function () {
+                return day;
+              }
+            },
+
+            templateUrl: './app/calendar/modal-calendar-day-events.templ.html',
+
+            controller: function ($scope, $modalInstance, day) {
+
+              $scope.day = day;
+
+              $scope.cancel = function () {
+                $modalInstance.dismiss();
+              };
+
+              $scope.openDetails = function ($event, calendarEvent) {
+                $modalInstance.dismiss();
+                return $scope.openDetailsDialog($event, calendarEvent);
+              };
+            }
+
+          });
+        };
+
         $scope.openDetailsDialog = function ($event, calendarEvent) {
 
           $event.stopPropagation();
@@ -168,52 +184,6 @@
 
             controller: function ($scope, $modalInstance, calendarEvent) {
               $scope.calendarEvent = calendarEvent;
-
-              $scope.datesSummary = '';
-
-              var start = calendarEvent.start;
-              var end = calendarEvent.end;
-
-              $scope.datesSummary = UtilitySvc.getMonthName(start).abbreviated + ' ' +
-                start.getDate();
-
-              if(UtilitySvc.startOfDate(start).getTime() === UtilitySvc.startOfDate(
-                  end).getTime()) {
-
-                if(!calendarEvent.allDay) {
-                  $scope.datesSummary += ', ' + getTimeString(start);
-                  $scope.datesSummary += ' - ' + getTimeString(end);
-                }
-
-              } else {
-
-                if(!calendarEvent.allDay) {
-                  $scope.datesSummary += ', ' + getTimeString(start);
-                }
-
-                $scope.datesSummary += ' - ' + UtilitySvc.getMonthName(end).abbreviated +
-                  ' ' +
-                  end.getDate();
-                if(!calendarEvent.allDay) {
-                  $scope.datesSummary += ', ' + getTimeString(end);
-                }
-              }
-
-              function getTimeString(d) {
-                var amPm = 'am';
-                var hour = d.getHours();
-                if(hour >= 12) {
-                  amPm = 'pm';
-                  if(hour > 13) {
-                    hour -= 13;
-                  }
-                  if(hour === 0) {
-                    hour = '12';
-                  }
-                }
-
-                return hour + (d.getMinutes() > 0 ? ':' + d.getMinutes() : '') + amPm;
-              }
 
               $scope.cancel = function () {
                 $modalInstance.dismiss();

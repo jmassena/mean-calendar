@@ -3,7 +3,8 @@
   <!-- <button type="button" ng-click="$emit('calendar.toggleCalendarEvents', calendar)" class="btn btn-default">Toggle</button> -->
 
   <div class="calendar-item-title-container" ng-click="$emit('calendar.toggleCalendarEvents', calendar)">
-    <div class="calendar-item-color-block" ng-class="{'calendar-item-color-block-disabled':!calendar.config.showEvents}" ng-style="{'background-color': (calendar.config.showEvents?calendar.config.eventColor:'#ffffff')}"></div>
+    <div class="calendar-item-color-block" ng-class="{'calendar-item-color-block-disabled':!calendar.config.showEvents}"
+    ng-style="{'background-color': (calendar.config.showEvents?calendar.config.eventColor:'#ffffff')}"></div>
 
     <span class="calendar-item-title"> {{calendar.title}}</span>
   </div>
