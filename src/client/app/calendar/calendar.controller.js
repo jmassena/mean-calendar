@@ -68,6 +68,8 @@
       // iterate over events in date order and add them to the days.
       // if event goes spans multiple days then call function to add it to all days it spans.
 
+      //vm.monthViewEvents.weeks = [];
+      vm.monthViewEvents = {};
       vm.monthViewEvents.weeks = [];
 
       var week;
@@ -253,37 +255,24 @@
     };
 
     EventWrapper.prototype.timeString = function (d) {
-      if(!d) {
-        return '';
-      }
-
-      var amPm = '';
-      var hour = d.getHours();
-      if(hour >= 12) {
-        amPm = 'p';
-        if(hour > 13) {
-          hour -= 13;
-        }
-        if(hour === 0) {
-          hour = '12';
-        }
-      }
-
-      return hour + (d.getMinutes() > 0 ? ':' + d.getMinutes() : '') + amPm;
+      return this.getTimeString(d, true);
     };
 
     EventWrapper.prototype.getCompleteTimeString = function (d) {
+      return this.getTimeString(d, false);
+    };
 
+    EventWrapper.prototype.getTimeString = function (d, shortAmPm) {
       if(!d) {
         return '';
       }
 
-      var amPm = 'am';
+      var amPm = shortAmPm ? 'a' : 'am';
       var hour = d.getHours();
       if(hour >= 12) {
-        amPm = 'pm';
-        if(hour > 13) {
-          hour -= 13;
+        amPm = shortAmPm ? 'p' : 'pm';
+        if(hour > 12) {
+          hour -= 12;
         }
         if(hour === 0) {
           hour = '12';
@@ -376,7 +365,7 @@
     };
 
     Day.prototype.calendarDisplayDate = function () {
-      var x = this.date.getDate() === 0 ?
+      var x = this.date.getDate() === 1 ?
         this.monthName().abbreviated + ' ' + this.date.getDate() :
         this.date.getDate();
 

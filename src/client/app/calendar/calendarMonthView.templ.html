@@ -3,7 +3,9 @@
   <table class="calendar-day-names-table">
     <tbody>
       <tr>
-        <th class="day-names-cell" ng-repeat="dayName in ['Sun', 'Mon', 'Tue','Wed','Thur', 'Fri', 'Sat']">{{dayName}}</th>
+        <th class="day-names-cell" ng-repeat="dayName in ['Sun', 'Mon', 'Tue','Wed','Thur', 'Fri', 'Sat']">
+          <span>{{dayName}}</span>
+        </th>
       </tr>
     </tbody>
   </table>
@@ -12,20 +14,23 @@
     <table class="calendar-week-table">
       <thead>
         <tr>
-          <th ng-repeat="day in week.days" ng-click="openCreateDialog($event, day.date)">{{day.calendarDisplayDate()}}</th>
+          <th ng-repeat="day in week.days" ng-click="openCreateDialog($event, day.date)">
+            <span>{{day.calendarDisplayDate()}}
+              <span>
+          </th>
         </tr>
       </thead>
 
       <tbody>
         <tr ng-repeat="eventIdx in week.eventRowIndexes">
 
-          <td ng-repeat="event in week.eventsAtIndex(eventIdx)" ng-class="{'calendar-event-filler':event.fillerEvent, 'calendar-event-last-event':event.lastEvent}"
+          <td ng-repeat="event in week.eventsAtIndex(eventIdx)" ng-class="{'calendar-event-last-event':event.lastEvent}"
           ng-attr-colspan="{{event.daySpanInWeek>1?event.daySpanInWeek:undefined}}" ng-attr-rowspan="{{event.rowSpan>1?event.rowSpan:undefined}}"
           ng-click="event.moreEventsCount?openDayEventsDialog($event,event.date):(event.fillerEvent?openCreateDialog($event, event.date):openDetailsDialog($event, event))">
 
-            <div ng-if="!event.fillerEvent && !event.moreEventsCount" class="calendar-month-view-event">{{event.displayString()}}</div>
+            <div ng-if="!event.fillerEvent && !event.moreEventsCount" class="calendar-event" ng-class="{'calendar-event-all-day':(event.allDay|| event.getDurationDays()>0)}">{{event.displayString()}}</div>
 
-            <div ng-if="event.moreEventsCount" class="calendar-month-view-more-events">+ {{event.moreEventsCount}} more</div>
+            <a ng-if="event.moreEventsCount" class="calendar-more-events">+{{event.moreEventsCount}} more</a>
 
           </td>
         </tr>

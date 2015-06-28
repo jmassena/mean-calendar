@@ -38,3 +38,5 @@ Can we put start/end time on same line?
 Make bootstrap selector for calendar edit 'Calendar' select.
 
 Make event text not show | cursor when hovered over. I think this is done by making it not selectable in css.
+
+Don't put cursor in event title for event edit popup

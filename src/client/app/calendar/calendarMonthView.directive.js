@@ -21,7 +21,7 @@
       link: function (scope, element, attrs) {
 
         $(window).on('resize.monthview', function () {
-          scope.trimDayEvents(window.innerHeight, true);
+          scope.trimDayEvents(window.innerHeight, false, true);
         });
 
         scope.$on('$destroy', function () {
@@ -34,18 +34,16 @@
 
         $scope.trimDayEvents = trimDayEvents;
 
-        // $scope.trimDayEvents();
-
         $scope.$watch(function () {
-            return $scope.monthViewEvents.weeks;
+            return $scope.monthViewEvents;
           },
           function (newVal, oldVal) {
-            if(newVal && oldVal !== newVal) {
-              $scope.trimDayEvents();
+            if(newVal !== oldVal) {
+              $scope.trimDayEvents(null, true, false);
             }
           });
 
-        function trimDayEvents(viewHeight, doDigest) {
+        function trimDayEvents(viewHeight, force, doDigest) {
           viewHeight = viewHeight || $window.innerHeight;
           var containerHeight = 0.8 * viewHeight;
           var weekHeight = 0.2 * containerHeight;
@@ -66,9 +64,10 @@
             return;
           }
 
-          if($scope.previousMaxEvents === maxEvents) {
+          if(!force && $scope.previousMaxEvents === maxEvents) {
             return;
           }
+          $scope.previousMaxEvents = maxEvents;
 
           // build $scope.trimmedMonthViewEvents from monthViewEvents.
           var tmpMonthView = angular.copy($scope.monthViewEvents);
@@ -84,7 +83,7 @@
 
               week.days.forEach(function (day) {
 
-                if(day.events.length > maxEvents + 1) {
+                if(day.events.length > maxEvents) {
                   var removedEventsCount = 0;
                   while(day.events.length >= maxEvents) {
                     var event = day.events.pop();
