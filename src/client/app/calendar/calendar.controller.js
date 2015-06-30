@@ -19,13 +19,70 @@
     };
     vm.calendarEvents = [];
     vm.monthViewEvents = {};
-    vm.calendar;
+    // vm.calendar;
     vm.calendarStart;
     vm.calendarEnd;
 
     vm.updateCalendar = updateCalendar;
 
     activate();
+
+    function activate() {
+
+      // calculate start/end for current month.
+      // if start is not a sunday then move start to prev sunday.
+      // same for end
+      var now = new Date(),
+        year = now.getFullYear(),
+        month = now.getMonth();
+
+      var firstDay = new Date(year, month, 1);
+      if(firstDay.getDay() !== 0) {
+        // move to previous sunday if necessary
+        firstDay.setDate(firstDay.getDate() - firstDay.getDay());
+      }
+
+      var lastDay = new Date(year, month + 1, 1);
+      if(lastDay.getDay() !== 0) {
+        // move to next monday (this is exclusive)
+        lastDay.setDate(lastDay.getDate() + (7 - lastDay.getDay()));
+      }
+
+      vm.calendarStart = firstDay;
+      vm.calendarEnd = lastDay;
+
+      // get calendars or create default calendar
+      // we can do the creation asynchronously
+      CalendarSvc.getCalendarList()
+        .then(function (res) {
+          if(res.data && res.data.length > 0) {
+            vm.calendarList.items = res.data;
+          } else {
+            //createCalendar('My calendar');
+            return CalendarSvc.createCalendar('My calendar')
+              .then(function (res) {
+                if(res && res.data) {
+                  vm.calendarList.items = [res.data];
+                } else {
+                  throw new Error('Error creating calendar');
+                }
+              }, function (res) {
+                throw new Error(res.data.message);
+              });
+          }
+        }, function (res) {
+          throw new Error(res.data.message);
+        })
+        .then(function () {
+          return getAndRenderMonthViewCalendarEvents();
+        })
+        .then(null,
+          function (err) {
+            console.error(err);
+            GlobalNotificationSvc.addError(err.message);
+            throw err;
+          });
+    }
 
     function createMonthView() {
       // merge all events into one list ordered by start date;
@@ -371,80 +428,6 @@
 
       return x;
     };
-
-    function activate() {
-
-      // calculate start/end for current month.
-      // if start is not a sunday then move start to prev sunday.
-      // same for end
-      var now = new Date(),
-        year = now.getFullYear(),
-        month = now.getMonth();
-
-      var firstDay = new Date(year, month, 1);
-      if(firstDay.getDay() !== 0) {
-        // move to previous sunday if necessary
-        firstDay.setDate(firstDay.getDate() - firstDay.getDay());
-      }
-
-      var lastDay = new Date(year, month + 1, 1);
-      if(lastDay.getDay() !== 0) {
-        // move to next monday (this is exclusive)
-        lastDay.setDate(lastDay.getDate() + (7 - lastDay.getDay()));
-      }
-
-      vm.calendarStart = firstDay;
-      vm.calendarEnd = lastDay;
-
-      // get calendars or create default calendar
-      // we can do the creation asynchronously
-      CalendarSvc.getCalendarList()
-        .then(function (res) {
-          if(res.data && res.data.length > 0) {
-            vm.calendarList.items = res.data;
-          } else {
-            //createCalendar('My calendar');
-            return CalendarSvc.createCalendar('My calendar')
-              .then(function (res) {
-                if(res && res.data) {
-                  vm.calendarList.items = [res.data];
-                } else {
-                  throw new Error('Error creating calendar');
-                }
-              }, function (res) {
-                throw new Error(res.data.message);
-              });
-          }
-        }, function (res) {
-          throw new Error(res.data.message);
-        })
-        .then(function () {
-          // var calendarIds = vm.calendarList.items.map(function (calendar) {
-          //   return calendar._id;
-          // });
-
-          // calendarIds = ['5578aa2b64a546cc922efb43'];
-
-          // return getCalendarEvents(calendarIds, vm.calendarStart, vm.calendarEnd)
-          //   .then(function () {
-          //     createMonthView();
-          //   }, function (res) {
-          //     throw new Error(res.data.message);
-          //   })
-          //   .then(null, function (err) {
-          //     GlobalNotificationSvc.addError(err.message);
-          //     throw err;
-          //   });
-
-          return getAndRenderMonthViewCalendarEvents();
-        })
-        .then(null,
-          function (err) {
-            console.error(err);
-            GlobalNotificationSvc.addError(err.message);
-            throw err;
-          });
-    }
 
     function getAndRenderMonthViewCalendarEvents() {
 
