@@ -26,9 +26,9 @@
 
           // convert date strings to date objects
           var data = res.data;
-          if(data && data.length > 0) {
-            for(var i = 0; i < data.length; i++) {
-              deserializeEventDates(data[i]);
+          if(data) {
+            for(var i = 0; i < data.events.length; i++) {
+              deserializeEventDates(data.events[i]);
             }
           }
           return res;

@@ -19,6 +19,15 @@
 
       controller: function ($scope, $modal) {
 
+        $scope.$watch(function () {
+            return $scope.calendarList;
+          },
+          function (newVal, oldVal) {
+            if(newVal !== oldVal) {
+              var x = 'test';
+            }
+          });
+
         $scope.openCreateDialog = function () {
           var modalInstance = $modal.open({
             animation: true,

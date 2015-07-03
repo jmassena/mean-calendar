@@ -36,22 +36,26 @@ router.get('/calendars/:calendarId/events/', auth.isAuthenticated(), function (r
       }, next);
   }
 
+  var tmp;
+
   if(queryStart) {
-    var tmp = Date.parse(queryStart);
+    tmp = Date.parse(queryStart);
     if(isNaN(tmp)) {
-      throw exceptionMessages.error('system_validation_failure', null, 'invalid start date: ' + queryStart);
+      throw exceptionMessages.error('system_validation_failure', null, 'invalid start date: ' +
+        queryStart);
     }
+    queryStart = new Date(tmp);
   } else {
     queryStart = new Date(-8640000000000000);
   }
 
   if(queryEnd) {
-    var tmp = Date.parse(queryEnd);
+    tmp = Date.parse(queryEnd);
     if(isNaN(tmp)) {
-      throw exceptionMessages.error('system_validation_failure', null, 'invalid end date: ' + queryEnd);
+      throw exceptionMessages.error('system_validation_failure', null, 'invalid end date: ' +
+        queryEnd);
     }
     queryEnd = new Date(tmp);
-    //console.log('query end: ' + queryEnd);
   } else {
     queryEnd = new Date(8640000000000000);
   }
@@ -70,13 +74,19 @@ router.get('/calendars/:calendarId/events/', auth.isAuthenticated(), function (r
       }]
     })
     .then(function (events) {
-      res.status(200).json(events);
+
+      console.log(events);
+      res.status(200).json({
+        calendarId: calendarId,
+        events: events
+      });
     }, next);
 
 });
 
 // GET one event for calendar
-router.get('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), function (req, res, next) {
+router.get('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), function (req, res,
+  next) {
 
   //console.log('calling route: ' + 'GET /calendars/events');
 
@@ -127,7 +137,8 @@ router.post('/calendars/:calendarId/events/', auth.isAuthenticated(), function (
 });
 
 // PUT update a calendar event
-router.put('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), function (req, res, next) {
+router.put('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), function (req, res,
+  next) {
 
   //console.log('calling route: ' + 'PUT /calendars/events/:eventId');
 
@@ -184,7 +195,9 @@ router.put('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), fun
 });
 
 // DELETE calendar event
-router.delete('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), function (req, res, next) {
+router.delete('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), function (req,
+  res,
+  next) {
 
   //console.log('calling route: ' + 'DELETE /calendars/events/:eventId');
 

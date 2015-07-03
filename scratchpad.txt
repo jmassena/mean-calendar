@@ -1,0 +1,37 @@
+
+
+function EventsCache(){
+  this.isInitialized = false;
+  this.events = [];
+  this.calendars = [];
+  this.ranges = [];
+  this.eventsModifiedDate;
+  this.calendarsModifiedDate;
+}
+
+EventsCache.prototype.hasEventsInRange(start,end){
+  // range end is exclusive
+  for(var i = 0; i < this.ranges.length; i++){
+    if(this.ranges[i].start <= start && this.ranges[i].end >= end){
+      return true;
+    }
+  }
+  return false;
+}
+
+/*Events*/
+EventsCache.prototype.getEvents(start,end){
+
+}
+
+EventsCache.prototype.createEvent(calendarEvent){
+
+}
+
+EventsCache.prototype.updateEvent(calendarEvent, oldEventStart){
+
+}
+
+EventsCache.prototype.deleteEvent(calendarEvent, oldEventStart){
+
+}
