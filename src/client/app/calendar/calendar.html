@@ -11,7 +11,8 @@
       <my-calendars calendar-list="calendarList"></my-calendars>
     </div>
     <div class="calendar-main-content col-md-8">
-      <calendar-month-view></calendar-month-view>
+      <calendar-month-view calendar-events-cache="vm.calendarEventsCache" calendars="vm.calendars" view-start="vm.calendarStart"
+      view-end="vm.calendarEnd"></calendar-month-view>
     </div>
 
     <div class="calendar-right-panel col-md-2">Right panel for tasks/notes...</div>

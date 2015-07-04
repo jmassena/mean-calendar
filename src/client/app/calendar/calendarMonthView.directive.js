@@ -13,6 +13,12 @@
     return {
       restrict: 'E',
       templateUrl: './app/calendar/calendarMonthView.templ.html',
+      scope: {
+        calendarEventsCache: '=',
+        calendars: '=',
+        viewStart: '=',
+        viewEnd: '='
+      },
 
       link: function (scope, element, attrs) {
 
@@ -25,13 +31,11 @@
               scope.trimDayEvents(maxEvents);
             });
           }
-
         });
 
         scope.$on('$destroy', function () {
           $(window).off('resize.monthview');
         });
-
       },
 
       controller: CalendarMonthViewCtrl
@@ -45,7 +49,11 @@
 
   function CalendarMonthViewCtrl($scope, $timeout, $modal, $window, UtilitySvc, CalendarEditSvc) {
 
-    // $scope.eventsCache;
+    // $scope.calendarEventsCache: '=',
+    // $scope.calendars: '=',
+    // $scope.viewStart: '=',
+    // $scope.viewEnd: '='
+
     // $scope.previousMaxEvents;
     // $scope.monthView;
     // $scope.trimmedMonthView;
@@ -69,7 +77,7 @@
 
       // handle cache modified
       $scope.$watch(function () {
-          return $scope.eventsCache.eventsModifiedDate;
+          return $scope.calendarEventsCache.eventsModifiedDate;
         },
         function (newVal, oldVal) {
           if(newVal) {
@@ -79,7 +87,7 @@
 
       // handle cache reassigned
       $scope.$watch(function () {
-          return $scope.eventsCache.calendarEvents;
+          return $scope.calendarEventsCache.calendars;
         },
         function (newVal, oldVal) {
           if(newVal) {
@@ -164,10 +172,10 @@
 
     function createMonthView() {
 
-      // var allEvents = Array.prototype.concat.apply([], $scope.eventsCache.calendarEvents);
+      // var allEvents = Array.prototype.concat.apply([], $scope.calendarEventsCache .calendarEvents);
       var allEvents = [];
-      $scope.eventsCache.calendarEvents.forEach(function (calendarEvent) {
-        allEvents = allEvents.concat(calendarEvent.events);
+      $scope.calendarEventsCache.calendars.forEach(function (calendar) {
+        allEvents = allEvents.concat(calendar.events);
       });
 
       allEvents.sort(function (a, b) {
@@ -188,7 +196,7 @@
       var i;
 
       // create week object with days
-      for(var d = new Date($scope.calendarStart); d < $scope.calendarEnd; d.setDate(d.getDate() +
+      for(var d = new Date($scope.viewStart); d < $scope.viewEnd; d.setDate(d.getDate() +
           1)) {
 
         if(d.getDay() === 0) {
@@ -218,12 +226,12 @@
           while(eventIdx < allEvents.length && allEvents[eventIdx].start < nextDay &&
             allEvents[eventIdx].end >= day.date) {
 
-            var calendarEvent = allEvents[eventIdx];
+            var event = allEvents[eventIdx];
 
-            if(UtilitySvc.dateDiffInDays(calendarEvent.start, calendarEvent.end) > 0) {
-              addMultiDayEventToMonth(i, j, calendarEvent);
+            if(UtilitySvc.dateDiffInDays(event.start, event.end) > 0) {
+              addMultiDayEventToMonth(i, j, event);
             } else {
-              day.setNextAvailableEvent(calendarEvent);
+              day.setNextAvailableEvent(event);
             }
             eventIdx++;
           }
@@ -427,9 +435,9 @@
 
       var modalInstance;
       if(calendarEvent) {
-        modalInstance = CalendarEditSvc.openEditDialog(calendarEvent, $scope.calendarList);
+        modalInstance = CalendarEditSvc.openEditDialog(calendarEvent, $scope.calendars);
       } else {
-        modalInstance = CalendarEditSvc.openCreateDialog(dayDate, $scope.calendarList);
+        modalInstance = CalendarEditSvc.openCreateDialog(dayDate, $scope.calendars);
       }
 
       modalInstance.result.then(function (result) {

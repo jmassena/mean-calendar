@@ -69,7 +69,7 @@
           'main-content': {
             templateUrl: 'app/calendar/calendar.html',
             controller: 'CalendarCtrl',
-            // controllerAs: 'vm'
+            controllerAs: 'vm'
           }
         }
       });
