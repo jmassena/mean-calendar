@@ -1,7 +1,9 @@
 Calendar todo:
 
 
-[*] move the monthly calendar view model code into the monthly calendar directive?
+[*] move the monthly calendar view model code into the monthly calendar directive.
+
+
 
 Make calendarEvents have a ranges property and act like a cache so we don't fetch events
 if we don't need to.

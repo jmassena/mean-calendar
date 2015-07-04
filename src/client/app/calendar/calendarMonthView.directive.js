@@ -17,7 +17,15 @@
       link: function (scope, element, attrs) {
 
         $(window).on('resize.monthview', function () {
-          scope.trimDayEvents(window.innerHeight, false, true);
+
+          var maxEvents = scope.calculateMaxEvents(window.innerHeight);
+
+          if(scope.previousMaxEvents !== maxEvents) {
+            scope.$apply(function () {
+              scope.trimDayEvents(maxEvents);
+            });
+          }
+
         });
 
         scope.$on('$destroy', function () {
@@ -37,19 +45,25 @@
 
   function CalendarMonthViewCtrl($scope, $timeout, $modal, $window, UtilitySvc, CalendarEditSvc) {
 
+    // $scope.eventsCache;
+    // $scope.previousMaxEvents;
+    // $scope.monthView;
+    // $scope.trimmedMonthView;
+
     $scope.trimDayEvents = trimDayEvents;
-    // $scope.monthViewEvents
+    $scope.calculateMaxEvents = calculateMaxEvents;
 
     activate();
 
     function activate() {
 
       $scope.$watch(function () {
-          return $scope.monthViewEvents;
+          return $scope.monthView;
         },
         function (newVal, oldVal) {
           if(newVal !== oldVal) {
-            $scope.trimDayEvents(null, true, false);
+            var maxEvents = calculateMaxEvents();
+            $scope.trimDayEvents(maxEvents);
           }
         });
 
@@ -74,7 +88,7 @@
         });
     }
 
-    function trimDayEvents(viewHeight, force, doDigest) {
+    function calculateMaxEvents(viewHeight) {
       viewHeight = viewHeight || $window.innerHeight;
       var containerHeight = 0.8 * viewHeight;
       var weekHeight = 0.2 * containerHeight;
@@ -83,25 +97,30 @@
       var eventHeight = 21;
       var maxEvents = Math.floor((weekHeight - 20) / eventHeight);
 
-      console.log('');
-      console.log('max events: ' + maxEvents);
-      console.log('viewHeight: ' + viewHeight);
-      console.log('containerHeight: ' + containerHeight);
-      console.log('weekHeight: ' + weekHeight);
-      console.log('eventHeight: ' + eventHeight);
+      // console.log('');
+      // console.log('max events: ' + maxEvents);
+      // console.log('viewHeight: ' + viewHeight);
+      // console.log('containerHeight: ' + containerHeight);
+      // console.log('weekHeight: ' + weekHeight);
+      // console.log('eventHeight: ' + eventHeight);
 
-      if(!$scope.monthViewEvents.weeks) {
+      return maxEvents;
+    }
+
+    function trimDayEvents(maxEvents) {
+
+      if(!$scope.monthView.weeks) {
         // object might not be initialized from web service call yet.
+        console.log('not really trimming events');
         return;
       }
 
-      if(!force && $scope.previousMaxEvents === maxEvents) {
-        return;
-      }
+      console.log('trimming events: ' + maxEvents);
+
       $scope.previousMaxEvents = maxEvents;
 
-      // build $scope.trimmedMonthViewEvents from monthViewEvents.
-      var tmpMonthView = angular.copy($scope.monthViewEvents);
+      // build $scope.trimmedMonthView from monthView.
+      var tmpMonthView = angular.copy($scope.monthView);
 
       tmpMonthView.weeks.forEach(function (week) {
         if(week.eventRowsCount > maxEvents + 1) {
@@ -140,10 +159,7 @@
         }
       });
 
-      $scope.trimmedMonthViewEvents = tmpMonthView;
-      if(doDigest) {
-        $scope.$apply();
-      }
+      $scope.trimmedMonthView = tmpMonthView;
     }
 
     function createMonthView() {
@@ -163,8 +179,8 @@
         return msDiff;
       });
 
-      $scope.monthViewEvents = {};
-      $scope.monthViewEvents.weeks = [];
+      $scope.monthView = {};
+      $scope.monthView.weeks = [];
 
       var week;
       var day;
@@ -178,7 +194,7 @@
         if(d.getDay() === 0) {
           // new week
           week = new Week();
-          $scope.monthViewEvents.weeks.push(week);
+          $scope.monthView.weeks.push(week);
         }
 
         day = new Day(d);
@@ -187,8 +203,8 @@
 
       // add events to days.
       var eventIdx = 0;
-      for(i = 0; i < $scope.monthViewEvents.weeks.length && eventIdx < allEvents.length; i++) {
-        week = $scope.monthViewEvents.weeks[i];
+      for(i = 0; i < $scope.monthView.weeks.length && eventIdx < allEvents.length; i++) {
+        week = $scope.monthView.weeks[i];
 
         for(var j = 0; j < week.days.length; j++) {
           day = week.days[j];
@@ -220,7 +236,7 @@
 
       // add spacer event (last row) to each day
 
-      $scope.monthViewEvents.weeks.forEach(function (week) {
+      $scope.monthView.weeks.forEach(function (week) {
 
         // max events in a day + 1 row for spacer.
         week.eventRowsCount = week.days.reduce(function (prev, current) {
@@ -254,8 +270,8 @@
 
     function addMultiDayEventToMonth(weekIdx, dayIdx, calendarEvent) {
       // do while event is in current week range.
-      for(var i = weekIdx; i < $scope.monthViewEvents.weeks.length; i++) {
-        var week = $scope.monthViewEvents.weeks[i];
+      for(var i = weekIdx; i < $scope.monthView.weeks.length; i++) {
+        var week = $scope.monthView.weeks[i];
 
         var isEventEnded = addMultiDayEventToWeek(week, dayIdx, calendarEvent);
 
@@ -323,8 +339,8 @@
       $event.stopPropagation();
 
       var day;
-      for(var i = 0; i < $scope.monthViewEvents.weeks.length; i++) {
-        var week = $scope.monthViewEvents.weeks[i];
+      for(var i = 0; i < $scope.monthView.weeks.length; i++) {
+        var week = $scope.monthView.weeks[i];
 
         for(var j = 0; j < week.days.length; j++) {
 

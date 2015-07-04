@@ -14,32 +14,7 @@
     /* jshint maxstatements:50 */
     // var vm = this;
 
-    // $scope.calendarList = {
-    //   items: [],
-    //   getIds: function () {
-    //     return this.items.map(function (calendar) {
-    //       return calendar._id;
-    //     });
-    //   }
-    // };
     $scope.calendarList = new Calendars();
-
-    function Calendars(list) {
-
-      if(!list) {
-        this.items = [];
-      } else if(!list.length) {
-        this.items = [list];
-      } else {
-        this.items = list;
-      }
-    }
-
-    Calendars.prototype.getIds = function () {
-      return this.items.map(function (calendar) {
-        return calendar._id;
-      });
-    }
 
     $scope.eventsCache = new EventsCache();
     $scope.updateCalendar = updateCalendar;
@@ -49,6 +24,8 @@
     activate();
 
     function activate() {
+
+      // fetch month view data + calendars
       $scope.view = 'month';
       $scope.viewDate = new Date();
       calculateMonthViewDates($scope.viewDate);
@@ -86,95 +63,6 @@
       $scope.calendarStart = firstDay;
       $scope.calendarEnd = lastDay;
     }
-
-    function EventsCache() {
-      this.isInitialized = false;
-      this.calendarEvents = [];
-      // this.calendars = [];
-      this.ranges = [];
-      this.eventsModifiedDate;
-      // this.calendarsModifiedDate;
-    }
-
-    EventsCache.prototype.setModifiedDate = function () {
-
-      this.eventsModifiedDate = new Date();
-    };
-
-    EventsCache.prototype.replaceEvent = function (event) {
-
-      this.deleteEvent(event._id);
-      this.addEvent(event);
-    };
-
-    EventsCache.prototype.deleteEvent = function (eventId) {
-
-      for(var i = 0; i < this.calendarEvents.length; i++) {
-        var calendarEvent = this.calendarEvents[i];
-
-        for(var j = 0; j < calendarEvent.events.length; j++) {
-          if(calendarEvent.events[j]._id === eventId) {
-            calendarEvent.events.splice(j, 1);
-            return;
-          }
-        }
-      }
-    };
-
-    EventsCache.prototype.addEvent = function (event) {
-
-      if(typeof event.start === 'string') {
-        event.start = new Date(event.start);
-      }
-      if(typeof event.end === 'string') {
-        event.end = new Date(event.end);
-      }
-
-      for(var i = 0; i < this.calendarEvents.length; i++) {
-
-        // TODO: this is super confusing to have calendarEvents have events.
-        var calendarEvent = this.calendarEvents[i];
-
-        if(calendarEvent.calendarId === event.calendarId) {
-
-          // if(calendarEvent.events.length === 0) {
-          //   calendarEvent.events.push(event);
-          //   return;
-          // }
-          //
-          // for(var j = 0; j < calendarEvent.events.length; j++) {
-          //   if(calendarEvent.events[j].start > event.start) {
-          //     calendarEvent.events.splice(j, 0, event);
-          //     return;
-          //   }
-          // }
-
-          calendarEvent.events.push(event);
-          return;
-        }
-      }
-    };
-
-    // EventsCache.prototype.hasEventsInRange(start,end){
-    //   // range end is exclusive
-    //   for(var i = 0; i < this.ranges.length; i++){
-    //     if(this.ranges[i].start <= start && this.ranges[i].end >= end){
-    //       return true;
-    //     }
-    //   }
-    //   return false;
-    // }
-    //
-    // EventsCache.prototype.addEvents(events,start,end){
-    //   // range end is exclusive
-    //   for(var i = 0; i < this.ranges.length; i++){
-    //     if(this.ranges[i].start <= start && this.ranges[i].end >= end){
-    //       return true;
-    //     }
-    //   }
-    //   return false;
-    // }
-    //
 
     function getCalendarsList() {
       return CalendarSvc.getCalendarList()
@@ -338,6 +226,82 @@
             GlobalNotificationSvc.addError(res.data.message);
           });
     }
+
+    /* classes: Calendars, EventsCache */
+
+    function Calendars(list) {
+
+      if(!list) {
+        this.items = [];
+      } else if(!list.length) {
+        this.items = [list];
+      } else {
+        this.items = list;
+      }
+    }
+
+    Calendars.prototype.getIds = function () {
+      return this.items.map(function (calendar) {
+        return calendar._id;
+      });
+    }
+
+    function EventsCache() {
+      this.isInitialized = false;
+      this.calendarEvents = [];
+      // this.calendars = [];
+      this.ranges = [];
+      this.eventsModifiedDate;
+      // this.calendarsModifiedDate;
+    }
+
+    EventsCache.prototype.setModifiedDate = function () {
+
+      this.eventsModifiedDate = new Date();
+    };
+
+    EventsCache.prototype.replaceEvent = function (event) {
+
+      this.deleteEvent(event._id);
+      this.addEvent(event);
+    };
+
+    EventsCache.prototype.deleteEvent = function (eventId) {
+
+      for(var i = 0; i < this.calendarEvents.length; i++) {
+        var calendarEvent = this.calendarEvents[i];
+
+        for(var j = 0; j < calendarEvent.events.length; j++) {
+          if(calendarEvent.events[j]._id === eventId) {
+            calendarEvent.events.splice(j, 1);
+            return;
+          }
+        }
+      }
+    };
+
+    EventsCache.prototype.addEvent = function (event) {
+
+      if(typeof event.start === 'string') {
+        event.start = new Date(event.start);
+      }
+      if(typeof event.end === 'string') {
+        event.end = new Date(event.end);
+      }
+
+      for(var i = 0; i < this.calendarEvents.length; i++) {
+
+        // TODO: this is super confusing to have calendarEvents have events.
+        var calendarEvent = this.calendarEvents[i];
+
+        if(calendarEvent.calendarId === event.calendarId) {
+
+          calendarEvent.events.push(event);
+          return;
+        }
+      }
+    };
+
   }
 
 }(this.angular));
