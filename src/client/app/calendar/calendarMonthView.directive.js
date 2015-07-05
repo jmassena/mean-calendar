@@ -184,18 +184,26 @@
       //     default: '#9A9CFF'
       //   }
       // }
-      var calendarsToShow = $scope.calendars.items.filter(function (calendar) {
-          return calendar.config.showEvents;
-        })
-        .map(function (calendar) {
-          return calendar._id;
-        });
+
+      var calendarsHash = {};
+      $scope.calendars.items.forEach(function (calendar) {
+        calendarsHash[calendar._id.toString()] = calendar;
+      });
+
+      // var calendarsToShow = $scope.calendars.items.filter(function (calendar) {
+      //     return calendar.config.showEvents;
+      //   })
+      //   .map(function (calendar) {
+      //     return calendar._id;
+      //   });
 
       var allEvents = [];
       $scope.calendarEventsCache.calendars.forEach(function (calendar) {
-        if(calendarsToShow.indexOf(calendar.calendarId) > -1) {
-          allEvents = allEvents.concat(calendar.events);
-        }
+        // if(calendarsHash[calendar.calendarId].showEvents) {
+        //   allEvents = allEvents.concat(calendar.events);
+        // }
+        allEvents = allEvents.concat(calendar.events);
+
       });
 
       allEvents.sort(function (a, b) {
@@ -205,6 +213,11 @@
             a.end);
         }
         return msDiff;
+      });
+
+      //update events with calendar data
+      allEvents.forEach(function (event) {
+        event.calendar = calendarsHash[event.calendarId];
       });
 
       $scope.monthView = {};
@@ -232,6 +245,7 @@
       // add events to days.
       var eventIdx = 0;
       for(i = 0; i < $scope.monthView.weeks.length && eventIdx < allEvents.length; i++) {
+
         week = $scope.monthView.weeks[i];
 
         for(var j = 0; j < week.days.length; j++) {
@@ -248,10 +262,12 @@
 
             var event = allEvents[eventIdx];
 
-            if(UtilitySvc.dateDiffInDays(event.start, event.end) > 0) {
-              addMultiDayEventToMonth(i, j, event);
-            } else {
-              day.setNextAvailableEvent(event);
+            if(event.calendar.config.showEvents) {
+              if(UtilitySvc.dateDiffInDays(event.start, event.end) > 0) {
+                addMultiDayEventToMonth(i, j, event);
+              } else {
+                day.setNextAvailableEvent(event);
+              }
             }
             eventIdx++;
           }
@@ -501,6 +517,26 @@
 
       angular.extend(this, calendarEvent);
     }
+
+    EventWrapper.prototype.getBackgroundColor = function () {
+      if(this.isAllDayOrMultiDay()) {
+        return this.color || this.calendar.config.eventColor;
+      } else {
+        return undefined;
+      }
+    };
+
+    EventWrapper.prototype.getFontColor = function () {
+      if(this.isAllDayOrMultiDay()) {
+        return undefined;
+      } else {
+        return this.color || this.calendar.config.eventColor;
+      }
+    };
+
+    EventWrapper.prototype.isAllDayOrMultiDay = function () {
+      return this.allDay || this.getDurationDays() > 0;
+    };
 
     EventWrapper.prototype.getDurationDays = function () {
       return UtilitySvc.dateDiffInDays(this.start, this.end);

@@ -28,7 +28,10 @@
           ng-attr-colspan="{{event.daySpanInWeek>1?event.daySpanInWeek:undefined}}" ng-attr-rowspan="{{event.rowSpan>1?event.rowSpan:undefined}}"
           ng-click="event.moreEventsCount?openDayEventsDialog($event,event.date):(event.fillerEvent?openCreateDialog($event, event.date):openDetailsDialog($event, event))">
 
-            <div ng-if="!event.fillerEvent && !event.moreEventsCount" class="calendar-event" ng-class="{'calendar-event-all-day':(event.allDay|| event.getDurationDays()>0)}">{{event.displayString()}}</div>
+            <!-- // if all day or multi-day then background-color = color and font-color=black / else fontcolor = color -->
+
+            <div ng-if="!event.fillerEvent && !event.moreEventsCount" style="background-color:{{event.getBackgroundColor()}}; color:{{event.getFontColor()}}"
+            class="calendar-event" ng-class="{'calendar-event-all-day':event.isAllDayOrMultiDay()}">{{event.displayString()}}</div>
 
             <a ng-if="event.moreEventsCount" class="calendar-more-events">+{{event.moreEventsCount}} more</a>
 

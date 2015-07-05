@@ -40,7 +40,7 @@
 
               $scope.editCalendar = {};
               $scope.editCalendar.config = {};
-              $scope.editCalendar.config.eventColor = '#7d8ec0'
+              $scope.editCalendar.config.eventColor = '#7d8ec0';
 
               $scope.submit = function () {
                 if($scope.form.editCalendar.$valid) {

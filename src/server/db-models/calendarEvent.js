@@ -40,6 +40,10 @@ if(!mongoose.models.CalendarEvent) {
     // arbitrary label so we can color different types of events
     label: {
       type: String
+    },
+
+    color: {
+      type: String
     }
   });
 
