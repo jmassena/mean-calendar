@@ -1,11 +1,21 @@
 Calendar todo:
 
+Bugs:
+  Edit event doesn't show selected calendar in select.
+
 
 [*] move the monthly calendar view model code into the monthly calendar directive.
 
 [x] my-calendars list not showing now.
 
 [x] Enable hiding/showing calendar events.
+
+[x] Allow setting colors for calendars.
+
+[x] Make bootstrap selector for calendar edit 'Calendar' select.
+
+[x] Don't put cursor in event title for event edit popup
+
 
 [] put shown calendars at top of list in calendar edit.
 
@@ -14,19 +24,11 @@ Calendar todo:
 Make calendarEvents have a ranges property and act like a cache so we don't fetch events
 if we don't need to.
 
-Allow setting colors for calendars.
-
-
 Enable collapsing of left/right panels.
-
 
 Can we put start/end time on same line?
 
-Make bootstrap selector for calendar edit 'Calendar' select.
-
 Make event text not show | cursor when hovered over. I think this is done by making it not selectable in css.
-
-Don't put cursor in event title for event edit popup
 
 Make full/multi-day events show '<' at start of continued week and '>' at continuing week end.
 

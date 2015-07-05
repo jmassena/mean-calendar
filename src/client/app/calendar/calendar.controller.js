@@ -196,7 +196,7 @@
           for(var i = 0; i < vm.calendars.items.length; i++) {
             if(vm.calendars.items[i]._id === calendarId) {
               vm.calendars.items.splice(i, 1);
-
+              vm.calendars = angular.copy(vm.calendars);
               vm.calendarEventsCache.deleteCalendar(res.data);
               vm.calendarEventsCache = angular.copy(vm.calendarEventsCache);
 
@@ -218,6 +218,7 @@
             GlobalNotificationSvc.addError('Calendar create failed');
           }
           vm.calendars.items.push(res.data);
+          vm.calendars = angular.copy(vm.calendars);
           vm.calendarEventsCache.addCalendar(res.data);
           vm.calendarEventsCache = angular.copy(vm.calendarEventsCache);
         })
@@ -238,7 +239,6 @@
           for(var i = 0; i < vm.calendars.items.length; i++) {
             if(vm.calendars.items[i]._id === cal._id) {
               vm.calendars.items[i] = cal;
-              // reassign object ref so controllers watching the object will see the change.
               vm.calendars = angular.copy(vm.calendars);
               vm.calendarEventsCache = angular.copy(vm.calendarEventsCache);
 
