@@ -3,9 +3,11 @@ Calendar todo:
 
 [*] move the monthly calendar view model code into the monthly calendar directive.
 
-[] my-calendars list not showing now.
+[x] my-calendars list not showing now.
 
-Enable hiding/showing calendar events.
+[x] Enable hiding/showing calendar events.
+
+[] put shown calendars at top of list in calendar edit.
 
 
 

@@ -64,6 +64,92 @@
       vm.calendarEnd = lastDay;
     }
 
+    /* CalendarEvents functions */
+    function getCalendarEvents(calendarIdList, start, end) {
+      var promises = calendarIdList.map(function (calendarId) {
+        return CalendarEventSvc.getEventsList(calendarId, start, end);
+      });
+
+      return $q.all(promises)
+        .then(function (results) {
+          vm.calendarEventsCache.calendars = [];
+          for(var i = 0; i < results.length; i++) {
+            vm.calendarEventsCache.calendars.push(results[i].data);
+          }
+
+          vm.calendarEventsCache = angular.copy(vm.calendarEventsCache);
+        }, function (res) {
+          throw new Error(res.data.message);
+        })
+        .then(null,
+          function (err) {
+            console.error(err);
+            GlobalNotificationSvc.addError(err.message);
+            throw err;
+          });
+    }
+
+    $scope.$on('calendarEvent.create', function (event, calendarId, calendarEvent) {
+      event.stopPropagation();
+      createCalendarEvent(calendarId, calendarEvent);
+    });
+
+    $scope.$on('calendarEvent.update', function (event, calendarId, calendarEvent) {
+      event.stopPropagation();
+      updateCalendarEvent(calendarId, calendarEvent);
+    });
+
+    $scope.$on('calendarEvent.delete', function (event, calendarId, calendarEventId) {
+      event.stopPropagation();
+      deleteCalendarEvent(calendarId, calendarEventId);
+    });
+
+    function createCalendarEvent(calendarId, calendarEvent) {
+      CalendarEventSvc.createEvent(calendarId, calendarEvent)
+        .then(function (res) {
+          vm.calendarEventsCache.addEvent(res.data);
+          // vm.calendarEventsCache.setModifiedDate();
+
+          vm.calendarEventsCache = angular.copy(vm.calendarEventsCache);
+        });
+    }
+
+    function updateCalendarEvent(calendarId, calendarEvent) {
+      CalendarEventSvc.updateEvent(calendarId, calendarEvent)
+        .then(function (res) {
+          vm.calendarEventsCache.replaceEvent(res.data);
+          // vm.calendarEventsCache.setModifiedDate();
+          vm.calendarEventsCache = angular.copy(vm.calendarEventsCache);
+
+        });
+    }
+
+    function deleteCalendarEvent(calendarId, calendarEventId) {
+      CalendarEventSvc.deleteEvent(calendarId, calendarEventId)
+        .then(function (res) {
+          vm.calendarEventsCache.deleteEvent(res.data._id);
+          vm.calendarEventsCache = angular.copy(vm.calendarEventsCache);
+
+        });
+    }
+
+    $scope.$on('calendar.toggleCalendarEvents', function (event, calendar) {
+      event.stopPropagation();
+      calendar.config.showEvents = !calendar.config.showEvents;
+      updateCalendar(calendar);
+    });
+
+    $scope.$on('mycalendar.create', function (event, title) {
+      event.stopPropagation();
+      createCalendar(title);
+    });
+
+    $scope.$on('mycalendar.delete', function (event, calendarId) {
+      event.stopPropagation();
+      deleteCalendar(calendarId);
+    });
+
+    /* Calendars functions */
     function getCalendarsList() {
       return CalendarSvc.getCalendarList()
         .then(function (res) {
@@ -97,89 +183,17 @@
           });
     }
 
-    function getCalendarEvents(calendarIdList, start, end) {
-      var promises = calendarIdList.map(function (calendarId) {
-        return CalendarEventSvc.getEventsList(calendarId, start, end);
-      });
-
-      return $q.all(promises)
-        .then(function (results) {
-          vm.calendarEventsCache.calendars = [];
-          for(var i = 0; i < results.length; i++) {
-            vm.calendarEventsCache.calendars.push(results[i].data);
-          }
-        }, function (res) {
-          throw new Error(res.data.message);
-        })
-        .then(null,
-          function (err) {
-            console.error(err);
-            GlobalNotificationSvc.addError(err.message);
-            throw err;
-          });
-    }
-
-    $scope.$on('calendar.toggleCalendarEvents', function (event, calendar) {
-      event.stopPropagation();
-      calendar.config.showEvents = !calendar.config.showEvents;
-      updateCalendar(calendar);
-    });
-
-    $scope.$on('mycalendar.create', function (event, title) {
-      event.stopPropagation();
-      createCalendar(title);
-    });
-
-    $scope.$on('mycalendar.delete', function (event, calendarId) {
-      event.stopPropagation();
-      deleteCalendar(calendarId);
-    });
-
-    $scope.$on('calendarEvent.create', function (event, calendarId, calendarEvent) {
-      event.stopPropagation();
-      createCalendarEvent(calendarId, calendarEvent);
-    });
-
-    $scope.$on('calendarEvent.update', function (event, calendarId, calendarEvent) {
-      event.stopPropagation();
-      updateCalendarEvent(calendarId, calendarEvent);
-    });
-
-    $scope.$on('calendarEvent.delete', function (event, calendarId, calendarEventId) {
-      event.stopPropagation();
-      deleteCalendarEvent(calendarId, calendarEventId);
-    });
-
-    function createCalendarEvent(calendarId, calendarEvent) {
-      CalendarEventSvc.createEvent(calendarId, calendarEvent)
-        .then(function (res) {
-          vm.calendarEventsCache.addEvent(res.data);
-          vm.calendarEventsCache.setModifiedDate();
-        });
-    }
-
-    function updateCalendarEvent(calendarId, calendarEvent) {
-      CalendarEventSvc.updateEvent(calendarId, calendarEvent)
-        .then(function (res) {
-          vm.calendarEventsCache.replaceEvent(res.data);
-          vm.calendarEventsCache.setModifiedDate();
-        });
-    }
-
-    function deleteCalendarEvent(calendarId, calendarEventId) {
-      CalendarEventSvc.deleteEvent(calendarId, calendarEventId)
-        .then(function (res) {
-          vm.calendarEventsCache.deleteEvent(res.data._id);
-          vm.calendarEventsCache.setModifiedDate();
-        });
-    }
-
     function deleteCalendar(calendarId) {
       CalendarSvc.deleteCalendar(calendarId)
         .then(function (res) {
           for(var i = 0; i < vm.calendars.items.length; i++) {
             if(vm.calendars.items[i]._id === calendarId) {
               vm.calendars.items.splice(i, 1);
+
+              vm.calendarEventsCache.deleteCalendar(res.data);
+              vm.calendarEventsCache = angular.copy(vm.calendarEventsCache);
+
+              return;
             }
           }
         })
@@ -197,6 +211,8 @@
             GlobalNotificationSvc.addError('Calendar create failed');
           }
           vm.calendars.items.push(res.data);
+          vm.calendarEventsCache.addCalendar(res.data);
+          vm.calendarEventsCache = angular.copy(vm.calendarEventsCache);
         })
         .then(null,
           function (res) {
@@ -211,11 +227,14 @@
           if(!res.data) {
             GlobalNotificationSvc.addError('Calendar update failed');
           }
-          // TODO: do i really need to update he local calendar from db when it was changed locally first?
           var cal = res.data;
           for(var i = 0; i < vm.calendars.items.length; i++) {
             if(vm.calendars.items[i]._id === cal._id) {
               vm.calendars.items[i] = cal;
+              // reassign object ref so controllers watching the object will see the change.
+              vm.calendars = angular.copy(vm.calendars);
+              vm.calendarEventsCache = angular.copy(vm.calendarEventsCache);
+
               break;
             }
           }
@@ -247,16 +266,39 @@
     };
 
     function CalendarEventsCache() {
-      this.isInitialized = false;
+      // this.isInitialized = false;
       this.calendars = [];
       this.ranges = [];
-      this.eventsModifiedDate;
+      //this.eventsModifiedDate;
     }
 
-    CalendarEventsCache.prototype.setModifiedDate = function () {
+    CalendarEventsCache.prototype.addCalendar = function (calendar) {
 
-      this.eventsModifiedDate = new Date();
+      this.calendars.push({
+        calendarId: calendar._id,
+        events: []
+      });
+
+      //this.eventsModifiedDate = new Date();
     };
+
+    CalendarEventsCache.prototype.deleteCalendar = function (calendar) {
+
+      for(var i = 0; i < this.calendars.length; i++) {
+        if(this.calendars[i].calendarId === calendar._id) {
+          this.calendars.splice(i, 1);
+          //this.eventsModifiedDate = new Date();
+          return;
+        }
+      }
+
+      //this.eventsModifiedDate = new Date();
+    };
+
+    // CalendarEventsCache.prototype.setModifiedDate = function () {
+    //
+    //   //this.eventsModifiedDate = new Date();
+    // };
 
     CalendarEventsCache.prototype.replaceEvent = function (event) {
 

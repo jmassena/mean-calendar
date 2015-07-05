@@ -75,19 +75,19 @@
           }
         });
 
-      // handle cache modified
-      $scope.$watch(function () {
-          return $scope.calendarEventsCache.eventsModifiedDate;
-        },
-        function (newVal, oldVal) {
-          if(newVal) {
-            createMonthView();
-          }
-        });
+      // // handle cache modified
+      // $scope.$watch(function () {
+      //     return $scope.calendarEventsCache.eventsModifiedDate;
+      //   },
+      //   function (newVal, oldVal) {
+      //     if(newVal) {
+      //       createMonthView();
+      //     }
+      //   });
 
       // handle cache reassigned
       $scope.$watch(function () {
-          return $scope.calendarEventsCache.calendars;
+          return $scope.calendarEventsCache;
         },
         function (newVal, oldVal) {
           if(newVal) {
@@ -173,9 +173,29 @@
     function createMonthView() {
 
       // var allEvents = Array.prototype.concat.apply([], $scope.calendarEventsCache .calendarEvents);
+      // config: {
+      //   showEvents: {
+      //     type: Boolean,
+      //     default: true
+      //   },
+      //
+      //   eventColor: {
+      //     type: String,
+      //     default: '#9A9CFF'
+      //   }
+      // }
+      var calendarsToShow = $scope.calendars.items.filter(function (calendar) {
+          return calendar.config.showEvents;
+        })
+        .map(function (calendar) {
+          return calendar._id;
+        });
+
       var allEvents = [];
       $scope.calendarEventsCache.calendars.forEach(function (calendar) {
-        allEvents = allEvents.concat(calendar.events);
+        if(calendarsToShow.indexOf(calendar.calendarId) > -1) {
+          allEvents = allEvents.concat(calendar.events);
+        }
       });
 
       allEvents.sort(function (a, b) {
