@@ -21,11 +21,9 @@
       return $http.get(calendarUrl.list());
     }
 
-    function createCalendar(title) {
+    function createCalendar(calendar) {
       console.log('calling: ' + calendarUrl.insert());
-      return $http.post(calendarUrl.insert(), {
-        title: title
-      });
+      return $http.post(calendarUrl.insert(), calendar);
     }
 
     function updateCalendar(calendar) {

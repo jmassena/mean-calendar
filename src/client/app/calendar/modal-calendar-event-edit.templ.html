@@ -5,7 +5,10 @@
   <h4 class="modal-title">{{modal.title}}</h4>
 </div>
 
-<form name="eventForm" novalidate ng-submit="submit()" auto-focus>
+<!-- <form name="eventForm" novalidate ng-submit="submit()" ng-attr-auto-focus="newEvent.forUpdate?undefined:true"> -->
+<!-- <form name="eventForm" novalidate ng-submit="submit()" ng-attr-auto-focus="{{false}}"> -->
+<form name="eventForm" novalidate ng-submit="submit()">
+  <!-- <form name="eventForm" novalidate auto-focus ng-submit="submit()"> -->
 
   <div class="modal-body">
     <div class="form-group">
@@ -22,9 +25,9 @@
     </div>
 
     <div class="form-group">
-      <label for="event-all-day">Calendar</label>
-      <select ng-init="newEvent.calendar =  newEvent.calendar || calendarList.items[0]" ng-model="newEvent.calendar"
-      ng-options="item as item.title for item in calendarList.items">
+      <label for="event-calendar">Calendar</label>
+      <select id="event-calendar" class="form-control" ng-init="newEvent.calendar =  newEvent.calendar || calendarList.items[0]"
+      ng-model="newEvent.calendar" ng-options="item as item.title for item in calendarList.items">
       </select>
     </div>
 

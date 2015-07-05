@@ -5,19 +5,26 @@
   <h4 class="modal-title">New Calendar</h4>
 </div>
 
-<form name="form.newCalendar" ng-submit="submit()" auto-focus>
+<form name="form.editCalendar" ng-submit="submit()" auto-focus>
   <div class="modal-body">
-
     <div class="form-group">
       <label for="calendar-title">Name</label>
-      <input id="calendar-title" ng-model="calendarTitle" name="calendarTitle" type="text" class="form-control"
+      <input id="calendar-title" ng-model="editCalendar.title" name="title" type="text" class="form-control"
       placeholder="Calendar Name" required/>
-      <p ng-show="form.newCalendar.calendarTitle.$invalid && form.newCalendar.calendarTitle.$touched" class="invalid-message">Calendar name is required.</p>
+      <p ng-show="form.editCalendar.$submitted && form.editCalendar.title.$invalid" class="invalid-message">Calendar name is required.</p>
+    </div>
+
+    <div class="form-group">
+      <label for="calendar-color">Color</label>
+      <input id="calendar-color" ng-model="editCalendar.config.eventColor" name="eventColor" type="color" class="form-control"
+      placeholder="Calendar Events Color" required default="#a6a6f7" />
+      <p ng-show="form.editCalendar.$submitted && form.editCalendar.eventColor.$invalid" class="invalid-message">Calendar color is required.</p>
     </div>
 
   </div>
+
   <div class="modal-footer">
-    <button type="button" class="btn btn-primary" ng-disabled="form.newCalendar.$invalid" ng-click="submit()">Submit</button>
+    <button type="button" class="btn btn-primary" ng-disabled="form.editCalendar.$invalid" ng-click="submit()">Submit</button>
     <button type="button" class="btn btn-warning" ng-click="cancel()">Cancel</button>
   </div>
 </form>

@@ -139,14 +139,19 @@
       updateCalendar(calendar);
     });
 
-    $scope.$on('mycalendar.create', function (event, title) {
+    $scope.$on('mycalendar.create', function (event, calendar) {
       event.stopPropagation();
-      createCalendar(title);
+      createCalendar(calendar);
     });
 
     $scope.$on('mycalendar.delete', function (event, calendarId) {
       event.stopPropagation();
       deleteCalendar(calendarId);
+    });
+
+    $scope.$on('mycalendar.update', function (event, calendar) {
+      event.stopPropagation();
+      updateCalendar(calendar);
     });
 
     /* Calendars functions */
@@ -158,7 +163,9 @@
             return res.data;
           } else {
             // create a calendar if none exists for the user.
-            return CalendarSvc.createCalendar('My calendar')
+            return CalendarSvc.createCalendar({
+                title: 'My calendar'
+              })
               .then(function (res) {
                 if(res && res.data) {
                   vm.calendars = new Calendars(res.data);
@@ -204,8 +211,8 @@
           });
     }
 
-    function createCalendar(title) {
-      CalendarSvc.createCalendar(title)
+    function createCalendar(calendar) {
+      CalendarSvc.createCalendar(calendar)
         .then(function (res) {
           if(!res.data) {
             GlobalNotificationSvc.addError('Calendar create failed');
