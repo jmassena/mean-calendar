@@ -5,19 +5,14 @@
     </a>
     <ul class="dropdown-menu">
       <li>
-        <!-- <a ng-click="emit('myCalendar.create')" href="#">Create Calendar</a> -->
         <a ng-click="openCreateDialog()" href="#">Create Calendar</a>
-
       </li>
     </ul>
   </div>
 
   <ul class="list-unstyled">
-
-    <li ng-repeat="calendar in calendarList.items">
-
+    <li ng-repeat="calendar in calendars.items">
       <calendar-list-item calendar="calendar"></calendar-list-item>
-
     </li>
   </ul>
 </div>

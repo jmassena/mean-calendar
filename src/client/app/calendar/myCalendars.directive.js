@@ -14,13 +14,13 @@
       restrict: 'E',
       templateUrl: './app/calendar/myCalendars.templ.html',
       scope: {
-        calendarList: '='
+        calendars: '='
       },
 
       controller: function ($scope, $modal) {
 
         $scope.$watch(function () {
-            return $scope.calendarList;
+            return $scope.calendars;
           },
           function (newVal, oldVal) {
             if(newVal !== oldVal) {
@@ -32,18 +32,11 @@
           var modalInstance = $modal.open({
             animation: true,
             size: 'sm',
-            // resolve: {
-            //   modalData: function () {
-            //     return 'hello';
-            //   }
-            // },
             scope: $scope,
 
             templateUrl: './app/calendar/modal-new-calendar.templ.html',
 
             controller: function ($scope, $modalInstance) {
-
-              // $scope.form = {};
 
               $scope.submit = function () {
                 if($scope.form.newCalendar.$valid) {

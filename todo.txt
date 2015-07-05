@@ -3,6 +3,10 @@ Calendar todo:
 
 [*] move the monthly calendar view model code into the monthly calendar directive.
 
+[] my-calendars list not showing now.
+
+Enable hiding/showing calendar events.
+
 
 
 Make calendarEvents have a ranges property and act like a cache so we don't fetch events
@@ -10,7 +14,6 @@ if we don't need to.
 
 Allow setting colors for calendars.
 
-Enable hiding/showing calendar events.
 
 Enable collapsing of left/right panels.
 
