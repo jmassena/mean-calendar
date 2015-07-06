@@ -26,7 +26,7 @@
 
           <td ng-repeat="event in week.eventsAtIndex(eventIdx)" ng-class="{'calendar-event-last-event':event.lastEvent}"
           ng-attr-colspan="{{event.daySpanInWeek>1?event.daySpanInWeek:undefined}}" ng-attr-rowspan="{{event.rowSpan>1?event.rowSpan:undefined}}"
-          ng-click="event.moreEventsCount?openDayEventsDialog($event,event.date):(event.fillerEvent?openCreateDialog($event, event.date):openDetailsDialog($event, event))">
+          ng-click="event.moreEventsCount?openDayEventsDialog($event,event.date):(event.fillerEvent?openCreateDialog($event, event.date):openEditDialog($event, event))">
 
             <div ng-if="!event.fillerEvent && !event.moreEventsCount" style="background-color:{{event.getBackgroundColor()}}; color:{{event.getFontColor()}}"
             class="calendar-event" ng-class="{'calendar-event-all-day':event.isAllDayOrMultiDay()}">{{event.displayString()}}</div>

@@ -64,11 +64,11 @@
 
       if($scope.newEvent.forUpdate) {
 
-        var cal = $scope.calendarList.items.filter(function (item) {
-          return item._id === config.calendarEvent.calendarId;
-        });
-
-        $scope.newEvent.calendar = cal[0];
+        // var cal = $scope.calendarList.items.filter(function (item) {
+        //   return item._id === config.calendarEvent.calendarId;
+        // });
+        //
+        // $scope.newEvent.calendar = cal[0];
         angular.extend($scope.newEvent, config.calendarEvent);
 
         if(!$scope.newEvent.allDay) {
@@ -85,6 +85,15 @@
 
       } else {
         // new event
+
+        for(var i = 0; i < $scope.calendarList.items.length; i++) {
+          // find first calendar showing events.
+          if($scope.calendarList.items[i].config.showEvents) {
+            $scope.newEvent.calendarId = $scope.calendarList.items[i]._id;
+            break;
+          }
+        }
+
         $scope.newEvent.allDay = true;
         var d = config.dayDate ? new Date(config.dayDate) : new Date();
         $scope.newEvent.start = UtilitySvc.startOfDate(d);
@@ -178,7 +187,7 @@
 
           var result = {};
           result.action = $scope.newEvent.forUpdate ? 'update' : 'create';
-          result.calendarId = $scope.newEvent.calendar._id;
+          result.calendarId = $scope.newEvent.calendarId;
           result.calendarEvent = $scope.newEvent;
 
           // if($scope.newEvent.forUpdate) {

@@ -428,7 +428,7 @@
       });
     };
 
-    $scope.openDetailsDialog = function ($event, calendarEvent) {
+    $scope.openEditDialog = function ($event, calendarEvent) {
 
       $event.stopPropagation();
 

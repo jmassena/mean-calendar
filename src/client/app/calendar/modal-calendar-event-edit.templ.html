@@ -26,8 +26,7 @@
 
     <div class="form-group">
       <label for="event-calendar">Calendar</label>
-      <select id="event-calendar" class="form-control" ng-init="newEvent.calendar =  newEvent.calendar || calendarList.items[0]"
-      ng-model="newEvent.calendar" ng-options="item as item.title for item in calendarList.items">
+      <select id="event-calendar" class="form-control" ng-model="newEvent.calendarId" ng-options="item._id as item.title for item in calendarList.items">
       </select>
     </div>
 
