@@ -1,12 +1,15 @@
 Calendar todo:
 
 Bugs:
-  Edit event doesn't show selected calendar in select.
+  [x] Edit event doesn't show selected calendar in select.
+
+  [] color picker doesn't close when calendar edit form submitted. Can we close it on blur?
 
 
-
-[] put shown calendars at top of list in calendar edit.
-
+Features:
+  [] Change mycalendar name to General and set defaultFlag on it in case they make another one called 'general'
+  [] put shown calendars at top of list in calendar edit.
+  [] sort calendars by name but 'General' is at top.
 
 
 Make calendarEvents have a ranges property and act like a cache so we don't fetch events

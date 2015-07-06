@@ -135,7 +135,7 @@
 
     $scope.$on('calendar.toggleCalendarEvents', function (event, calendar) {
       event.stopPropagation();
-      calendar.config.showEvents = !calendar.config.showEvents;
+      calendar.showEvents = !calendar.showEvents;
       updateCalendar(calendar);
     });
 

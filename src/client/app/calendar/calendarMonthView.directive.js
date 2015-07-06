@@ -172,38 +172,14 @@
 
     function createMonthView() {
 
-      // var allEvents = Array.prototype.concat.apply([], $scope.calendarEventsCache .calendarEvents);
-      // config: {
-      //   showEvents: {
-      //     type: Boolean,
-      //     default: true
-      //   },
-      //
-      //   eventColor: {
-      //     type: String,
-      //     default: '#9A9CFF'
-      //   }
-      // }
-
       var calendarsHash = {};
       $scope.calendars.items.forEach(function (calendar) {
         calendarsHash[calendar._id.toString()] = calendar;
       });
 
-      // var calendarsToShow = $scope.calendars.items.filter(function (calendar) {
-      //     return calendar.config.showEvents;
-      //   })
-      //   .map(function (calendar) {
-      //     return calendar._id;
-      //   });
-
       var allEvents = [];
       $scope.calendarEventsCache.calendars.forEach(function (calendar) {
-        // if(calendarsHash[calendar.calendarId].showEvents) {
-        //   allEvents = allEvents.concat(calendar.events);
-        // }
         allEvents = allEvents.concat(calendar.events);
-
       });
 
       allEvents.sort(function (a, b) {
@@ -262,7 +238,7 @@
 
             var event = allEvents[eventIdx];
 
-            if(event.calendar.config.showEvents) {
+            if(event.calendar.showEvents) {
               if(UtilitySvc.dateDiffInDays(event.start, event.end) > 0) {
                 addMultiDayEventToMonth(i, j, event);
               } else {
@@ -520,7 +496,7 @@
 
     EventWrapper.prototype.getBackgroundColor = function () {
       if(this.isAllDayOrMultiDay()) {
-        return this.color || this.calendar.config.eventColor;
+        return this.color || this.calendar.color;
       } else {
         return undefined;
       }
@@ -530,7 +506,7 @@
       if(this.isAllDayOrMultiDay()) {
         return undefined;
       } else {
-        return this.color || this.calendar.config.eventColor;
+        return this.color || this.calendar.color;
       }
     };
 

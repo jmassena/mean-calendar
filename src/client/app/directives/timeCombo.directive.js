@@ -40,7 +40,8 @@
           updateModelTime(time, vm);
 
           vm.timesList.forEach(function (item) {
-            item.selected = item.value.hours === time.hours && item.value.minutes === time.minutes;
+            item.selected = item.value.hours === time.hours && item.value.minutes ===
+              time.minutes;
           });
         };
       },

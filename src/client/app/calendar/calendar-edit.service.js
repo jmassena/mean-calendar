@@ -88,7 +88,7 @@
 
         for(var i = 0; i < $scope.calendarList.items.length; i++) {
           // find first calendar showing events.
-          if($scope.calendarList.items[i].config.showEvents) {
+          if($scope.calendarList.items[i].showEvents) {
             $scope.newEvent.calendarId = $scope.calendarList.items[i]._id;
             break;
           }

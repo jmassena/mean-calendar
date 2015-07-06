@@ -19,16 +19,14 @@ if(!mongoose.models.Calendar) {
       required: true
     },
 
-    config: {
-      showEvents: {
-        type: Boolean,
-        default: true
-      },
+    showEvents: {
+      type: Boolean,
+      default: true
+    },
 
-      eventColor: {
-        type: String,
-        default: '#9A9CFF'
-      }
+    color: {
+      type: String,
+      default: '#9A9CFF'
     }
   });
 

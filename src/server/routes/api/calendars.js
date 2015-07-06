@@ -56,21 +56,12 @@ router.get('/calendars/:calendarId', auth.isAuthenticated(), function (req, res,
 // POST create a new calendar
 router.post('/calendars/', auth.isAuthenticated(), function (req, res, next) {
 
-  //console.log('calling route: ' + 'POST /calendars/');
-
-  var title = req.body.title;
-  var config = req.body.config;
-
-  //console.log(config);
-
   var calendar = new Calendar({
     userId: req.user._id,
-    title: title,
-    config: config
+    title: req.body.title,
+    color: req.body.color,
+    showEvents: req.body.showEvents
   });
-
-  //console.log('new calendar');
-  //console.log(calendar);
 
   calendar.save()
     .then(function (calendar) {
@@ -87,8 +78,6 @@ router.put('/calendars/:calendarId', auth.isAuthenticated(), function (req, res,
   // //console.log('calling route: ' + 'PUT /calendars/:calendarId');
 
   var calendarId = req.params.calendarId;
-  var title = req.body.title;
-  var config = req.body.config;
 
   var where = {
     _id: calendarId,
@@ -97,9 +86,9 @@ router.put('/calendars/:calendarId', auth.isAuthenticated(), function (req, res,
 
   Calendar.findOneAndUpdate(where, {
       $set: {
-        title: title,
-        'config.showEvents': config.showEvents,
-        'config.eventColor': config.eventColor
+        title: req.body.title,
+        showEvents: req.body.showEvents,
+        color: req.body.color
       }
     }, {
       new: true,
