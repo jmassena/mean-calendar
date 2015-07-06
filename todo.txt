@@ -7,9 +7,9 @@ Bugs:
 
 
 Features:
-  [] Change mycalendar name to General and set defaultFlag on it in case they make another one called 'general'
-  [] put shown calendars at top of list in calendar edit.
-  [] sort calendars by name but 'General' is at top.
+  [x] Change mycalendar name to General and set defaultFlag on it in case they make another one called 'general'
+  [x] put shown calendars at top of list in calendar edit.
+  [x] sort calendars by name but 'General' is at top.
 
 
 Make calendarEvents have a ranges property and act like a cache so we don't fetch events

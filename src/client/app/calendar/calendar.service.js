@@ -21,6 +21,13 @@
       return $http.get(calendarUrl.list());
     }
 
+    function createDefaultCalendar() {
+      return createCalendar({
+        title: 'General',
+        isDefault: true
+      });
+    }
+
     function createCalendar(calendar) {
       console.log('calling: ' + calendarUrl.insert());
       return $http.post(calendarUrl.insert(), calendar);
@@ -62,6 +69,7 @@
     return {
       getCalendarList: getCalendarList,
       createCalendar: createCalendar,
+      createDefaultCalendar: createDefaultCalendar,
       updateCalendar: updateCalendar,
       deleteCalendar: deleteCalendar
     };

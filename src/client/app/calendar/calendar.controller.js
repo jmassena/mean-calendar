@@ -163,9 +163,7 @@
             return res.data;
           } else {
             // create a calendar if none exists for the user.
-            return CalendarSvc.createCalendar({
-                title: 'My calendar'
-              })
+            return CalendarSvc.createDefaultCalendar()
               .then(function (res) {
                 if(res && res.data) {
                   vm.calendars = new Calendars(res.data);
@@ -262,7 +260,13 @@
       } else if(!list.length) {
         this.items = [list];
       } else {
-        this.items = list;
+        this.items = list.sort(function (a, b) {
+          if(a.isDefault !== b.isDefault) {
+            return b.isDefault - a.isDefault;
+          }
+
+          return a.title.localeCompare(b.title);
+        });
       }
     }
 
