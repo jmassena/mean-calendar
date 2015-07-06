@@ -13,6 +13,8 @@
 
     /* jshint maxstatements:50 */
     var vm = this;
+    vm.view = 'month';
+    vm.viewDate = new Date();
 
     vm.calendars = new Calendars();
 
@@ -20,14 +22,15 @@
     vm.updateCalendar = updateCalendar;
     vm.getCalendarEvents = getCalendarEvents;
     vm.getCalendarsList = getCalendarsList;
+    vm.addViewMonth = addViewMonth;
+    vm.setViewMonthToday = setViewMonthToday;
+    // vm.getMonthName = getMonthName
 
     activate();
 
     function activate() {
 
       // fetch month view data + calendars
-      vm.view = 'month';
-      vm.viewDate = new Date();
       calculateMonthViewDates(vm.viewDate);
 
       vm.getCalendarsList()
@@ -35,6 +38,27 @@
           return vm.getCalendarEvents(vm.calendars.getIds(), vm.calendarStart,
             vm.calendarEnd);
         });
+    }
+
+    // function getMonthName(dt) {
+    //   return UtilitySvc.getMonthName(dt);
+    // }
+
+    function addViewMonth(months) {
+      vm.viewDate.setMonth(vm.viewDate.getMonth() + months);
+      calculateMonthViewDates(vm.viewDate);
+      cacheCalendarEventsGet();
+    }
+
+    function setViewMonthToday() {
+      vm.viewDate = new Date();
+      calculateMonthViewDates(vm.viewDate);
+      cacheCalendarEventsGet();
+    }
+
+    function cacheCalendarEventsGet() {
+      // TODO: if cache does not have range requested then get it from db and add it.
+      getCalendarEvents(vm.calendars.getIds(), vm.calendarStart, vm.calendarEnd);
     }
 
     function calculateMonthViewDates(dt) {

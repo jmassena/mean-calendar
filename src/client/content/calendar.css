@@ -168,6 +168,19 @@ td, th {
   white-space: nowrap;
 }
 
+.calendar-nav {
+  margin-bottom: 15px;
+}
+
+.month-header {
+  font-size: larger;
+  font-weight: bolder;
+  /*padding-left: 5em;*/
+  /*position: relative;*/
+  white-space: nowrap;
+  margin-left: 3em;
+}
+
 
 /*
 .calendar-more-events:hover {

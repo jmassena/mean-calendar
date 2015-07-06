@@ -2,9 +2,11 @@ Calendar todo:
 
 Next:
   Add calendar navigation control.
-
+    for now just have [today] <prev| |next> 'Month Year'
 
 Features:
+
+  grey background for 'today'
 
   Make calendarEvents have a ranges property and act like a cache so we don't fetch events
   if we don't need to.
