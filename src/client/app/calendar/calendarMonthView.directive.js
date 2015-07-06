@@ -404,13 +404,13 @@
       });
     };
 
-    $scope.openEditDialog = function ($event, calendarEvent) {
+    $scope.openDetailsDialog = function ($event, calendarEvent) {
 
       $event.stopPropagation();
 
       var modalInstance = $modal.open({
         windowClass: 'modal fade in',
-        // size: 'lg',
+        size: 'sm',
         scope: $scope,
         resolve: {
           calendarEvent: function () {

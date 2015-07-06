@@ -1,29 +1,28 @@
 Calendar todo:
 
+Next:
+  Add calendar navigation control.
+
+
+Features:
+
+  Make calendarEvents have a ranges property and act like a cache so we don't fetch events
+  if we don't need to.
+
+  Enable collapsing of left/right panels.
+
+  Make event text not show | cursor when hovered over. I think this is done by making it not selectable in css.
+
+  Make full/multi-day events show '<' at start of continued week and '>' at continuing week end.
+
+  Show previous/next month date number in gray or add background color for all
+     dates and make it different for prev/next.
+
 Bugs:
   color picker doesn't close when calendar edit form submitted.
   might have to use 3rd party picker or static list of colors.
 
 
-Features:
-
-  allow setting color for event.
-
-  Can we put start/end time on same line?
-
-
-
-Make calendarEvents have a ranges property and act like a cache so we don't fetch events
-if we don't need to.
-
-Enable collapsing of left/right panels.
-
-Make event text not show | cursor when hovered over. I think this is done by making it not selectable in css.
-
-Make full/multi-day events show '<' at start of continued week and '>' at continuing week end.
-
-Show previous/next month date number in gray or add background color for all
-   dates and make it different for prev/next.
 
 
 [x] Calendar edit modal should show edit/create in title as appropriate.
@@ -45,3 +44,4 @@ Show previous/next month date number in gray or add background color for all
 [x] Change mycalendar name to General and set defaultFlag on it in case they make another one called 'general'
 [x] put shown calendars at top of list in calendar edit.
 [x] sort calendars by name but 'General' is at top.
+[x] Can we put start/end time on same line?
