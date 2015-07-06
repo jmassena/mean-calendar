@@ -34,6 +34,7 @@
 
               $scope.submit = function () {
                 if($scope.form.editCalendar.$valid) {
+                  $scope.editCalendar.showEvents = true;
                   $scope.$emit('mycalendar.create', $scope.editCalendar);
                   $modalInstance.close();
                 }

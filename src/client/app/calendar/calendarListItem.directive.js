@@ -19,69 +19,62 @@
 
       controller: function ($scope) {
 
-          $scope.delete = function (calendar) {
-            ModalSvc.open({
-                bodyContent: 'Delete "' + calendar.title + '"?'
-              })
-              .result
-              .then(function (okVal) {
-                $scope.$emit('mycalendar.delete', calendar._id);
-              }, function (cancelVal) {
-                console.log('Cancelled modal val: ' + cancelVal);
-              });
-          };
-
-          $scope.edit = function (calendar) {
-            ModalSvc.open({
-                bodyContent: 'Delete "' + calendar.title + '"?'
-              })
-              .result
-              .then(function (okVal) {
-                $scope.$emit('mycalendar.delete', calendar._id);
-              }, function (cancelVal) {
-                console.log('Cancelled modal val: ' + cancelVal);
-              });
-          };
-
-          $scope.openEditDialog = function (calendar) {
-            var modalInstance = $modal.open({
-              animation: true,
-              size: 'sm',
-              scope: $scope,
-              resolve: {
-                calendar: function () {
-                  return calendar;
-                }
-              },
-
-              templateUrl: './app/calendar/modal-new-calendar.templ.html',
-
-              controller: function ($scope, $modalInstance, calendar) {
-
-                $scope.editCalendar = angular.copy(calendar);
-
-                $scope.submit = function () {
-                  if($scope.form.editCalendar.$valid) {
-
-                    $scope.$emit('mycalendar.update', $scope.editCalendar);
-                    $modalInstance.close();
-                  }
-                };
-
-                $scope.cancel = function () {
-                  $modalInstance.dismiss();
-                };
-              }
+        $scope.delete = function (calendar) {
+          ModalSvc.open({
+              bodyContent: 'Delete "' + calendar.title + '"?'
+            })
+            .result
+            .then(function (okVal) {
+              $scope.$emit('mycalendar.delete', calendar._id);
+            }, function (cancelVal) {
+              console.log('Cancelled modal val: ' + cancelVal);
             });
-          };
+        };
 
-        }
-        // ,
-        //
-        // link: function (scope, element, attrs) {
-        //
-        // }
+        $scope.edit = function (calendar) {
+          ModalSvc.open({
+              bodyContent: 'Delete "' + calendar.title + '"?'
+            })
+            .result
+            .then(function (okVal) {
+              $scope.$emit('mycalendar.delete', calendar._id);
+            }, function (cancelVal) {
+              console.log('Cancelled modal val: ' + cancelVal);
+            });
+        };
 
+        $scope.openEditDialog = function (calendar) {
+          var modalInstance = $modal.open({
+            animation: true,
+            size: 'sm',
+            scope: $scope,
+            resolve: {
+              calendar: function () {
+                return calendar;
+              }
+            },
+
+            templateUrl: './app/calendar/modal-new-calendar.templ.html',
+
+            controller: function ($scope, $modalInstance, calendar) {
+
+              $scope.editCalendar = angular.copy(calendar);
+
+              $scope.submit = function () {
+                if($scope.form.editCalendar.$valid) {
+
+                  $scope.$emit('mycalendar.update', $scope.editCalendar);
+                  $modalInstance.close();
+                }
+              };
+
+              $scope.cancel = function () {
+                $modalInstance.dismiss();
+              };
+            }
+          });
+        };
+      }
     };
   }
 

@@ -11,6 +11,8 @@ Features:
   [x] put shown calendars at top of list in calendar edit.
   [x] sort calendars by name but 'General' is at top.
 
+  allow setting color for event.
+
 
 Make calendarEvents have a ranges property and act like a cache so we don't fetch events
 if we don't need to.
