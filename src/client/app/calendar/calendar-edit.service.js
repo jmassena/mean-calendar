@@ -30,7 +30,7 @@
 
       var modalInstance = $modal.open({
         windowClass: 'modal fade in',
-        size: 'sm',
+        // size: 'md',
         resolve: {
           config: function () {
             return {

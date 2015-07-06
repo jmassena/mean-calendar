@@ -410,7 +410,7 @@
 
       var modalInstance = $modal.open({
         windowClass: 'modal fade in',
-        size: 'sm',
+        // size: 'lg',
         scope: $scope,
         resolve: {
           calendarEvent: function () {

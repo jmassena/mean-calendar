@@ -7,57 +7,82 @@
 
 <!-- <form name="eventForm" novalidate ng-submit="submit()" ng-attr-auto-focus="newEvent.forUpdate?undefined:true"> -->
 <!-- <form name="eventForm" novalidate ng-submit="submit()" ng-attr-auto-focus="{{false}}"> -->
-<form name="eventForm" novalidate ng-submit="submit()">
+<form name="eventForm" class="form-horizontal" novalidate ng-submit="submit()">
   <!-- <form name="eventForm" novalidate auto-focus ng-submit="submit()"> -->
 
   <div class="modal-body">
     <div class="form-group">
-      <label for="event-title">Name</label>
-      <input id="event-title" ng-model="newEvent.title" name="title" type="text" class="form-control" placeholder="Event Name"
-      required/>
-      <p ng-show="eventForm.$submitted && eventForm.title.$invalid " class="invalid-message">Event name is required.</p>
+      <label for="event-title" class="control-label col-xs-3">Name</label>
+      <div class="col-xs-9">
+        <input id="event-title" ng-model="newEvent.title" name="title" type="text" class="form-control" placeholder="Event Name"
+        required/>
+        <p ng-show="eventForm.$submitted && eventForm.title.$invalid " class="invalid-message">Event name is required.</p>
+      </div>
     </div>
 
     <div class="form-group">
-      <label for="event-notes">Notes</label>
-      <input id="event-notes" ng-model="newEvent.notes" name="notes" type="text" class="form-control" placeholder="Notes"
-      />
+      <label class="control-label col-xs-3" for="event-notes">Notes</label>
+      <div class="col-xs-9">
+        <input id="event-notes" ng-model="newEvent.notes" name="notes" type="text" class="form-control" placeholder="Notes"
+        />
+      </div>
     </div>
 
     <div class="form-group">
-      <label for="event-calendar">Calendar</label>
-      <select id="event-calendar" class="form-control" ng-model="newEvent.calendarId" ng-options="item._id as item.title for item in calendarList.items">
-      </select>
+      <label class="control-label col-xs-3" for="event-calendar">Calendar</label>
+      <div class="col-xs-9">
+        <select id="event-calendar" class="form-control" ng-model="newEvent.calendarId" ng-options="item._id as item.title for item in calendarList.items">
+        </select>
+      </div>
     </div>
 
     <div>
 
       <div class="form-group">
-        <label for="event-start">Start Date</label>
-        <input type='date' id="event-start" ng-model="newEvent.start" name="start" type="text" class="form-control"
-        placeholder="Start" required/>
-        <p ng-show="eventForm.$submitted && eventForm.start.$invalid " class="invalid-message">Start is required.</p>
+        <label class="control-label col-xs-3" for="event-start">Start</label>
+        <div class="col-xs-9">
+          <input type='date' id="event-start" ng-model="newEvent.start" name="start" type="text" class="form-control"
+          placeholder="Start" required/>
+          <p ng-show="eventForm.$submitted && eventForm.start.$invalid " class="invalid-message">Start is required.</p>
+        </div>
       </div>
       <div class="form-group">
-        <label for="event-end">End Date</label>
-        <input type='date' id="event-end" ng-model="newEvent.end" name="end" type="text" class="form-control"
-        placeholder="End" required/>
-        <p ng-show="eventForm.$submitted && eventForm.end.$invalid" class="invalid-message">End is required.</p>
+        <label class="control-label col-xs-3" for="event-end">End</label>
+        <div class="col-xs-9">
+          <input type='date' id="event-end" ng-model="newEvent.end" name="end" type="text" class="form-control"
+          placeholder="End" required/>
+          <p ng-show="eventForm.$submitted && eventForm.end.$invalid" class="invalid-message">End is required.</p>
+        </div>
       </div>
 
-      <div class="checkbox">
+      <div class="form-group">
+        <label class="control-label col-xs-3" for="event-end">Time</label>
+
+        <div class="col-xs-9 checkbox">
+          <!-- <input type="checkbox" ng-model="newEvent.allDay" name="allDay"> -->
+          <label>
+            <input type="checkbox" ng-model="newEvent.allDay" name="allDay">All Day
+          </label>
+        </div>
+
+        <!-- <div class="checkbox">
         <label>
           <input type="checkbox" ng-model="newEvent.allDay" name="allDay">All Day
         </label>
+      </div> -->
       </div>
 
       <div ng-hide="newEvent.allDay" class="form-group">
-        <label for="event-start-time">Start Time</label>
-        <time-combo id="event-start-time" time="newEvent.startTime" default-time="newEvent.defaultStartTime"></time-combo>
+        <label class="control-label col-xs-3" for="event-start-time">Start</label>
+        <div class="col-xs-9">
+          <time-combo id="event-start-time" time="newEvent.startTime" default-time="newEvent.defaultStartTime"></time-combo>
+        </div>
       </div>
       <div ng-hide="newEvent.allDay" class="form-group">
-        <label for="event-end-time">End Time</label>
-        <time-combo id="event-end-time" time="newEvent.endTime" min-time="newEvent.minEndTime" default-time="newEvent.defaultEndTime"></time-combo>
+        <label class="control-label col-xs-3" for="event-end-time">End</label>
+        <div class="col-xs-9">
+          <time-combo id="event-end-time" time="newEvent.endTime" min-time="newEvent.minEndTime" default-time="newEvent.defaultEndTime"></time-combo>
+        </div>
       </div>
     </div>
 
