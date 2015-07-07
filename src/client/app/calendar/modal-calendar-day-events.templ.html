@@ -8,6 +8,6 @@
 </div>
 
 <div class="modal-body">
-  <div ng-repeat="event in day.getVisibleEvents()" ng-click="openDetails($event, event)" ng-class="{'calendar-event-all-day':(event.allDay|| event.getDurationDays()>0)}"
-  class="calendar-event">{{event.displayString()}}</div>
+  <div ng-repeat="event in day.getVisibleEvents()" ng-click="openDetails($event, event)" style="background-color:{{event.getBackgroundColor()}}; color:{{event.getFontColor()}}"
+  accesskey="" ng-class="{'calendar-event-all-day':event.isAllDayOrMultiDay()}" class="calendar-event">{{event.displayString()}}</div>
 </div>

@@ -37,14 +37,14 @@ if(!mongoose.models.CalendarEvent) {
       type: String
     },
 
-    // arbitrary label so we can color different types of events
-    label: {
-      type: String
-    },
-
-    color: {
-      type: String
-    }
+    // // arbitrary label so we can color different types of events
+    // label: {
+    //   type: String
+    // },
+    //
+    // color: {
+    //   type: String
+    // }
   });
 
   // we will always look up events by calendarId + userId at least.

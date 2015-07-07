@@ -151,17 +151,23 @@
               }
 
               // now add 'more events' and then filler;
-              day.events.push({
-                moreEventsCount: removedEventsCount,
-                date: day.date
-              });
 
-              day.events.push({
-                fillerEvent: true,
-                lastEvent: true,
-                rowSpan: week.eventRowsCount - day.events.length,
-                date: day.date
-              });
+              // day.events.push({
+              //   moreEventsCount: removedEventsCount,
+              //   date: day.date,
+              //   isForToday: day.isToday()
+              // });
+              day.setMoreEvents(removedEventsCount);
+
+              // day.events.push({
+              //   fillerEvent: true,
+              //   lastEvent: true,
+              //   rowSpan: week.eventRowsCount - day.events.length,
+              //   date: day.date,
+              //   isForToday: day.isToday()
+              // });
+              day.setLastFillerEvent(week.eventRowsCount - day.events.length);
+
             }
           });
         }
@@ -204,6 +210,11 @@
       var nextDay;
       var i;
 
+      var tmp = new Date($scope.viewStart);
+      tmp.setDate(tmp.getDate() + 15);
+
+      var monthIndex = tmp.getMonth();
+
       // create week object with days
       for(var d = new Date($scope.viewStart); d < $scope.viewEnd; d.setDate(d.getDate() +
           1)) {
@@ -215,6 +226,7 @@
         }
 
         day = new Day(d);
+        day.isInMonth = monthIndex === day.date.getMonth();
         week.days.push(day);
       }
 
@@ -268,20 +280,30 @@
           week.eventRowIndexes.push(i);
         }
 
+        // add last filler event to each day
         week.days.forEach(function (day) {
-          day.events.push({
-            fillerEvent: true,
-            lastEvent: true,
-            rowSpan: week.eventRowsCount - day.events.length,
-            date: day.date
-          });
 
+          day.setLastFillerEvent(week.eventRowsCount - day.events.length);
+
+          // day.events.push({
+          //   fillerEvent: true,
+          //   lastEvent: true,
+          //   rowSpan: week.eventRowsCount - day.events.length,
+          //   date: day.date,
+          //   isForToday: day.isToday()
+          // });
+
+          // add spacer events for gaps between events
           for(var i = 0; i < day.events.length; i++) {
             if(!day.events[i]) {
-              day.events[i] = {
-                fillerEvent: true,
-                date: day.date
-              };
+
+              day.setFillerEventAt(i);
+
+              // day.events[i] = {
+              //   fillerEvent: true,
+              //   date: day.date,
+              //   isForToday: day.isToday()
+              // };
             }
           }
         });
@@ -325,12 +347,15 @@
         if(i === dayIdx) {
           wrappedEvent.isEventStart = true;
           wrappedEvent.isInterWeekContinuation = wrappedEvent.start < week.days[0].date;
+          wrappedEvent.isInterWeekContinued = wrappedEvent.end >= startNextWeek;
           wrappedEvent.daySpanInWeek = Math.min(UtilitySvc.dateDiffInDays(day.date, wrappedEvent.end) +
             1,
             7 - dayIdx);
-        } else if(i === week.length - 1) {
-          wrappedEvent.isInterWeekContinued = wrappedEvent.end >= startNextWeek;
-        } else {
+        }
+        //  else if(i === week.length - 1) {
+        //   wrappedEvent.isInterWeekContinued = wrappedEvent.end >= startNextWeek;
+        // }
+        else {
           wrappedEvent.isIntraWeekContinuation = true;
         }
 
@@ -592,6 +617,11 @@
       this.events = [];
     }
 
+    Day.prototype.isToday = function () {
+
+      return this.date.toDateString() === new Date().toDateString();
+    };
+
     Day.prototype.getVisibleEvents = function () {
 
       var ret = this.events.filter(function (event) {
@@ -617,10 +647,41 @@
       return this.setEvent(calendarEvent, idx);
     };
 
+    Day.prototype.setMoreEvents = function (moreEventsCount) {
+
+      this.events.push({
+        moreEventsCount: moreEventsCount,
+        date: this.date,
+        isForToday: this.isToday()
+      });
+    };
+
+    Day.prototype.setFillerEventAt = function (idx) {
+
+      this.events[idx] = {
+        fillerEvent: true,
+        date: this.date,
+        isForToday: this.isToday()
+      };
+    };
+
+    Day.prototype.setLastFillerEvent = function (rowSpan) {
+
+      this.events.push({
+        fillerEvent: true,
+        lastEvent: true,
+        rowSpan: rowSpan,
+        date: this.date,
+        isForToday: this.isToday()
+      });
+    };
+
     Day.prototype.setEvent = function (calendarEvent, idx) {
 
       var wrappedEvent = new EventWrapper(calendarEvent);
       wrappedEvent.index = idx;
+      wrappedEvent.isForToday = this.isToday();
+
       this.events[idx] = wrappedEvent;
       return wrappedEvent;
     };

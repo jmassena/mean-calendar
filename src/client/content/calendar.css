@@ -5,13 +5,25 @@
 .my-calendars-header {
   position: relative;
   display: inline-block;
-  background-color: #eeeeff;
+  /*background-color: #eeeeff;*/
 }
+
+
+/* list calendars horizontally when left + main-content don't fit on screen */
 
 @media screen and (max-width: 992px) {
   .my-calendars-container>ul>li {
     display: inline-block;
     margin-right: 1em;
+  }
+}
+
+
+/* don't let left panel grow too large on wide screens */
+
+@media screen and (min-width: 1020px) {
+  .calendar-left-panel {
+    max-width: 175px;
   }
 }
 
@@ -29,6 +41,16 @@
   border-radius: 4px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
 }
+
+
+/*.calendar-left-panel {
+  max-width: 175px;
+}*/
+
+
+/*.calendar-main-content {
+  padding-right: 50px;
+}*/
 
 .calendar-item-color-block {
   width: 10px;
@@ -126,6 +148,10 @@ td, th {
   white-space: nowrap;
 }
 
+.calendar-non-month-day {
+  color: #aaaaaa;
+}
+
 
 /*
   calendar-events
@@ -145,7 +171,20 @@ td, th {
 .calendar-event-all-day {
   /*background-color: #eeeeff;*/
   border: solid 1px #aaa;
+  /*color: #ffffff;*/
+  color: black;
+  /*font-size: 1em;*/
   /*border-left: 0px;*/
+}
+
+.calendar-event-continuation {
+  border-top-left-radius: .7em;
+  border-bottom-left-radius: .7em;
+}
+
+.calendar-event-continued {
+  border-top-right-radius: .7em;
+  border-bottom-right-radius: .7em;
 }
 
 .calendar-event-last-event {
@@ -166,6 +205,10 @@ td, th {
   font-size: smaller;
   cursor: pointer;
   white-space: nowrap;
+}
+
+.calendar-day-today {
+  background-color: rgb(249, 255, 155);
 }
 
 .calendar-nav {

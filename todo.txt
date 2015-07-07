@@ -1,40 +1,18 @@
 Calendar todo:
 
 Next:
-  Add calendar navigation control.
-    for now just have [today] <prev| |next> 'Month Year'
 
 Features:
-
-  grey background for 'today'
-
-  Make calendarEvents have a ranges property and act like a cache so we don't fetch events
-  if we don't need to.
-
-  Enable collapsing of left/right panels.
-
-  Make event text not show | cursor when hovered over. I think this is done by making it not selectable in css.
-
-  Make full/multi-day events show '<' at start of continued week and '>' at continuing week end.
-
-  Show previous/next month date number in gray or add background color for all
-     dates and make it different for prev/next.
-
-Bugs:
-  color picker doesn't close when calendar edit form submitted.
-  might have to use 3rd party picker or static list of colors.
-
-
 
 
 [x] Calendar edit modal should show edit/create in title as appropriate.
 [x] Clicking on event shows event details with 'edit', 'delete' links.
-[x]When events don't fit into calendar view show 'more events' element.
+[x] When events don't fit into calendar view show 'more events' element.
 [x] create popup for more events
   - show popup with all events listed as links to the normal edit/delete popup.
   - show all days first with border then show partials with time/title.
 [x] To do that I might need to make a directive for the calendar edit modal.
-[x]Make partial day events show no background and no border in text.
+[x] Make partial day events show no background and no border in text.
 [x] Remove l/r borders from day names table.
 [x] Add small left margin for day numbers.
 [x] move the monthly calendar view model code into the monthly calendar directive.
@@ -47,3 +25,8 @@ Bugs:
 [x] put shown calendars at top of list in calendar edit.
 [x] sort calendars by name but 'General' is at top.
 [x] Can we put start/end time on same line?
+[x] Add calendar navigation control.
+[x] grey background for 'today'
+[x] Show previous/next month date number in gray or add background color for all
+   dates and make it different for prev/next.
+[x] Make full/multi-day events show '<' at start of continued week and '>' at continuing week end.
