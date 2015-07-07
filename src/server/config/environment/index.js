@@ -9,7 +9,7 @@ var all = {
 
   port: process.env.PORT || 3000,
 
-  logLevel: process.env.NODE_LOG_LEVEL,
+  // logLevel: process.env.NODE_LOG_LEVEL,
 
   mongoose: {}
 

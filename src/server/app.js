@@ -10,18 +10,18 @@ var passport = require('passport');
 
 var config = require('./config/environment');
 
-// configure dev logger
-if(config.logLevel === 'none') {
-  require('./common/myLog.js').config({
-    logFlag: false,
-    logTypesAllowed: []
-  });
-} else {
-  require('./common/myLog.js').config({
-    logFlag: true,
-    logTypesAllowed: ['Success', 'Error', 'Info']
-  });
-}
+// // configure dev logger
+// if(config.logLevel === 'none') {
+//   require('./common/myLog.js').config({
+//     logFlag: false,
+//     logTypesAllowed: []
+//   });
+// } else {
+//   require('./common/myLog.js').config({
+//     logFlag: true,
+//     logTypesAllowed: ['Success', 'Error', 'Info']
+//   });
+// }
 
 require('./config/mongoose').connect();
 
@@ -55,6 +55,6 @@ console.log('About to start node');
 console.log('NODE_ENV: ' + config.env);
 console.log('PORT: ' + config.port);
 console.log('DB: ' + config.mongoose.dbName);
-console.log('NODE_LOG_LEVEL: ' + config.logLevel);
+// console.log('NODE_LOG_LEVEL: ' + config.logLevel);
 
 module.exports = app;
