@@ -8,9 +8,6 @@ var SessionModel = require('../db-models/session.js');
 var exceptionMessages = require('../common/exceptionMessages.js');
 
 function get(id) {
-  // return log.promise('get',
-  //   SessionModel.findById(id).exec());
-  //
   return SessionModel.findById(id).exec();
 }
 
@@ -22,11 +19,6 @@ function create(session) {
   delete copy._id;
 
   var s = new SessionModel(copy);
-  // log.info('create', 'saving session for: ', s);
-
-  // return log.promise('create',
-  //   s.save());
-  //
   return s.save();
 }
 
@@ -39,20 +31,6 @@ function update(session) {
     promise.reject(error);
     return promise;
   }
-
-  // return log.promise('update',
-  //   get(session._id)
-  //   .then(function (data) {
-  //     if(!data) {
-  //       var error = exceptionMessages.createError('object_not_found_by_id', 'Session', 'Session Id: ' + session._id);
-  //       error.statusCode = 404; // not found
-  //       throw error;
-  //     } else {
-  //       data.createdDateTime = session.createdDateTime;
-  //       data.expireDateTime = session.expireDateTime;
-  //       return data.save();
-  //     }
-  //   }));
 
   return get(session._id)
     .then(function (data) {
@@ -70,13 +48,6 @@ function update(session) {
 }
 
 function deleteOld(olderThanThisDateTime) {
-  // return log.promise('deleteOld',
-  //   SessionModel.find({
-  //     'expireDateTime': {
-  //       $lt: olderThanThisDateTime
-  //     }
-  //   })
-  //   .remove().exec());
 
   return SessionModel.find({
       'expireDateTime': {

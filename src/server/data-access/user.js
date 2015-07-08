@@ -1,7 +1,6 @@
 'use strict';
 
 var mongoose = require('mongoose');
-var uniqueValidator = require('mongoose-unique-validator');
 var _ = require('underscore');
 
 var UserModel = require('../db-models/user.js');
@@ -17,10 +16,6 @@ function get(condition) {
 }
 
 function getById(userId) {
-  // return log.promise('getById',
-  //   UserModel.findById(userId)
-  //   .select(userFields)
-  //   .exec());
 
   return UserModel.findById(userId)
     .select(userFields)
@@ -39,19 +34,6 @@ function create(user) {
 
 function deleteById(userId) {
 
-  // return log.promise('deleteById',
-  //   UserModel.findOneAndRemove({
-  //     _id: userId
-  //   }).exec()
-  //   .then(function (data) {
-  //     if(!data) {
-  //       var error = exceptionMessages.createError('user_not_found_for_id', null, 'id: ' + userId);
-  //       error.statusCode = 404;
-  //       throw error;
-  //     }
-  //     return data;
-  //   }));
-
   return UserModel.findOneAndRemove({
       _id: userId
     }).exec()
@@ -66,29 +48,6 @@ function deleteById(userId) {
 }
 
 function saveUser(user) {
-  // return log.promise('saveUser',
-  //   user.save()
-  // ).then(function (data) {
-  //     return data;
-  //   },
-  //
-  //   function (err) {
-  //
-  //     if(!err.exceptionInfo && err.message === 'User validation failed') {
-  //       var customError;
-  //
-  //       var errMsg = Object.keys(err.errors).map(function (key) {
-  //         return err.errors[key].message.replace(/Path /g, '').replace(/`/g, '');
-  //       }).join('. ');
-  //       customError = exceptionMessages.createError('validation_failure', errMsg);
-  //       customError.statusCode = 422; //422 Unprocessable Entity
-  //       throw customError;
-  //     } else {
-  //       // not a validation error!
-  //       throw err;
-  //     }
-  //   }
-  // );
 
   return user.save()
     .then(function (data) {
@@ -121,22 +80,6 @@ function update(user) {
     promise.reject(error);
     return promise;
   }
-
-  // return log.promise('update',
-  //   getById(user._id)
-  //   .then(function (dbUser) {
-  //     if(!dbUser) {
-  //       var error = exceptionMessages.createError('user_not_found_for_id', null, 'id: ' + user._id);
-  //       error.statusCode = 404;
-  //       throw error;
-  //     }
-  //     // only these fields should be updated
-  //     ['userName', 'email', 'firstName', 'lastName'].forEach(function (val) {
-  //       dbUser[val] = user[val];
-  //     });
-  //     return saveUser(dbUser);
-  //   })
-  // );
 
   return getById(user._id)
     .then(function (dbUser) {

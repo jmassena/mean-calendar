@@ -1,32 +1,29 @@
 'use strict';
 
-var express = require('express');
-var router = express.Router();
-// var mongoose = require('mongoose');
-// var Calendar = require('../../db-models/calendar.js');
 var CalendarEvent = require('../../db-models/calendarEvent.js');
-// var routeUtils = require('../routeUtils.js');
 var exceptionMessages = require('../../common/exceptionMessages.js');
 var auth = require('../../auth/auth.service');
+
+var express = require('express');
+var router = express.Router();
 var path = require('path');
+
+router.get('/calendars/:calendarId/events', auth.isAuthenticated(), list);
+router.get('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), get);
+router.post('/calendars/:calendarId/events', auth.isAuthenticated(), post);
+router.put('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), put);
+router.delete('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), del);
 
 module.exports = router;
 
-// GET get events for calendar
-router.get('/calendars/:calendarId/events/', auth.isAuthenticated(), function (req, res, next) {
-
-  //console.log('calling route: ' + 'GET /calendars/events');
+function list(req, res, next) {
 
   var calendarId = req.params.calendarId;
 
   var queryStart = req.query.start;
   var queryEnd = req.query.end;
 
-  // //console.log('query start: ' + queryStart);
-  // //console.log('query end: ' + queryEnd);
-
   if(!queryStart && !queryEnd) {
-    // //console.log('Find events with no date range');
     return CalendarEvent.find({
         calendarId: calendarId,
         userId: req.user.id
@@ -82,13 +79,9 @@ router.get('/calendars/:calendarId/events/', auth.isAuthenticated(), function (r
       });
     }, next);
 
-});
+}
 
-// GET one event for calendar
-router.get('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), function (req, res,
-  next) {
-
-  //console.log('calling route: ' + 'GET /calendars/events');
+function get(req, res, next) {
 
   var calendarId = req.params.calendarId;
   var eventId = req.params.eventId;
@@ -110,12 +103,9 @@ router.get('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), fun
       res.status(200).json(event);
     }, next);
 
-});
+}
 
-// POST create a new calendar event
-router.post('/calendars/:calendarId/events/', auth.isAuthenticated(), function (req, res, next) {
-
-  //console.log('calling route: ' + 'POST /calendars/events');
+function post(req, res, next) {
 
   var calendarId = req.params.calendarId;
 
@@ -134,13 +124,9 @@ router.post('/calendars/:calendarId/events/', auth.isAuthenticated(), function (
     })
     .then(null, next);
 
-});
+}
 
-// PUT update a calendar event
-router.put('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), function (req, res,
-  next) {
-
-  //console.log('calling route: ' + 'PUT /calendars/events/:eventId');
+function put(req, res, next) {
 
   var calendarId = req.params.calendarId;
   var eventId = req.params.eventId;
@@ -148,22 +134,13 @@ router.put('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), fun
 
   var where = {
     _id: eventId,
-    // in case we move event from one calendar to another we can't look it up by calendar id
-    // calendarId: calendarId,
     userId: userId
   };
-
-  // TODO: check if start/end dates are valid dates also.
-  // I think date will be type string.
 
   var start = Date.parse(req.body.start);
   var end = Date.parse(req.body.end);
 
   if(!start || !end) {
-
-    //console.log('start: ' + start + ' orig: ' + req.body.start);
-    //console.log('end: ' + end + ' orig: ' + req.body.end);
-
     return next(exceptionMessages.error('system_validation_failure', null,
       'Start and end dates are required'));
   }
@@ -192,14 +169,9 @@ router.put('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), fun
     .then(function (event) {
       res.status(200).json(event);
     }, next);
-});
+}
 
-// DELETE calendar event
-router.delete('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), function (req,
-  res,
-  next) {
-
-  //console.log('calling route: ' + 'DELETE /calendars/events/:eventId');
+function del(req, res, next) {
 
   var calendarId = req.params.calendarId;
   var eventId = req.params.eventId;
@@ -221,4 +193,4 @@ router.delete('/calendars/:calendarId/events/:eventId', auth.isAuthenticated(), 
     .then(function (event) {
       res.status(200).json(event);
     }, next);
-});
+}

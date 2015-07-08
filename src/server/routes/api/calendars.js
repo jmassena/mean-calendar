@@ -1,23 +1,22 @@
 'use strict';
 
-var express = require('express');
-var router = express.Router();
-// var mongoose = require('mongoose');
 var Calendar = require('../../db-models/calendar.js');
-// var routeUtils = require('../routeUtils.js');
 var exceptionMessages = require('../../common/exceptionMessages.js');
 var auth = require('../../auth/auth.service');
+
+var express = require('express');
+var router = express.Router();
 var path = require('path');
+
+router.get('/calendars/', auth.isAuthenticated(), list);
+router.get('/calendars/:calendarId', auth.isAuthenticated(), get);
+router.post('/calendars/', auth.isAuthenticated(), post);
+router.put('/calendars/:calendarId', auth.isAuthenticated(), put);
+router.delete('/calendars/:calendarId', auth.isAuthenticated(), del);
 
 module.exports = router;
 
-// list
-// GET list for user
-router.get('/calendars/', auth.isAuthenticated(), function (req, res, next) {
-
-  //console.log('calling route: ' + 'GET /calendars/');
-
-  var userId = req.params.userId;
+function list(req, res, next) {
 
   var query = Calendar.find({
     userId: req.user._id
@@ -27,13 +26,9 @@ router.get('/calendars/', auth.isAuthenticated(), function (req, res, next) {
     .then(function (calendars) {
       res.status(200).json(calendars);
     }, next);
-});
+}
 
-// get
-// GET one
-router.get('/calendars/:calendarId', auth.isAuthenticated(), function (req, res, next) {
-
-  //console.log('calling route: ' + 'GET /calendars/:calendarId');
+function get(req, res, next) {
 
   var calendarId = req.params.calendarId;
 
@@ -50,11 +45,9 @@ router.get('/calendars/:calendarId', auth.isAuthenticated(), function (req, res,
       res.status(200).json(calendar);
     })
     .then(null, next);
-});
+}
 
-// insert
-// POST create a new calendar
-router.post('/calendars/', auth.isAuthenticated(), function (req, res, next) {
+function post(req, res, next) {
 
   var calendar = new Calendar({
     userId: req.user._id,
@@ -69,13 +62,9 @@ router.post('/calendars/', auth.isAuthenticated(), function (req, res, next) {
       res.status(201).json(calendar);
     })
     .then(null, next);
-});
+}
 
-// update
-// PUT update a calendar. will update title, config
-router.put('/calendars/:calendarId', auth.isAuthenticated(), function (req, res, next) {
-
-  // //console.log('calling route: ' + 'PUT /calendars/:calendarId');
+function put(req, res, next) {
 
   var calendarId = req.params.calendarId;
 
@@ -104,13 +93,9 @@ router.put('/calendars/:calendarId', auth.isAuthenticated(), function (req, res,
     .then(function (calendar) {
       res.status(200).json(calendar);
     }, next);
+}
 
-});
-
-// delete
-router.delete('/calendars/:calendarId', auth.isAuthenticated(), function (req, res, next) {
-
-  // //console.log('calling route: ' + 'DELETE /calendars/:calendarId');
+function del(req, res, next) {
 
   var calendarId = req.params.calendarId;
 
@@ -129,5 +114,4 @@ router.delete('/calendars/:calendarId', auth.isAuthenticated(), function (req, r
     .then(function (calendar) {
       res.status(200).json(calendar);
     }, next);
-
-});
+}

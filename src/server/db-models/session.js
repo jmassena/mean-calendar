@@ -1,7 +1,6 @@
 'use strict';
 
 var mongoose = require('mongoose');
-// var uniqueValidator = require('mongoose-unique-validator');
 var idvalidator = require('mongoose-id-validator');
 
 var ObjectId = mongoose.Schema.Types.ObjectId;
@@ -45,10 +44,6 @@ if(!mongoose.models.Session) {
     }
 
   });
-
-  // sessionSchema.plugin(uniqueValidator, {
-  //   message: 'Error, {PATH} {VALUE} must be unique.'
-  // });
 
   // valdidate that user with specified id really exists
   sessionSchema.plugin(idvalidator, {

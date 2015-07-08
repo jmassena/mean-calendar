@@ -2,34 +2,39 @@
 /*jslint node: true */
 'use strict';
 
-// var express = require('express');
-// var router = express.Router();
-// var mongoose = require('mongoose');
-var User = require('../../../data-access/user.js');
-var routeUtils = require('../../routeUtils.js');
-var exceptionMessages = require('../../../common/exceptionMessages.js');
-// var auth = require('../../auth/auth.service');
-var path = require('path');
+var User = require('../../data-access/user.js');
+var routeUtils = require('../routeUtils.js');
+var exceptionMessages = require('../../common/exceptionMessages.js');
+var auth = require('../../auth/auth.service');
 
-//router.get('/users', auth.isAuthenticated(),
-module.exports.list = function (req, res, next) {
+var path = require('path');
+var express = require('express');
+var router = express.Router();
+
+router.get('/users', auth.isAuthenticated(), list);
+router.get('/users/me', auth.isAuthenticated(), getMe);
+router.get('/users/:userId', auth.isAuthenticated(), get);
+router.post('/users/', post);
+router.put('/users/:userId', auth.isAuthenticated(), put);
+router.delete('/users/:userId', auth.isAuthenticated(), del);
+
+module.exports = router;
+
+function list(req, res, next) {
+
   User.get({})
     .then(routeUtils.onSuccess(200, res),
       routeUtils.onError(500, res));
-};
+}
 
-// GET me
-//router.get('/users/me', auth.isAuthenticated(), function (req, res, next) {
-module.exports.getMe = function (req, res, next) {
+function getMe(req, res, next) {
 
   User.getById(req.user._id)
     .then(routeUtils.onSuccess(200, res),
       routeUtils.onError(500, res));
-};
+}
 
-// Get One
-//router.get('/users/:userId', auth.isAuthenticated(), function (req, res, next) {
-module.exports.get = function (req, res, next) {
+function get(req, res, next) {
 
   var userId = req.params.userId;
   User.getById(userId)
@@ -43,15 +48,9 @@ module.exports.get = function (req, res, next) {
       return res.status(200).json(data);
     })
     .then(null, next);
+}
 
-};
-
-// POST
-// router.post('/users', function (req, res, next) {
-
-module.exports.post = function (req, res, next) {
-
-  // console.log('/users post: creating user');
+function post(req, res, next) {
 
   User.create(req.body) // 201: created
     .then(function (data) {
@@ -61,23 +60,18 @@ module.exports.post = function (req, res, next) {
           .json(data);
       },
       routeUtils.onError(500, res));
-};
+}
 
-// DELETE
-//router.delete('/users/:userId', auth.isAuthenticated(), function (req, res, next) {
-module.exports.delete = function (req, res, next) {
+function del(req, res, next) {
 
   var userId = req.params.userId;
 
   User.deleteById(userId) //204 No Content
     .then(routeUtils.onSuccess(204, res),
       routeUtils.onError(500, res));
-};
+}
 
-// PUT
-//router.put('/users/:userId', auth.isAuthenticated(), function (req, res, next) {
-
-module.exports.put = function (req, res, next) {
+function put(req, res, next) {
 
   var userId = req.params.userId;
   var user = req.body;
@@ -95,8 +89,5 @@ module.exports.put = function (req, res, next) {
   User.update(user)
     .then(routeUtils.onSuccess(200, res),
       routeUtils.onError(500, res));
-  return;
 
-};
-
-// module.exports = router;
+}
