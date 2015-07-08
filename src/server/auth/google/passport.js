@@ -2,7 +2,8 @@
 
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-var userDAL = require('../../data-access/user.js');
+// var userDAL = require('../../data-access/user.js');
+var User = require('../../db-models/user.js');
 var config = require('../../config/environment');
 
 module.exports.setup = function () {
@@ -15,18 +16,18 @@ module.exports.setup = function () {
     },
     function (accessToken, refreshToken, profile, done) {
 
-      console.log('google called back!');
+      // console.log('google called back!');
 
-      userDAL.Model.findOne({
+      User.findOne({
           'google.id': profile.id
         })
         .exec()
         .then(function (user) {
           if(!user) {
-            console.log('creating new user for google user');
-            console.log(profile._json);
+            // console.log('creating new user for google user');
+            // console.log(profile._json);
 
-            user = new userDAL.Model({
+            user = new User({
               firstName: profile.name.givenName,
               lastName: profile.name.familyName,
               provider: 'google',
@@ -35,17 +36,17 @@ module.exports.setup = function () {
 
             return user.save();
           } else {
-            console.log('found existin user for google user');
+            // console.log('found existin user for google user');
             return user;
           }
         })
         .then(function (user) {
-          console.log('new user created/found for google user');
+          // console.log('new user created/found for google user');
           return done(null, user);
 
         }, function (err) {
-          console.log('error while creating new user for google user');
-          console.log(err);
+          // console.log('error while creating new user for google user');
+          // console.log(err);
           return done(err);
         });
     }

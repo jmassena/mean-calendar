@@ -72,7 +72,7 @@ function list(req, res, next) {
     })
     .then(function (events) {
 
-      console.log(events);
+      // console.log(events);
       res.status(200).json({
         calendarId: calendarId,
         events: events
@@ -114,7 +114,7 @@ function post(req, res, next) {
   calendarEvent.calendarId = calendarId;
   calendarEvent.userId = req.user.id;
 
-  console.log(calendarEvent);
+  // console.log(calendarEvent);
 
   calendarEvent.save()
     .then(function (event) {

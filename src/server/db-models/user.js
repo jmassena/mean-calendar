@@ -3,8 +3,9 @@
 var exceptionMessages = require('../common/exceptionMessages.js');
 var mongoose = require('mongoose');
 var crypto = require('crypto');
-// var uniqueValidator = require('mongoose-unique-validator');
-// var _ = require('underscore');
+var _ = require('underscore');
+
+var userFields = 'userId userName email firstName lastName fullName';
 
 var providers = ['google', 'local'];
 
@@ -138,6 +139,70 @@ if(!mongoose.models.User) {
       }
       var salt = new Buffer(this.salt, 'base64');
       return crypto.pbkdf2Sync(password, salt, 10000, 64).toString('base64');
+    }
+  };
+
+  UserSchema.statics = {
+    get: function (condition) {
+      return this.find(condition)
+        .select(userFields).exec();
+    },
+    getById: function (userId) {
+
+      return this.findById(userId)
+        .select(userFields)
+        .exec();
+    },
+
+    saveUser: function (user) {
+
+      return user.save()
+        .then(function (data) {
+            return data;
+          },
+          function (err) {
+            if(!err.exceptionInfo && err.message === 'User validation failed') {
+              var customError;
+
+              var errMsg = Object.keys(err.errors).map(function (key) {
+                return err.errors[key].message.replace(/Path /g, '').replace(/`/g, '');
+              }).join('. ');
+              customError = exceptionMessages.createError('validation_failure', errMsg);
+              customError.statusCode = 422; //422 Unprocessable Entity
+              throw customError;
+            } else {
+              // not a validation error!
+              throw err;
+            }
+          }
+        );
+    },
+    updateUser: function (user) {
+
+      if(!user._id) {
+        var promise = new mongoose.Promise();
+        var error = exceptionMessages.createError('cannot_update_object_with_null_id',
+          'User update');
+        error.statusCode = 422; //422 Unprocessable Entity
+        promise.reject(error);
+        return promise;
+      }
+
+      return this.getById(user._id)
+        .then(function (dbUser) {
+          if(!dbUser) {
+            var error = exceptionMessages.createError('user_not_found_for_id', null, 'id: ' +
+              user._id);
+            error.statusCode = 404;
+            throw error;
+          }
+          // only these fields should be updated
+          ['userName', 'email', 'firstName', 'lastName'].forEach(function (val) {
+            dbUser[val] = user[val];
+          });
+          return this.saveUser(dbUser);
+        });
+
     }
   };
 

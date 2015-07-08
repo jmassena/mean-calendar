@@ -2,7 +2,8 @@
 /*jslint node: true */
 'use strict';
 
-var User = require('../../data-access/user.js');
+// var User = require('../../data-access/user.js');
+var User = require('../../db-models/user.js');
 var routeUtils = require('../routeUtils.js');
 var exceptionMessages = require('../../common/exceptionMessages.js');
 var auth = require('../../auth/auth.service');
@@ -52,7 +53,9 @@ function get(req, res, next) {
 
 function post(req, res, next) {
 
-  User.create(req.body) // 201: created
+  var newUser = new User(req.body);
+
+  User.saveUser(newUser)
     .then(function (data) {
         res
           .location(path.join(req.baseUrl, 'users', data._id.toString()))
@@ -66,7 +69,10 @@ function del(req, res, next) {
 
   var userId = req.params.userId;
 
-  User.deleteById(userId) //204 No Content
+  return User.findByIdAndRemove({
+      _id: userId
+    }).exec()
+    // User.deleteById(userId) //204 No Content
     .then(routeUtils.onSuccess(204, res),
       routeUtils.onError(500, res));
 }
@@ -86,7 +92,7 @@ function put(req, res, next) {
     return next(error);
   }
 
-  User.update(user)
+  User.updateUser(user)
     .then(routeUtils.onSuccess(200, res),
       routeUtils.onError(500, res));
 

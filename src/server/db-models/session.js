@@ -2,31 +2,13 @@
 
 var mongoose = require('mongoose');
 var idvalidator = require('mongoose-id-validator');
+var exceptionMessages = require('../common/exceptionMessages.js');
 
 var ObjectId = mongoose.Schema.Types.ObjectId;
 
-// unit tests use this require multiple times so can have this model already defined
-// which gives an error
-// TODO: a better way might be to delete the model before each test so it will be re-created.
-// I have seen it done like this before but I want to use existing schema.
-
-// beforeEach(function(done) {
-//     if (mongoose.connection.models['User']) {
-//         delete mongoose.connection.models['User'];
-//     }
-//
-//     User = mongoose.model('User', mongoose.Schema({
-//        ...
-//     });
-//
-//     User.remove({}).exec().then(function () {
-//         done();
-//     });
-// });
-
 if(!mongoose.models.Session) {
 
-  var sessionSchema = new mongoose.Schema({
+  var SessionSchema = new mongoose.Schema({
 
     userId: {
       type: ObjectId,
@@ -46,11 +28,49 @@ if(!mongoose.models.Session) {
   });
 
   // valdidate that user with specified id really exists
-  sessionSchema.plugin(idvalidator, {
+  SessionSchema.plugin(idvalidator, {
     message: 'Error, Invalid {PATH} {VALUE}.'
   });
 
-  mongoose.model('Session', sessionSchema);
+  SessionSchema.statics = {
+    updateSession: function (session) {
+      if(!session._id) {
+        var promise = new mongoose.Promise();
+        var error = exceptionMessages.createError('cannot_update_object_with_null_id',
+          'Session update',
+          'Session update');
+        error.statusCode = 422; //422 Unprocessable Entity
+        promise.reject(error);
+        return promise;
+      }
+
+      return this.findById(session._id)
+        .then(function (foundSession) {
+          if(!foundSession) {
+            var error = exceptionMessages.createError('object_not_found_by_id', 'Session',
+              'Session Id: ' + session._id);
+            error.statusCode = 404; // not found
+            throw error;
+          } else {
+            foundSession.createdDateTime = session.createdDateTime;
+            foundSession.expireDateTime = session.expireDateTime;
+            return foundSession.save();
+          }
+        });
+    },
+
+    deleteOldSessions: function (maxDateTime) {
+
+      return this.find({
+          'expireDateTime': {
+            $lt: maxDateTime
+          }
+        })
+        .remove().exec();
+    }
+  };
+
+  mongoose.model('Session', SessionSchema);
 }
 
 module.exports = mongoose.model('Session');

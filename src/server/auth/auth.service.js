@@ -6,7 +6,8 @@ var config = require('../config/environment');
 var jwt = require('jsonwebtoken');
 var expressJwt = require('express-jwt');
 var compose = require('composable-middleware');
-var userDAL = require('../data-access/user.js');
+// var userDAL = require('../data-access/user.js');
+var User = require('../db-models/user.js');
 
 var validateJwt = expressJwt({
   secret: config.secrets.tokenSecret
@@ -20,7 +21,6 @@ function isAuthenticated() {
   return compose()
     // Validate jwt
     .use(function (req, res, next) {
-      //console.log('running isAuthenticated');
 
       // allow access_token to be passed through query parameter as well
       if(req.query && req.query.hasOwnProperty('access_token')) {
@@ -29,27 +29,16 @@ function isAuthenticated() {
       }
 
       //console.log('isAuthenticated request Authorization');
-      console.log('token header: ' + req.headers.authorization);
+      // console.log('token header: ' + req.headers.authorization);
       validateJwt(req, res, next);
     })
     // Attach user to request
     .use(function (req, res, next) {
-      console.log('running isAuthenticated.getById');
+      // console.log('running isAuthenticated.getById');
 
-      console.log('authentication getting user ' + req.user._id);
+      // console.log('authentication getting user ' + req.user._id);
 
-      // userDAL.getById(req.user._id)
-      //   .then(function (user) {
-      //     if(!user) {
-      //       return res.sendStatus(404);
-      //     }
-      //     req.user = user;
-      //     next();
-      //   }, function (err) {
-      //     return next(err);
-      //   });
-
-      userDAL.Model.findById(req.user._id)
+      User.findById(req.user._id)
         .select('-hashedPassword -salt')
         .exec()
         .then(function (user) {
@@ -103,14 +92,10 @@ function setTokenCookie(req, res) {
       message: 'Error occurred'
     });
   }
-  //console.log('setting cookie');
 
   var token = signToken(req.user._id);
   res.cookie('token', token);
   console.log('token: ' + token);
-  // res.status(200).json({
-  //   token: token
-  // });
   res.redirect('/');
 }
 
