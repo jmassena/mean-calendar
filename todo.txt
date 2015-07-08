@@ -2,7 +2,27 @@ Calendar todo:
 
 Next:
 
+  code cleanup.
+
+    Restructure routes so api can be seen from index file.
+    Get rid of data-access files and move functionality to models.
+      - Users, Session (do we even use session?)
+
+    Get rid of console.log statements.
+
+  tests.
+
+  deploy to heroku.
+    after initial deploy find heroku url and authorize it for google oauth.
+
+
+
+
 Features:
+
+  successful login takes you to calendar page.
+  not logged in user is taken to log in page which has link to registration page.
+
 
 
 [x] Calendar edit modal should show edit/create in title as appropriate.

@@ -4,7 +4,9 @@
   angular.module('app')
     .controller('LoginCtrl', LoginCtrl);
 
-  LoginCtrl.$inject = ['$rootScope', '$state', 'AuthSvc', 'GlobalNotificationSvc', '$timeout', '$window'];
+  LoginCtrl.$inject = ['$rootScope', '$state', 'AuthSvc', 'GlobalNotificationSvc', '$timeout',
+    '$window'
+  ];
 
   function LoginCtrl($rootScope, $state, AuthSvc, GlobalNotificationSvc, $timeout, $window) {
 
@@ -23,7 +25,7 @@
 
     function activate() {
       if(AuthSvc.isLoggedIn()) {
-        $state.go('welcome');
+        $state.go('calendar');
       }
 
       var test = true;
@@ -51,13 +53,13 @@
     }
 
     function redirectAfterLogin() {
-      $state.go('welcome');
-      GlobalNotificationSvc.add({
-        message: 'Login Successful',
-        type: 'success',
-        nextState: true,
-        timeout: 2000
-      });
+      $state.go('calendar');
+      // GlobalNotificationSvc.add({
+      //   message: 'Login Successful',
+      //   type: 'success',
+      //   nextState: true,
+      //   timeout: 2000
+      // });
     }
 
   }

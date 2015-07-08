@@ -44,6 +44,7 @@
         // http://stackoverflow.com/questions/20647483/angularjs-injecting-service-into-a-http-interceptor-circular-dependency
 
         var AuthSvc = $injector.get('AuthSvc');
+
         var token = AuthSvc.getToken();
         if(token) {
           config.headers.Authorization = 'Bearer ' + token;
@@ -59,6 +60,15 @@
           console.error(response);
         }
         return response || $q.when(response);
+      },
+      responseError: function (rejection) {
+        if(rejection.status === 401) {
+          console.error('Not authorized: ');
+          console.error(rejection);
+
+          $injector.get('$state').go('login');
+        }
+        return rejection || $q.when(rejection);
       }
     };
   }

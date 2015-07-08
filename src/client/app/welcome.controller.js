@@ -4,9 +4,9 @@
   angular.module('app')
     .controller('WelcomeCtrl', WelcomeCtrl);
 
-  WelcomeCtrl.$inject = ['AuthSvc'];
+  WelcomeCtrl.$inject = ['AuthSvc', '$state'];
 
-  function WelcomeCtrl(AuthSvc) {
+  function WelcomeCtrl(AuthSvc, $state) {
 
     var vm = this;
     vm.user = null;
@@ -18,13 +18,17 @@
       var t = AuthSvc.getToken();
 
       if(AuthSvc.isLoggedIn()) {
-        AuthSvc.getCurrentUser()
-          .then(function (user) {
-              vm.user = user;
-            },
-            function (res) {
-              console.error(res);
-            });
+
+        // AuthSvc.getCurrentUser()
+        //   .then(function (user) {
+        //       vm.user = user;
+        //     },
+        //     function (res) {
+        //       console.error(res);
+        //     });
+
+        $state.go('calendar');
+
       }
     }
   }
