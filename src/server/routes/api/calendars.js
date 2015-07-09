@@ -49,8 +49,8 @@ function get(req, res, next) {
 
 function post(req, res, next) {
 
-  console.log('posted calendar');
-  console.log(req.body);
+  // console.log('posted calendar');
+  // console.log(req.body);
 
   var newCalendar = new Calendar({
     userId: req.user._id,
@@ -67,13 +67,13 @@ function post(req, res, next) {
     newCalendar.color = req.body.color;
   }
 
-  console.log('new calendar');
-  console.log(newCalendar);
+  // console.log('new calendar');
+  // console.log(newCalendar);
 
   newCalendar.save()
     .then(function (calendar) {
-      console.log('created calendar');
-      console.log(calendar);
+      // console.log('created calendar');
+      // console.log(calendar);
       res.location(path.join(req.baseUrl, 'calendars', calendar._id.toString()));
       res.status(201).json(calendar);
     })
