@@ -1,37 +1,62 @@
-
-
-function EventsCache(){
-  this.isInitialized = false;
-  this.events = [];
-  this.calendars = [];
-  this.ranges = [];
-  this.eventsModifiedDate;
-  this.calendarsModifiedDate;
-}
-
-EventsCache.prototype.hasEventsInRange(start,end){
-  // range end is exclusive
-  for(var i = 0; i < this.ranges.length; i++){
-    if(this.ranges[i].start <= start && this.ranges[i].end >= end){
-      return true;
-    }
-  }
-  return false;
-}
-
-/*Events*/
-EventsCache.prototype.getEvents(start,end){
-
-}
-
-EventsCache.prototype.createEvent(calendarEvent){
-
-}
-
-EventsCache.prototype.updateEvent(calendarEvent, oldEventStart){
-
-}
-
-EventsCache.prototype.deleteEvent(calendarEvent, oldEventStart){
-
-}
+//
+//
+// if(user.email) {
+//   user.email = user.email.toLowerCase();
+// }
+// // if(user.email){
+// //   user.email = user.email.toLowerCase();
+// // }
+//
+// // check for dup username or email
+// return mongoose.model('User').findOne({
+//     $and: [{
+//       _id: {
+//         $ne: user._id
+//       }
+//     }, {
+//       $or: [{
+//         userName: user.userName
+//       }, {
+//         email: user.email
+//       }]
+//     }]
+//   })
+//   .exec()
+//   .then(function (dupUser) {
+//     if(dupUser) {
+//       var errors = [];
+//       if(dupUser.email === user.email) {
+//         throw exceptionMessages.error('email_not_available');
+//       } else {
+//         throw exceptionMessages.error('username_not_available');
+//       }
+//     }
+//   })
+//   .then(function () {
+//     // if no dups then do update
+//     var where = {
+//       _id: user._id
+//     };
+//
+//     console.log('find user: ' + user._id);
+//     return mongoose.model('User').findOneAndUpdate(where, {
+//         $set: {
+//           userName: user.userName,
+//           email: user.email,
+//           firstName: user.firstName,
+//           lastName: user.lastName
+//         }
+//       }, {
+//         new: true,
+//         runValidators: true
+//       })
+//       .then(function (updatedUser) {
+//         console.log('updatedUser: ' + updatedUser);
+//         if(!updatedUser) {
+//           throw exceptionMessages.error('user_not_found_for_id', null, JSON.stringify(
+//             where));
+//         }
+//
+//         return updatedUser;
+//       });
+//   });

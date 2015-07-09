@@ -5,7 +5,7 @@ var mongoose = require('mongoose');
 var crypto = require('crypto');
 var _ = require('underscore');
 
-var userFields = 'userId userName email firstName lastName fullName';
+// var userFields = 'userId userName email firstName lastName fullName';
 
 var providers = ['google', 'local'];
 
@@ -19,9 +19,15 @@ if(!mongoose.models.User) {
       maxlength: 100
     },
 
-    hashedPassword: String,
+    hashedPassword: {
+      type: String,
+      select: false // must be explicitly selected to be returned
+    },
 
-    salt: String,
+    salt: {
+      type: String,
+      select: false // must be explicitly selected to be returned
+    },
 
     email: {
       type: String,
@@ -143,16 +149,6 @@ if(!mongoose.models.User) {
   };
 
   UserSchema.statics = {
-    get: function (condition) {
-      return this.find(condition)
-        .select(userFields).exec();
-    },
-    getById: function (userId) {
-
-      return this.findById(userId)
-        .select(userFields)
-        .exec();
-    },
 
     saveUser: function (user) {
 
@@ -177,6 +173,7 @@ if(!mongoose.models.User) {
           }
         );
     },
+
     updateUser: function (user) {
 
       if(!user._id) {
@@ -188,19 +185,21 @@ if(!mongoose.models.User) {
         return promise;
       }
 
-      return this.getById(user._id)
+      return mongoose.model('User')
+        .findById(user._id, '+hashedPassword +salt')
         .then(function (dbUser) {
+
           if(!dbUser) {
             var error = exceptionMessages.createError('user_not_found_for_id', null, 'id: ' +
               user._id);
-            error.statusCode = 404;
             throw error;
           }
+
           // only these fields should be updated
           ['userName', 'email', 'firstName', 'lastName'].forEach(function (val) {
             dbUser[val] = user[val];
           });
-          return this.saveUser(dbUser);
+          return mongoose.model('User').saveUser(dbUser);
         });
 
     }
@@ -214,12 +213,13 @@ function validateUnique(path, pathDesc) {
   UserSchema
     .path(path)
     .validate(function (value, respond) {
-      if(value) {
+      if(value && this) {
 
         var whereClause = {};
         whereClause[path] = value;
 
         var self = this;
+
         this.constructor.findOne(whereClause, function (err, data) {
           if(err) {
             throw err;
@@ -230,6 +230,8 @@ function validateUnique(path, pathDesc) {
           }
           respond(true);
         });
+      } else {
+        respond(true);
       }
     }, 'The ' + (pathDesc || path) + ' is already in use');
 }

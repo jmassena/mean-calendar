@@ -16,17 +16,12 @@ module.exports.setup = function () {
     },
     function (accessToken, refreshToken, profile, done) {
 
-      // console.log('google called back!');
-
       User.findOne({
           'google.id': profile.id
         })
         .exec()
         .then(function (user) {
           if(!user) {
-            // console.log('creating new user for google user');
-            // console.log(profile._json);
-
             user = new User({
               firstName: profile.name.givenName,
               lastName: profile.name.familyName,
@@ -36,17 +31,13 @@ module.exports.setup = function () {
 
             return user.save();
           } else {
-            // console.log('found existin user for google user');
             return user;
           }
         })
         .then(function (user) {
-          // console.log('new user created/found for google user');
           return done(null, user);
 
         }, function (err) {
-          // console.log('error while creating new user for google user');
-          // console.log(err);
           return done(err);
         });
     }

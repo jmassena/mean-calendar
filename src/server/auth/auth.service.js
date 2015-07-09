@@ -39,7 +39,7 @@ function isAuthenticated() {
       // console.log('authentication getting user ' + req.user._id);
 
       User.findById(req.user._id)
-        .select('-hashedPassword -salt')
+        // .select('-hashedPassword -salt')
         .exec()
         .then(function (user) {
           if(!user) {
