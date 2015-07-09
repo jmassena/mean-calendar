@@ -29,7 +29,10 @@ function list(req, res, next) {
         userId: req.user.id
       })
       .then(function (events) {
-        res.status(200).json(events);
+        res.status(200).json({
+          calendarId: calendarId,
+          events: events
+        });
       }, next);
   }
 
@@ -56,6 +59,9 @@ function list(req, res, next) {
   } else {
     queryEnd = new Date(8640000000000000);
   }
+
+  // console.log('start: ' + queryStart);
+  // console.log('end: ' + queryEnd);
 
   CalendarEvent.find({
       calendarId: calendarId,
