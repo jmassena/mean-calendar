@@ -12,7 +12,7 @@
     // emits events to communicate with calendar controller for setting color or deactivating calendar.
     return {
       restrict: 'E',
-      templateUrl: './app/calendar/calendarListItem.templ.html',
+      templateUrl: './app/calendar/my-calendars/calendarListItem.templ.html',
       scope: {
         calendar: '='
       },
@@ -54,7 +54,7 @@
               }
             },
 
-            templateUrl: './app/calendar/modal-new-calendar.templ.html',
+            templateUrl: './app/calendar/modals/modal-new-calendar.templ.html',
 
             controller: function ($scope, $modalInstance, calendar) {
 

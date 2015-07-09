@@ -41,7 +41,7 @@
             };
           }
         },
-        templateUrl: './app/calendar/modal-calendar-event-edit.templ.html',
+        templateUrl: './app/calendar/modals/modal-calendar-event-edit.templ.html',
 
         controller: ModalCtrl
       });

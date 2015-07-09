@@ -49,15 +49,31 @@ function get(req, res, next) {
 
 function post(req, res, next) {
 
-  var calendar = new Calendar({
+  console.log('posted calendar');
+  console.log(req.body);
+
+  var newCalendar = new Calendar({
     userId: req.user._id,
     title: req.body.title,
-    color: req.body.color,
-    showEvents: req.body.showEvents
+
+    isDefault: req.body.isDefault
   });
 
-  calendar.save()
+  if(req.body.showEvents !== undefined) {
+    newCalendar.showEvents = req.body.showEvents;
+  }
+
+  if(req.body.color !== undefined) {
+    newCalendar.color = req.body.color;
+  }
+
+  console.log('new calendar');
+  console.log(newCalendar);
+
+  newCalendar.save()
     .then(function (calendar) {
+      console.log('created calendar');
+      console.log(calendar);
       res.location(path.join(req.baseUrl, 'calendars', calendar._id.toString()));
       res.status(201).json(calendar);
     })

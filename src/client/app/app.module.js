@@ -53,22 +53,22 @@
         }
         return config;
       },
-      response: function (response) {
-        if(response.status === 401) {
+      response: function (res) {
+        if(res.status === 401) {
           // handle the case where the user is not authenticated
           console.error('Not authorized: ');
-          console.error(response);
+          console.error(res);
         }
-        return response || $q.when(response);
+        return res || $q.when(res);
       },
-      responseError: function (rejection) {
-        if(rejection.status === 401) {
+      responseError: function (res) {
+        if(res.status === 401) {
           console.error('Not authorized: ');
-          console.error(rejection);
+          console.error(res);
 
           $injector.get('$state').go('login');
         }
-        return rejection || $q.when(rejection);
+        return $q.reject(res);
       }
     };
   }

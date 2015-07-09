@@ -31,8 +31,10 @@
     <div class="form-group">
       <label class="control-label col-xs-3" for="event-calendar">Calendar</label>
       <div class="col-xs-9">
-        <select id="event-calendar" class="form-control" ng-model="newEvent.calendarId" ng-options="item._id as item.title for item in calendarList.items">
+        <select id="event-calendar" name="calendar" class="form-control" ng-model="newEvent.calendarId" required
+        ng-options="item._id as item.title for item in calendarList.items">
         </select>
+        <p ng-show="eventForm.$submitted && eventForm.calendar.$invalid " class="invalid-message">Event calendar is required.</p>
       </div>
     </div>
 

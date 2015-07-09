@@ -26,7 +26,8 @@ if(!mongoose.models.Calendar) {
 
     color: {
       type: String,
-      default: '#9A9CFF'
+      default: '#9A9CFF',
+      required: true
     },
 
     isDefault: {

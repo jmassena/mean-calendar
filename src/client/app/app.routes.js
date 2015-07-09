@@ -23,7 +23,7 @@
             controllerAs: 'vm'
           },
           'main-content': {
-            templateUrl: 'app/welcome.html',
+            templateUrl: 'app/welcome/welcome.html',
             controller: 'WelcomeCtrl',
             controllerAs: 'vm'
           }
@@ -38,7 +38,7 @@
             controllerAs: 'vm'
           },
           'main-content': {
-            templateUrl: 'app/login.html',
+            templateUrl: 'app/login/login.html',
             controller: 'LoginCtrl',
             controllerAs: 'vm'
           }
@@ -53,7 +53,7 @@
             controllerAs: 'vm'
           },
           'main-content': {
-            templateUrl: 'app/registration.html',
+            templateUrl: 'app/registration/registration.html',
             controller: 'RegistrationCtrl',
             controllerAs: 'vm'
           }
