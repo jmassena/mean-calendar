@@ -37,7 +37,7 @@ describe('User Model', function () {
       lastName: 'user'
     });
 
-    User.saveUser(user)
+    user.customSave()
       .then(function (data) {
         return User.find({
           userName: user.userName
@@ -66,7 +66,7 @@ describe('User Model', function () {
       lastName: 'user2'
     });
 
-    User.saveUser(newUser)
+    newUser.customSave()
       .then(function (data) {
         return User.find({
           userName: newUser.userName
@@ -115,7 +115,7 @@ describe('User Model', function () {
     };
     updateUser._id = user._id;
 
-    User.updateUser(updateUser)
+    User.customUpdate(updateUser)
       .then(function (data) {
         return User.findOne({
           _id: user._id
@@ -140,7 +140,7 @@ describe('User Model', function () {
   it('should return 404 error if user not found when updating', function (done) {
     var fakeId = '554b8b066d4e5b5c11aa0000';
     user._id = fakeId;
-    User.updateUser(user)
+    User.customUpdate(user)
       .then(function (data) {
         expect('this should not be called').to.equal('');
       }, function (err) {
@@ -155,7 +155,7 @@ describe('User Model', function () {
 
   it('should return 422 error if no _id set updating', function (done) {
     user._id = null;
-    User.updateUser(user)
+    User.customUpdate(user)
       .then(function (data) {
         expect('this should not be called').to.equal('');
       }, function (err) {

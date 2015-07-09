@@ -23,14 +23,14 @@ module.exports = router;
 
 function list(req, res, next) {
 
-  User.get({})
+  User.find({})
     .then(routeUtils.onSuccess(200, res),
       routeUtils.onError(500, res));
 }
 
 function getMe(req, res, next) {
 
-  User.getById(req.user._id)
+  User.findById(req.user._id)
     .then(routeUtils.onSuccess(200, res),
       routeUtils.onError(500, res));
 }
@@ -38,10 +38,10 @@ function getMe(req, res, next) {
 function get(req, res, next) {
 
   var userId = req.params.userId;
-  User.getById(userId)
+  User.findById(userId)
     .then(function (data) {
       if(!data) {
-        var error = exceptionMessages.createError('user_not_found_for_id');
+        var error = exceptionMessages.error('user_not_found_for_id');
         error.statusCode = 404;
         throw error;
       }
@@ -55,14 +55,14 @@ function post(req, res, next) {
 
   var newUser = new User(req.body);
 
-  User.saveUser(newUser)
+  newUser.customSave()
     .then(function (data) {
         res
           .location(path.join(req.baseUrl, 'users', data._id.toString()))
           .status(201)
           .json(data);
       },
-      routeUtils.onError(500, res));
+      next);
 }
 
 function del(req, res, next) {
@@ -71,10 +71,16 @@ function del(req, res, next) {
 
   return User.findByIdAndRemove({
       _id: userId
-    }).exec()
-    // User.deleteById(userId) //204 No Content
+    })
+    .exec()
+    .then(function (removedUser) {
+      if(!removedUser) {
+        throw exceptionMessages.error('user_not_found_for_id', null, 'id: ' +
+          userId);
+      }
+    })
     .then(routeUtils.onSuccess(204, res),
-      routeUtils.onError(500, res));
+      next);
 }
 
 function put(req, res, next) {
@@ -87,13 +93,13 @@ function put(req, res, next) {
   } else if(user._id.toString() !== userId.toString()) {
 
     var debugInfo = 'object _id: ' + user._id + ' path id: ' + userId;
-    var error = exceptionMessages.createError('path_id_differs_from_object_id', null, debugInfo);
+    var error = exceptionMessages.error('path_id_differs_from_object_id', null, debugInfo);
     error.statusCode = 422;
     return next(error);
   }
 
-  User.updateUser(user)
+  User.customUpdate(user)
     .then(routeUtils.onSuccess(200, res),
-      routeUtils.onError(500, res));
+      next);
 
 }

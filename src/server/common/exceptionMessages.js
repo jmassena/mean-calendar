@@ -17,7 +17,8 @@ var code;
 // system exceptions: 1000 - 2000
 type = exceptionMessages.exceptionTypes.system;
 addInfo(1000, type, 500, 'system_error', 'Error occurred', 'Unanticipated exception occurred');
-addInfo(1001, type, 500, 'exception_type_not_found', 'Error occurred', 'Invalid exception type code');
+addInfo(1001, type, 500, 'exception_type_not_found', 'Error occurred',
+  'Invalid exception type code');
 addInfo(1002, type, 422, 'path_id_differs_from_object_id', 'Error occurred',
   'Id in path is different from id in object');
 
@@ -31,8 +32,10 @@ addInfo(2003, type, 422, 'system_validation_failure', 'Validation failed');
 
 // user exceptions: 3000 - 4000
 type = exceptionMessages.exceptionTypes.user;
-addInfo(3000, type, 404, 'username_or_password_not_found', 'Username and password combination not found');
-addInfo(3001, type, 409, 'username_not_available', 'Username is associated with an existing account');
+addInfo(3000, type, 404, 'username_or_password_not_found',
+  'Username and password combination not found');
+addInfo(3001, type, 409, 'username_not_available',
+  'Username is associated with an existing account');
 addInfo(3002, type, 409, 'email_not_available', 'Email is associated with an existing account');
 addInfo(3002, type, 409, 'email_and_username_not_available',
   'Email and user-name are associated with an existing account');
@@ -41,7 +44,8 @@ addInfo(3004, type, 404, 'object_not_found_by_id', 'Object not found', 'Invalid 
 addInfo(3005, type, 404, 'object_not_found', 'Object not found');
 addInfo(3006, type, 422, 'validation_failure', 'Validation failed');
 addInfo(3007, type, 403, 'permission_denied', 'Permission denied');
-addInfo(3008, type, 403, 'admin_role_required', 'Permission denied. Admin role required to access the resource');
+addInfo(3008, type, 403, 'admin_role_required',
+  'Permission denied. Admin role required to access the resource');
 
 exceptionMessages.error = function (code, userInfo, debugInfo) {
   return exceptionMessages.createError(code, userInfo, debugInfo);

@@ -31,25 +31,23 @@ module.exports.errorHandler = function (err, req, res, next) {
     code = 422;
   }
 
-  if(err.exceptionInfo &&
-    (err.exceptionInfo.type === exceptionMessages.exceptionTypes.user || isDevOrTest)) {
+  if(err.exceptionMessages && err.exceptionMessages.type === exceptionMessages.exceptionTypes.user) {
+    // (err.exceptionMessages.type === exceptionMessages.exceptionTypes.user || isDevOrTest)) {
+
     // only show user type exception messages to user unless we are in dev/test
-    msg = err.exceptionInfo.message;
+    msg = err.exceptionMessages.message;
 
   } else if(code === 401) {
     msg = err.message;
   } else {
     // Log exception but don't pass real message to web.
     msg = 'Error occurred';
-    console.error(err);
   }
 
-  if(isDevOrTest) {
-    console.log(err);
-    if(err.stack) {
-      stack = err.stack;
-      console.log(err.stack);
-    }
+  console.log(err);
+  if(err.stack) {
+    stack = err.stack;
+    console.log(err.stack);
   }
 
   return res

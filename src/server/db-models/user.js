@@ -145,14 +145,11 @@ if(!mongoose.models.User) {
       }
       var salt = new Buffer(this.salt, 'base64');
       return crypto.pbkdf2Sync(password, salt, 10000, 64).toString('base64');
-    }
-  };
+    },
 
-  UserSchema.statics = {
+    customSave: function () {
 
-    saveUser: function (user) {
-
-      return user.save()
+      return this.save()
         .then(function (data) {
             return data;
           },
@@ -173,8 +170,11 @@ if(!mongoose.models.User) {
           }
         );
     },
+  };
 
-    updateUser: function (user) {
+  UserSchema.statics = {
+
+    customUpdate: function (user) {
 
       if(!user._id) {
         var promise = new mongoose.Promise();
@@ -199,7 +199,8 @@ if(!mongoose.models.User) {
           ['userName', 'email', 'firstName', 'lastName'].forEach(function (val) {
             dbUser[val] = user[val];
           });
-          return mongoose.model('User').saveUser(dbUser);
+
+          return dbUser.customSave();
         });
 
     }
