@@ -16,11 +16,20 @@
   angular.module('app')
     .run(run);
 
-  run.$inject = ['$rootScope', 'GlobalNotificationSvc'];
+  run.$inject = ['$rootScope', '$state', 'GlobalNotificationSvc', 'AuthSvc'];
 
-  function run($rootScope, GlobalNotificationSvc) {
+  function run($rootScope, $state, GlobalNotificationSvc, AuthSvc) {
     $rootScope.$on('$stateChangeSuccess', function () {
       GlobalNotificationSvc.setNextSignal(true);
+    });
+
+    // if user not logged in redirect to login page
+    $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+      if(!AuthSvc.isLoggedIn() && ['login', 'register'].indexOf(toState.name) ===
+        -1) {
+        event.preventDefault();
+        $state.go('login');
+      }
     });
   }
 
@@ -78,7 +87,6 @@
   function noResponseInterceptor($q) {
     return {
       responseError: function (res) {
-        // console.log(res);
         if(res.status === 0 && res.data == null) {
           res.data = {};
           res.data.message = 'The site is not available right now.';
