@@ -5,26 +5,23 @@
     .controller('CalendarCtrl', CalendarCtrl);
 
   CalendarCtrl.$inject = ['$scope', '$q', 'CalendarSvc', 'CalendarEventSvc',
-    'GlobalNotificationSvc', 'UtilitySvc'
+    'GlobalNotificationSvc', 'UtilitySvc', 'CalendarEventsCache', 'Calendars'
   ];
 
   function CalendarCtrl($scope, $q, CalendarSvc, CalendarEventSvc, GlobalNotificationSvc,
-    UtilitySvc) {
+    UtilitySvc, CalendarEventsCache, Calendars) {
 
     /* jshint maxstatements:50 */
     var vm = this;
     vm.view = 'month';
     vm.viewDate = new Date();
-
     vm.calendars = new Calendars();
-
     vm.calendarEventsCache = new CalendarEventsCache();
     vm.updateCalendar = updateCalendar;
     vm.getCalendarEvents = getCalendarEvents;
     vm.getCalendarsList = getCalendarsList;
     vm.addViewMonth = addViewMonth;
     vm.setViewMonthToday = setViewMonthToday;
-    // vm.getMonthName = getMonthName
 
     activate();
 
@@ -39,10 +36,6 @@
             vm.calendarEnd);
         });
     }
-
-    // function getMonthName(dt) {
-    //   return UtilitySvc.getMonthName(dt);
-    // }
 
     function addViewMonth(months) {
       vm.viewDate.setMonth(vm.viewDate.getMonth() + months);
@@ -95,19 +88,19 @@
       });
 
       return $q.all(promises)
-        .then(function (results) {
+        .then(function (responses) {
           vm.calendarEventsCache.calendars = [];
-          for(var i = 0; i < results.length; i++) {
-            vm.calendarEventsCache.calendars.push(results[i].data);
+          for(var i = 0; i < responses.length; i++) {
+            vm.calendarEventsCache.calendars.push(responses[i].data);
           }
 
           vm.calendarEventsCache = angular.copy(vm.calendarEventsCache);
+
         }, function (res) {
           throw new Error(res.data.message);
         })
         .then(null,
           function (err) {
-            console.error(err);
             GlobalNotificationSvc.addError(err.message);
             throw err;
           });
@@ -132,8 +125,6 @@
       CalendarEventSvc.createEvent(calendarId, calendarEvent)
         .then(function (res) {
           vm.calendarEventsCache.addEvent(res.data);
-          // vm.calendarEventsCache.setModifiedDate();
-
           vm.calendarEventsCache = angular.copy(vm.calendarEventsCache);
         });
     }
@@ -142,9 +133,7 @@
       CalendarEventSvc.updateEvent(calendarId, calendarEvent)
         .then(function (res) {
           vm.calendarEventsCache.replaceEvent(res.data);
-          // vm.calendarEventsCache.setModifiedDate();
           vm.calendarEventsCache = angular.copy(vm.calendarEventsCache);
-
         });
     }
 
@@ -153,7 +142,6 @@
         .then(function (res) {
           vm.calendarEventsCache.deleteEvent(res.data._id);
           vm.calendarEventsCache = angular.copy(vm.calendarEventsCache);
-
         });
     }
 
@@ -274,107 +262,6 @@
             GlobalNotificationSvc.addError(res.data.message);
           });
     }
-
-    /* classes: Calendars, CalendarEvents */
-
-    function Calendars(list) {
-
-      if(!list) {
-        this.items = [];
-      } else if(!list.length) {
-        this.items = [list];
-      } else {
-        this.items = list.sort(function (a, b) {
-          if(a.isDefault !== b.isDefault) {
-            return b.isDefault - a.isDefault;
-          }
-
-          return a.title.localeCompare(b.title);
-        });
-      }
-    }
-
-    Calendars.prototype.getIds = function () {
-      return this.items.map(function (calendar) {
-        return calendar._id;
-      });
-    };
-
-    function CalendarEventsCache() {
-      // this.isInitialized = false;
-      this.calendars = [];
-      this.ranges = [];
-      //this.eventsModifiedDate;
-    }
-
-    CalendarEventsCache.prototype.addCalendar = function (calendar) {
-
-      this.calendars.push({
-        calendarId: calendar._id,
-        events: []
-      });
-
-      //this.eventsModifiedDate = new Date();
-    };
-
-    CalendarEventsCache.prototype.deleteCalendar = function (calendar) {
-
-      for(var i = 0; i < this.calendars.length; i++) {
-        if(this.calendars[i].calendarId === calendar._id) {
-          this.calendars.splice(i, 1);
-          //this.eventsModifiedDate = new Date();
-          return;
-        }
-      }
-
-      //this.eventsModifiedDate = new Date();
-    };
-
-    // CalendarEventsCache.prototype.setModifiedDate = function () {
-    //
-    //   //this.eventsModifiedDate = new Date();
-    // };
-
-    CalendarEventsCache.prototype.replaceEvent = function (event) {
-
-      this.deleteEvent(event._id);
-      this.addEvent(event);
-    };
-
-    CalendarEventsCache.prototype.deleteEvent = function (eventId) {
-
-      for(var i = 0; i < this.calendars.length; i++) {
-        var calendar = this.calendars[i];
-
-        for(var j = 0; j < calendar.events.length; j++) {
-          if(calendar.events[j]._id === eventId) {
-            calendar.events.splice(j, 1);
-            return;
-          }
-        }
-      }
-    };
-
-    CalendarEventsCache.prototype.addEvent = function (event) {
-
-      if(typeof event.start === 'string') {
-        event.start = new Date(event.start);
-      }
-      if(typeof event.end === 'string') {
-        event.end = new Date(event.end);
-      }
-
-      for(var i = 0; i < this.calendars.length; i++) {
-
-        var calendar = this.calendars[i];
-
-        if(calendar.calendarId === event.calendarId) {
-
-          calendar.events.push(event);
-          return;
-        }
-      }
-    };
 
   }
 

@@ -44,10 +44,11 @@
   }
 
   CalendarMonthViewCtrl.$inject = ['$scope', '$timeout', '$modal', '$window', 'UtilitySvc',
-    'CalendarEditSvc'
+    'CalendarEditSvc', 'Week', 'Day'
   ];
 
-  function CalendarMonthViewCtrl($scope, $timeout, $modal, $window, UtilitySvc, CalendarEditSvc) {
+  function CalendarMonthViewCtrl($scope, $timeout, $modal, $window, UtilitySvc, CalendarEditSvc,
+    Week, Day) {
 
     // $scope.calendarEventsCache: '=',
     // $scope.calendars: '=',
@@ -75,16 +76,6 @@
           }
         });
 
-      // // handle cache modified
-      // $scope.$watch(function () {
-      //     return $scope.calendarEventsCache.eventsModifiedDate;
-      //   },
-      //   function (newVal, oldVal) {
-      //     if(newVal) {
-      //       createMonthView();
-      //     }
-      //   });
-
       // handle cache reassigned
       $scope.$watch(function () {
           return $scope.calendarEventsCache;
@@ -104,13 +95,6 @@
       // for now this will be static but later can change this based on browser zoom and actual font-size I hope.
       var eventHeight = 21;
       var maxEvents = Math.floor((weekHeight - 20) / eventHeight);
-
-      // console.log('');
-      // console.log('max events: ' + maxEvents);
-      // console.log('viewHeight: ' + viewHeight);
-      // console.log('containerHeight: ' + containerHeight);
-      // console.log('weekHeight: ' + weekHeight);
-      // console.log('eventHeight: ' + eventHeight);
 
       return maxEvents;
     }
@@ -152,20 +136,8 @@
 
               // now add 'more events' and then filler;
 
-              // day.events.push({
-              //   moreEventsCount: removedEventsCount,
-              //   date: day.date,
-              //   isForToday: day.isToday()
-              // });
               day.setMoreEvents(removedEventsCount);
 
-              // day.events.push({
-              //   fillerEvent: true,
-              //   lastEvent: true,
-              //   rowSpan: week.eventRowsCount - day.events.length,
-              //   date: day.date,
-              //   isForToday: day.isToday()
-              // });
               day.setLastFillerEvent(week.eventRowsCount - day.events.length);
 
             }
@@ -285,25 +257,12 @@
 
           day.setLastFillerEvent(week.eventRowsCount - day.events.length);
 
-          // day.events.push({
-          //   fillerEvent: true,
-          //   lastEvent: true,
-          //   rowSpan: week.eventRowsCount - day.events.length,
-          //   date: day.date,
-          //   isForToday: day.isToday()
-          // });
-
           // add spacer events for gaps between events
           for(var i = 0; i < day.events.length; i++) {
             if(!day.events[i]) {
 
               day.setFillerEventAt(i);
 
-              // day.events[i] = {
-              //   fillerEvent: true,
-              //   date: day.date,
-              //   isForToday: day.isToday()
-              // };
             }
           }
         });
@@ -494,217 +453,6 @@
       });
 
     };
-
-    /****************************************
-    /* Classes
-    /****************************************/
-    function Week() {
-      this.days = [];
-    }
-
-    Week.prototype.eventsAtIndex = function (idx) {
-      var ret = [];
-
-      this.days.forEach(function (day) {
-        if(day.events[idx] && !day.events[idx].isIntraWeekContinuation) {
-          ret.push(day.events[idx]);
-        }
-      });
-
-      return ret;
-    };
-
-    function EventWrapper(calendarEvent) {
-
-      angular.extend(this, calendarEvent);
-    }
-
-    EventWrapper.prototype.getBackgroundColor = function () {
-      if(this.isAllDayOrMultiDay()) {
-        return this.color || this.calendar.color;
-      } else {
-        return undefined;
-      }
-    };
-
-    EventWrapper.prototype.getFontColor = function () {
-      if(this.isAllDayOrMultiDay()) {
-        return undefined;
-      } else {
-        return this.color || this.calendar.color;
-      }
-    };
-
-    EventWrapper.prototype.isAllDayOrMultiDay = function () {
-      return this.allDay || this.getDurationDays() > 0;
-    };
-
-    EventWrapper.prototype.getDurationDays = function () {
-      return UtilitySvc.dateDiffInDays(this.start, this.end);
-    };
-
-    EventWrapper.prototype.startTimeString = function () {
-      return this.timeString(this.start);
-    };
-
-    EventWrapper.prototype.endTimeString = function () {
-      return this.timeString(this.end);
-    };
-
-    EventWrapper.prototype.timeString = function (d) {
-      return this.getTimeString(d, true);
-    };
-
-    EventWrapper.prototype.getCompleteTimeString = function (d) {
-      return this.getTimeString(d, false);
-    };
-
-    EventWrapper.prototype.getTimeString = function (d, shortAmPm) {
-      if(!d) {
-        return '';
-      }
-
-      var amPm = shortAmPm ? 'a' : 'am';
-      var hour = d.getHours();
-      if(hour >= 12) {
-        amPm = shortAmPm ? 'p' : 'pm';
-        if(hour > 12) {
-          hour -= 12;
-        }
-        if(hour === 0) {
-          hour = '12';
-        }
-      }
-
-      return hour + (d.getMinutes() > 0 ? ':' + d.getMinutes() : '') + amPm;
-    };
-
-    EventWrapper.prototype.displayString = function () {
-      if(this.allDay) {
-        return this.title;
-      }
-      return this.startTimeString() + ' ' + this.title;
-    };
-
-    EventWrapper.prototype.getDateRangeSummary = function () {
-
-      var datesSummary = UtilitySvc.getMonthName(this.start).abbreviated + ' ' + this.start.getDate();
-
-      if(UtilitySvc.startOfDate(this.start).getTime() === UtilitySvc.startOfDate(this.end).getTime()) {
-
-        if(!this.allDay) {
-          datesSummary += ', ' + this.getCompleteTimeString(this.start);
-          datesSummary += ' - ' + this.getCompleteTimeString(this.end);
-        }
-
-      } else {
-
-        if(!this.allDay) {
-          datesSummary += ', ' + this.getCompleteTimeString(this.start);
-        }
-
-        datesSummary += ' - ' + UtilitySvc.getMonthName(this.end).abbreviated + ' ' + this.end.getDate();
-        if(!this.allDay) {
-          datesSummary += ', ' + this.getCompleteTimeString(this.end);
-        }
-      }
-
-      return datesSummary;
-    };
-
-    function Day(d) {
-      this.date = new Date(d);
-      this.events = [];
-    }
-
-    Day.prototype.isToday = function () {
-
-      return this.date.toDateString() === new Date().toDateString();
-    };
-
-    Day.prototype.getVisibleEvents = function () {
-
-      var ret = this.events.filter(function (event) {
-        return !event.fillerEvent && !event.moreEventsCount;
-      });
-
-      return ret;
-    };
-
-    Day.prototype.getNextAvailableEventIndex = function () {
-      for(var i = 0; i < this.events.length; i++) {
-        if(!this.events[i]) {
-          return i;
-        }
-      }
-
-      return this.events.length;
-    };
-
-    Day.prototype.setNextAvailableEvent = function (calendarEvent) {
-
-      var idx = this.getNextAvailableEventIndex();
-      return this.setEvent(calendarEvent, idx);
-    };
-
-    Day.prototype.setMoreEvents = function (moreEventsCount) {
-
-      this.events.push({
-        moreEventsCount: moreEventsCount,
-        date: this.date,
-        isForToday: this.isToday()
-      });
-    };
-
-    Day.prototype.setFillerEventAt = function (idx) {
-
-      this.events[idx] = {
-        fillerEvent: true,
-        date: this.date,
-        isForToday: this.isToday()
-      };
-    };
-
-    Day.prototype.setLastFillerEvent = function (rowSpan) {
-
-      this.events.push({
-        fillerEvent: true,
-        lastEvent: true,
-        rowSpan: rowSpan,
-        date: this.date,
-        isForToday: this.isToday()
-      });
-    };
-
-    Day.prototype.setEvent = function (calendarEvent, idx) {
-
-      var wrappedEvent = new EventWrapper(calendarEvent);
-      wrappedEvent.index = idx;
-      wrappedEvent.isForToday = this.isToday();
-
-      this.events[idx] = wrappedEvent;
-      return wrappedEvent;
-    };
-
-    Day.prototype.dayName = function () {
-      // return this.dayNames[this.date.getDate()];
-      return UtilitySvc.getDayName(this.date);
-
-    };
-
-    Day.prototype.monthName = function () {
-      // return this.monthNames[this.date.getMonth()];
-      return UtilitySvc.getMonthName(this.date);
-    };
-
-    Day.prototype.calendarDisplayDate = function () {
-      var x = this.date.getDate() === 1 ?
-        this.monthName().abbreviated + ' ' + this.date.getDate() :
-        this.date.getDate();
-
-      return x;
-    };
-
   }
 
 }(this.angular));

@@ -8,7 +8,7 @@
     .factory('authInterceptor', authInterceptor);
 
   angular.module('app')
-    .factory('errorInterceptor', errorInterceptor);
+    .factory('noResponseInterceptor', noResponseInterceptor);
 
   angular.module('app')
     .config(interceptorConfig);
@@ -28,7 +28,7 @@
 
   function interceptorConfig($httpProvider) {
     $httpProvider.interceptors.push('authInterceptor');
-    $httpProvider.interceptors.push('errorInterceptor');
+    $httpProvider.interceptors.push('noResponseInterceptor');
   }
 
   authInterceptor.$inject = ['$q', '$window', '$injector'];
@@ -73,9 +73,9 @@
     };
   }
 
-  errorInterceptor.$inject = ['$q'];
+  noResponseInterceptor.$inject = ['$q'];
 
-  function errorInterceptor($q) {
+  function noResponseInterceptor($q) {
     return {
       responseError: function (res) {
         // console.log(res);

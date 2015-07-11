@@ -54,12 +54,6 @@
 
     function redirectAfterLogin() {
       $state.go('calendar');
-      // GlobalNotificationSvc.add({
-      //   message: 'Login Successful',
-      //   type: 'success',
-      //   nextState: true,
-      //   timeout: 2000
-      // });
     }
 
   }
