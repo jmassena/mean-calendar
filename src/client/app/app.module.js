@@ -40,10 +40,11 @@
     $httpProvider.interceptors.push('noResponseInterceptor');
   }
 
-  authInterceptor.$inject = ['$q', '$window', '$injector'];
+  authInterceptor.$inject = ['$q', '$window', '$injector', 'GlobalNotificationSvc'];
 
-  function authInterceptor($q, $window, $injector) {
+  function authInterceptor($q, $window, $injector, GlobalNotificationSvc) {
     return {
+
       request: function (config) {
         config.headers = config.headers || {};
 
@@ -51,9 +52,7 @@
         // Uncaught Error: [$injector:cdep] Circular dependency found:
         //    $http <- AuthSvc <- authInterceptor <- $http <- $templateRequest <- $compile
         // http://stackoverflow.com/questions/20647483/angularjs-injecting-service-into-a-http-interceptor-circular-dependency
-
         var AuthSvc = $injector.get('AuthSvc');
-
         var token = AuthSvc.getToken();
         if(token) {
           config.headers.Authorization = 'Bearer ' + token;
@@ -62,20 +61,39 @@
         }
         return config;
       },
-      response: function (res) {
-        if(res.status === 401) {
-          // handle the case where the user is not authenticated
-          console.error('Not authorized: ');
-          console.error(res);
-        }
-        return res || $q.when(res);
-      },
+
+      // response: function (res) {
+      //
+      //   if(res.status === 401) {
+      //     // handle the case where the user is not authenticated
+      //     console.error('Not authorized: ');
+      //     console.error(res);
+      //     // AuthSvc.clearUserAndToken();
+      //   }
+      //   return res || $q.when(res);
+      // },
+
       responseError: function (res) {
+
+        // TODO: need to distinguish between not authorized for resource and not authenticated.
         if(res.status === 401) {
           console.error('Not authorized: ');
           console.error(res);
 
-          $injector.get('$state').go('login');
+          if(res.data.message === 'jwt expired') {
+            var AuthSvc = $injector.get('AuthSvc');
+            AuthSvc.clearUserAndToken();
+
+            GlobalNotificationSvc.addNextError('Session expired');
+
+            $injector.get('$state').go('login');
+
+          } else if(res.data.message === 'No authorization token was found') {
+            var AuthSvc = $injector.get('AuthSvc');
+            AuthSvc.clearUserAndToken();
+
+            $injector.get('$state').go('login');
+          }
         }
         return $q.reject(res);
       }

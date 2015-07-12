@@ -32,7 +32,7 @@ module.exports = function (config) {
       './bower_components/moment/moment.js',
 
       './src/client/app/*.module.js', // need to load the module first
-      './src/client/app/*.js',
+      './src/client/app/**/*.js',
 
       './src/client/test/data/**/*.js',
       './src/client/test/unit/**/*.js'

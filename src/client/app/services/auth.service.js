@@ -114,7 +114,8 @@
       logout: logout,
       isLoggedIn: isLoggedIn,
       getCurrentUser: getCurrentUser,
-      getToken: getToken
+      getToken: getToken,
+      clearUserAndToken: clearUserAndToken
     };
 
   }
