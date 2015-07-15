@@ -1,0 +1,23 @@
+<div class="calendar-item-container">
+
+  <!-- <button type="button" ng-click="$emit('calendar.toggleCalendarEvents', calendar)" class="btn btn-default">Toggle</button> -->
+
+  <div class="calendar-item-title-container" ng-click="$emit('calendar.toggleCalendarEvents', calendar)">
+    <div class="calendar-item-color-block" ng-class="{'calendar-item-color-block-disabled':!calendar.showEvents}"
+    ng-style="{'background-color': (calendar.showEvents?calendar.color:'#ffffff')}"></div>
+
+    <span class="calendar-item-title"> {{calendar.title}}</span>
+  </div>
+
+  <a href="" class="dropdown-toggle" data-toggle="dropdown">
+    <b class="caret"></b>
+  </a>
+
+  <ul class="dropdown-menu">
+    <li>
+      <a href="#" ng-click="openEditDialog(calendar)">Edit</a>
+      <a href="#" ng-click="delete(calendar)">Delete</a>
+    </li>
+  </ul>
+
+</div>

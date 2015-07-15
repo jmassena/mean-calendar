@@ -14,14 +14,16 @@
       <span class="icon-bar">
       </span>
     </button>
-    <a ui-sref="welcome" class="navbar-brand">Authentication</a>
+    <a ui-sref="welcome" class="navbar-brand">Calendar Demo</a>
   </div>
 
   <div class="collapse navbar-collapse" id="navbar-collapse">
     <ul class="nav navbar-nav pull-right">
-
       <li>
-        <a ng-hide="vm.user===null">{{vm.user.userName}}</a>
+        <a ng-hide="vm.user===null" ui-sref="calendar">Calendar</a>
+      </li>
+      <li>
+        <a ng-hide="vm.user===null">{{vm.user.fullName}}</a>
       </li>
       <li>
         <a ui-sref="login" ng-show="vm.user===null">Login</a>

@@ -1,0 +1,231 @@
+.my-calendars-container {
+  position: relative;
+}
+
+.my-calendars-header {
+  position: relative;
+  display: inline-block;
+  /*background-color: #eeeeff;*/
+}
+
+
+/* list calendars horizontally when left + main-content don't fit on screen */
+
+@media screen and (max-width: 992px) {
+  .my-calendars-container>ul>li {
+    display: inline-block;
+    margin-right: 1em;
+  }
+}
+
+
+/* don't let left panel grow too large on wide screens */
+
+@media screen and (min-width: 1020px) {
+  .calendar-left-panel {
+    max-width: 175px;
+  }
+}
+
+.my-calendars-create-dialog {
+  position: absolute;
+  z-index: 100;
+  min-width: 200px;
+  min-height: 150px;
+  left: 125px;
+  top: 0px;
+  border: solid 1px #aaa;
+  padding: 20px;
+  /*background-color: #eee;*/
+  border: 1px solid rgba(0, 0, 0, .15);
+  border-radius: 4px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+}
+
+
+/*.calendar-left-panel {
+  max-width: 175px;
+}*/
+
+
+/*.calendar-main-content {
+  padding-right: 50px;
+}*/
+
+.calendar-item-color-block {
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.calendar-item-color-block-disabled {
+  background-color: #ffffff;
+  border: solid 1px #ccc;
+}
+
+.calendar-item-container {
+  position: relative;
+}
+
+.calendar-item-title-container {
+  cursor: pointer;
+  display: inline-block;
+}
+
+.day-names-cell {
+  /*border: solid 1px #aaa;*/
+  width: 14%;
+}
+
+.calendar-month-container td {
+  /*border: solid 1px green;*/
+}
+
+
+/*
+td, th {
+  width: 14%;
+  max-width: 0;
+  overflow: hidden;
+  vertical-align: top;
+  height: 100%;
+  max-height: 0;
+}*/
+
+
+/*
+td, th {
+  border-left: solid 1px #aaa;
+  border-right: solid 1px #aaa;
+  width: 14%;
+  max-width: 0;
+  overflow: hidden;
+}*/
+
+.calendar-month-container {
+  height: 80vh;
+}
+
+.calendar-week-container {
+  width: 100%;
+  /*min-height: 20%;*/
+  height: 20%;
+  /*max-height: 30%;*/
+  overflow: hidden;
+  border-top: solid 1px #aaa;
+}
+
+.calendar-week-container:last-of-type {
+  border-bottom: solid 1px #aaa;
+}
+
+.calendar-day-names-table {
+  width: 100%;
+}
+
+.calendar-day-names-table th span {
+  margin-left: .5em;
+  white-space: nowrap;
+}
+
+.calendar-week-table {
+  width: 100%;
+  height: 100%;
+}
+
+.calendar-week-table td, .calendar-week-table th {
+  border-left: solid 1px #aaa;
+  border-right: solid 1px #aaa;
+  width: 14%;
+  max-width: 0;
+  overflow: hidden;
+}
+
+.calendar-week-table th span {
+  margin-left: .5em;
+  font-weight: normal;
+  white-space: nowrap;
+}
+
+.calendar-non-month-day {
+  color: #aaaaaa;
+}
+
+
+/*
+  calendar-events
+*/
+
+.calendar-event {
+  white-space: nowrap;
+  height: 1.5em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: .1em;
+  margin-left: .1em;
+  padding-left: .2em;
+  cursor: pointer;
+}
+
+.calendar-event-all-day {
+  /*background-color: #eeeeff;*/
+  border: solid 1px #aaa;
+  /*color: #ffffff;*/
+  color: black;
+  /*font-size: 1em;*/
+  /*border-left: 0px;*/
+}
+
+.calendar-event-continuation {
+  border-top-left-radius: .7em;
+  border-bottom-left-radius: .7em;
+}
+
+.calendar-event-continued {
+  border-top-right-radius: .7em;
+  border-bottom-right-radius: .7em;
+}
+
+.calendar-event-last-event {
+  height: 100%;
+}
+
+.calendar-details-title {
+  font-size: larger;
+  font-weight: bold;
+}
+
+.calendar-details-dates {
+  margin-top: 1em;
+}
+
+.calendar-more-events {
+  color: #15c;
+  font-size: smaller;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.calendar-day-today {
+  background-color: rgb(249, 255, 155);
+}
+
+.calendar-nav {
+  margin-bottom: 15px;
+}
+
+.month-header {
+  font-size: larger;
+  font-weight: bolder;
+  /*padding-left: 5em;*/
+  /*position: relative;*/
+  white-space: nowrap;
+  margin-left: 3em;
+}
+
+
+/*
+.calendar-more-events:hover {
+  text-decoration: underline;
+}*/

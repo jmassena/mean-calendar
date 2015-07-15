@@ -1,0 +1,36 @@
+<div class="calendar-page-container">
+  <!-- <h3>Calendar Page</h3> -->
+
+  <!-- <div class="row">
+    <div class="calendar-top-nav col-md-12">Navigation controls go here</div>
+  </div> -->
+
+  <div class="row calendar-panel">
+    <div class="calendar-left-panel  col-md-2">
+      <!-- <div>Mini calendar</div> -->
+      <my-calendars calendars="vm.calendars"></my-calendars>
+    </div>
+    <div class="calendar-main-content col-md-10">
+
+      <div class="calendar-nav">
+        <button type="button" class="btn btn-default btn-today" ng-click="vm.setViewMonthToday()">Today</button>
+
+        <button type="button" class="btn btn-default" ng-click="vm.addViewMonth(-1)">
+          <span class="glyphicon glyphicon-chevron-left"></span>
+        </button>
+
+        <button type="button" class="btn btn-default" ng-click="vm.addViewMonth(1)">
+          <span class="glyphicon glyphicon-chevron-right"></span>
+        </button>
+
+        <span class="month-header">{{vm.viewDate | date: 'MMMM yyyy'}}
+      </div>
+
+      <calendar-month-view calendar-events-cache="vm.calendarEventsCache" calendars="vm.calendars" view-start="vm.calendarStart"
+      view-end="vm.calendarEnd"></calendar-month-view>
+    </div>
+
+    <!-- <div class="calendar-right-panel col-md-1"></div> -->
+
+  </div>
+</div>

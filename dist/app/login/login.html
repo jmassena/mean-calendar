@@ -2,20 +2,14 @@
 
 <h2>Login</h2>
 
-<!-- <div id='userMessage' class="alert " ng-class="{'alert-danger':vm.userMessage.type=='error', 'alert-success':vm.userMessage.type=='success'}" ng-show="vm.userMessage.show">
-  <button type="button" class="close" ng-click="vm.clearUserMessage()" id="btnUserMessageClose">
-    <span>&times;</span>
-  </button>
-  <span> {{vm.userMessage.message}}</span>
-</div> -->
-
 <div class="form-container-med">
   <form id="loginForm" name="form" class="form form-horizontal" ng-submit="vm.login(vm.form)" novalidate>
     <!-- username -->
     <div class="form-group">
-      <label for="userName" class="col-sm-2 control-label">User Name</label>
-      <div class="col-sm-6">
-        <input ng-model="vm.form.userName" class="form-control" id="userName" name="userName" placeholder="User Name" required minlength="8" type="text">
+      <label for="userName" class="col-xs-3 control-label">User Name</label>
+      <div class="col-xs-9">
+        <input ng-model="vm.form.userName" class="form-control" id="userName" name="userName" placeholder="User Name"
+        required minlength="8" type="text">
 
         <div ng-show="form.$submitted || form.userName.$touched" class="invalid-message">
           <span ng-show="form.userName.$error.required">Username is required.</span>
@@ -26,9 +20,10 @@
     </div>
     <!-- password -->
     <div class="form-group">
-      <label for="password" class="col-sm-2 control-label">Password</label>
-      <div class="col-sm-6">
-        <input ng-model="vm.form.password" class="form-control" id="password" name="password" placeholder="Password" required minlength="8" type="password">
+      <label for="password" class="col-xs-3 control-label">Password</label>
+      <div class="col-xs-9">
+        <input ng-model="vm.form.password" class="form-control" id="password" name="password" placeholder="Password"
+        required minlength="8" type="password">
         <div ng-show="form.$submitted || form.password.$touched" class="invalid-message">
           <span ng-show="form.password.$error.required">Password is required.</span>
           <span ng-show="form.password.$error.minlength">Length must be at least 8 characters.</span>
@@ -38,9 +33,16 @@
 
     <!-- buttons -->
     <div class="form-group form-button-row">
-      <div class="col-sm-offset-2 col-sm-6">
+      <div class="col-xs-offset-3 col-xs-9">
         <button id="btnSubmit" type="submit" ng-disabled="form.$invalid" class="btn btn-default">Submit</button>
       </div>
     </div>
   </form>
+  <div class="col-xs-offset-3 col-xs-9">
+    Log in with:
+    <img class="google-login" ng-click="vm.loginProvider('google')" src="/content/img/Red signin_Google_44dp/Red-signin_Google_base_44dp.png">
+  </div>
+  <div class="col-xs-offset-3 col-xs-9">
+    <a ui-sref="register">Register</a>
+  </div>
 </div>

@@ -78,8 +78,9 @@ function signToken(id) {
   return jwt.sign({
     _id: id
   }, config.secrets.tokenSecret, {
-    //expiresInMinutes: 60 * 5
-    expiresInMinutes: 1
+    expiresInMinutes: 60 * 5
+      // for testing
+      // expiresInMinutes: 1
   });
 }
 

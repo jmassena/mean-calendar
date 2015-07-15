@@ -1,0 +1,18 @@
+<div class="my-calendars-container">
+  <div class="my-calendars-header">Calendars
+    <a href="" class="dropdown-toggle" data-toggle="dropdown">
+      <b class="caret"></b>
+    </a>
+    <ul class="dropdown-menu">
+      <li>
+        <a ng-click="openCreateDialog()" href="#">Create</a>
+      </li>
+    </ul>
+  </div>
+
+  <ul class="list-unstyled">
+    <li ng-repeat="calendar in calendars.items">
+      <calendar-list-item calendar="calendar"></calendar-list-item>
+    </li>
+  </ul>
+</div>

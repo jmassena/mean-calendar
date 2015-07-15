@@ -1,15 +1,10 @@
-
-notification.top-left-float-notification {
+notification.notification-top-center-float {
   position: absolute;
-  left: 20%;
-  top: 10px;
   z-index: 10;
-  width:700px;
+  left: 50%;
+  top: 0%;
+  transform: translate(-50%, 0%);
 }
-/*notification.top-middle-notification>div {
-  position: relative;
-}*/
-
 
 notification.right-notification {
   position: absolute;
@@ -18,38 +13,21 @@ notification.right-notification {
   z-index: 10;
 }
 
-notification.top-middle-notification {
+
+/*notification.top-middle-notification {
   position: absolute;
   left: 50%;
   top: 10px;
   z-index: 10;
-}
-
-notification.top-middle-notification>div {
-  position: relative;
-  left: -50%;
-}
-/*notification.top-left-third-notification {
-  position: absolute;
-  left: 33%;
-  top: 10px;
-  z-index: 10;
-}
-
-notification.top-left-third-notification>div {
-  position: relative;
-  left: -50%;
 }*/
 
 li.notification {
   position: relative;
   list-style: none;
-
   -webkit-transition: all ease .5s;
   -o-transition: all ease .5s;
   transition: all ease .5s;
   /*position: absolute;*/
-
   color: black;
   background-color: #ffffff;
   border: solid 1px black;
@@ -60,16 +38,10 @@ li.notification {
   max-width: 500px;
   min-height: 30px;
   box-shadow: 5px 5px 7px #aaa;
-
   /*-webkit-transition: opacity ease .9s;
   -o-transition: opacity ease .9s;
   transition: opacity ease .9s;*/
 }
-
-/*global-notification>div {
-  position: relative;
-  left: -50%;
-}*/
 
 notification li button.notification-close {
   font-weight: bold;
@@ -83,7 +55,6 @@ notification li button.notification-close {
   position: absolute;
   top: 0px;
   right: 10px;
-
   /*-webkit-transition: opacity ease .9s;
   -o-transition: opacity ease .9s;
   transition: opacity ease .9s;*/

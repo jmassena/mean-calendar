@@ -23,7 +23,7 @@ var gulp = require('gulp'),
 
 var paths = {
   css: './src/client/content/*.css',
-  img: './src/client/content/img/*.*',
+  img: './src/client/content/img/**/*.*',
   html: './src/client/app/**/*.html',
   indexHtml: './src/client/index.html',
   js: './src/client/app/**/*.js',
@@ -34,7 +34,7 @@ var paths = {
     './bower_components/bootstrap/dist/css/bootstrap.css.map',
     './bower_components/bootstrap/dist/css/bootstrap-theme.css',
     './bower_components/bootstrap/dist/css/bootstrap-theme.css.map',
-
+    './bower_components/angular-bootstrap/ui-bootstrap-csp.css'
   ],
   vendorJs: ['./bower_components/jquery/dist/jquery.js',
     './bower_components/bootstrap/dist/js/bootstrap.js',
@@ -42,7 +42,13 @@ var paths = {
     './bower_components/angular-ui-router/release/angular-ui-router.js',
     './bower_components/angular-resource/angular-resource.js',
     './bower_components/moment/moment.js',
-    './bower_components/angular-cookies/angular-cookies.js'
+    './bower_components/angular-cookies/angular-cookies.js',
+    './bower_components/angular-bootstrap/ui-bootstrap-tpls.js',
+    './bower_components/angular-bootstrap/ui-bootstrap.js'
+
+  ],
+  vendorFonts: [
+    './bower_components/bootstrap/dist/fonts/*.*',
   ],
   build: './dist/'
 };
@@ -61,6 +67,7 @@ gulp.task('copy-css', ['clean'], function () {
     .src(paths.css)
     .pipe(gulp.dest(paths.build + 'content/'));
 });
+
 gulp.task('copy-js', ['clean', 'jshint'], function () {
   return gulp
     .src(paths.js)
@@ -82,6 +89,18 @@ gulp.task('copy-vendor-css', ['clean'], function () {
 gulp.task('copy-vendor-js', ['clean'], function () {
   return gulp
     .src(paths.vendorJs)
+    //.pipe(gulp.dest(paths.build + 'bower_components/'));
+    .pipe(gulp.dest(function (file) {
+      // I am not loving this solution.
+      return path.join(paths.build, file.path.substring(
+        file.path.indexOf('bower_components'),
+        file.path.lastIndexOf('/')));
+    }));
+});
+
+gulp.task('copy-vendor-fonts', ['clean'], function () {
+  return gulp
+    .src(paths.vendorFonts)
     //.pipe(gulp.dest(paths.build + 'bower_components/'));
     .pipe(gulp.dest(function (file) {
       // I am not loving this solution.
@@ -156,7 +175,8 @@ gulp.task('inject-angular-templates', ['htmlTemplates'], function () {
 //     .pipe(gulp.dest(paths.build));
 // });
 
-gulp.task('build', ['htmlTemplates', 'copy-html', 'copy-css', 'copy-vendor-css', 'copy-js', 'copy-vendor-js',
+gulp.task('build', ['htmlTemplates', 'copy-html', 'copy-css', 'copy-vendor-css', 'copy-js',
+  'copy-vendor-js', 'copy-vendor-fonts',
   'copy-img', 'inject-angular-templates'
 ]);
 // gulp.task('build', ['copy-html', 'copy-css', 'copy-img', 'copy-js',

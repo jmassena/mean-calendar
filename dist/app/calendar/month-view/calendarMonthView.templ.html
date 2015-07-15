@@ -1,0 +1,44 @@
+<div class="calendar-month-container">
+
+  <table class="calendar-day-names-table">
+    <tbody>
+      <tr>
+        <th class="day-names-cell" ng-repeat="dayName in ['Sun', 'Mon', 'Tue','Wed','Thur', 'Fri', 'Sat']">
+          <span>{{dayName}}</span>
+        </th>
+      </tr>
+    </tbody>
+  </table>
+
+  <div ng-repeat="week in trimmedMonthView.weeks" class="calendar-week-container">
+    <table class="calendar-week-table">
+      <thead>
+        <tr>
+          <th ng-repeat="day in week.days" ng-click="openCreateDialog($event, day.date)" ng-class="{'calendar-day-today':day.isToday()}">
+            <span ng-class="{'calendar-non-month-day':!day.isInMonth}">{{day.calendarDisplayDate()}}
+              <span>
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr ng-repeat="eventIdx in week.eventRowIndexes">
+
+          <td ng-repeat="event in week.eventsAtIndex(eventIdx)" ng-class="{'calendar-event-last-event':event.lastEvent, 'calendar-day-today':event.isForToday}"
+          ng-attr-colspan="{{event.daySpanInWeek>1?event.daySpanInWeek:undefined}}" ng-attr-rowspan="{{event.rowSpan>1?event.rowSpan:undefined}}"
+          ng-click="event.moreEventsCount?openDayEventsDialog($event,event.date):(event.fillerEvent?openCreateDialog($event, event.date):openDetailsDialog($event, event))">
+
+            <div ng-if="!event.fillerEvent && !event.moreEventsCount" style="background-color:{{event.getBackgroundColor()}}; color:{{event.getFontColor()}}"
+            class="calendar-event" ng-class="{'calendar-event-all-day':event.isAllDayOrMultiDay(), 'calendar-event-continuation': event.isInterWeekContinuation,'calendar-event-continued': event.isInterWeekContinued}">{{event.displayString()}}</div>
+
+            <a ng-if="event.moreEventsCount" class="calendar-more-events">+{{event.moreEventsCount}} more</a>
+
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+  <br/>
+
+</div>

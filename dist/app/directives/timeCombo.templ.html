@@ -1,0 +1,11 @@
+<div class="input-group input-append btn-block">
+
+  <div class="input-group-btn dropdown">
+    <input type="text" class="form-control dropdown-toggle" data-toggle="dropdown" ng-model="vm.selectedTimeString">
+
+    <ul class="dropdown-menu  dropdown-list-short" role="menu">
+      <li ng-class="{selected:time.selected}" ng-repeat="time in vm.timesList"><a ng-click="vm.setSelected(time.value)" href="#">{{time.text}}</a></li>
+    </ul>
+  </div>
+
+</div>

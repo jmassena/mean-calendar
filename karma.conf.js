@@ -32,6 +32,8 @@ module.exports = function (config) {
       './bower_components/moment/moment.js',
 
       './src/client/app/*.module.js', // need to load the module first
+      //'./src/client/app/services/global-notification.service.js',
+
       './src/client/app/**/*.js',
 
       './src/client/test/data/**/*.js',

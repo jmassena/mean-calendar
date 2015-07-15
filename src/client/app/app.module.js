@@ -62,17 +62,6 @@
         return config;
       },
 
-      // response: function (res) {
-      //
-      //   if(res.status === 401) {
-      //     // handle the case where the user is not authenticated
-      //     console.error('Not authorized: ');
-      //     console.error(res);
-      //     // AuthSvc.clearUserAndToken();
-      //   }
-      //   return res || $q.when(res);
-      // },
-
       responseError: function (res) {
 
         // TODO: need to distinguish between not authorized for resource and not authenticated.
@@ -80,8 +69,10 @@
           console.error('Not authorized: ');
           console.error(res);
 
+          var AuthSvc;
+
           if(res.data.message === 'jwt expired') {
-            var AuthSvc = $injector.get('AuthSvc');
+            AuthSvc = $injector.get('AuthSvc');
             AuthSvc.clearUserAndToken();
 
             GlobalNotificationSvc.addNextError('Session expired');
@@ -89,7 +80,7 @@
             $injector.get('$state').go('login');
 
           } else if(res.data.message === 'No authorization token was found') {
-            var AuthSvc = $injector.get('AuthSvc');
+            AuthSvc = $injector.get('AuthSvc');
             AuthSvc.clearUserAndToken();
 
             $injector.get('$state').go('login');

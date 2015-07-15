@@ -2,37 +2,48 @@
 
 describe('Calendar class', function () {
 
-  // get ref to calendar constructor.
-
   beforeEach(module('app'));
 
-  var Calendar;
+  var Calendars;
   beforeEach(inject(function ($injector) {
-    Calendar = $injector.get('Calendar');
+    Calendars = $injector.get('Calendars');
   }));
 
   it('Calendars constructor should populate list from list input', function () {
-    // var calendars = [{
-    //   calendarId: 1,
-    //   events: []
-    // }, {
-    //   calendarId: 2,
-    //   events: []
-    // }];
-    // var c = new Calendar(calendars);
-    //
-    // expect(c.items.length).toEqual(2);
+    var calendars = [{
+      userId: 1234,
+      title: 'Birthdays',
+      showEvents: true,
+      color: '#9a9caa',
+      isDefault: false
+    }, {
+      userId: 1234,
+      title: 'General',
+      showEvents: true,
+      color: '#9a9cff',
+      isDefault: true
+    }];
 
-    expect(true).toEqual(true);
+    var c = new Calendars(calendars);
 
+    expect(c.items.length).toEqual(2);
+    expect(c.items[0].title).toEqual('General');
   });
 
-  xit('Calendars constructor should populate list from single input', function () {
-    expect(true).toEqual(true);
+  it('Calendars constructor should populate list from single input', function () {
+    var c = new Calendars({
+      userId: 1234,
+      title: 'Birthdays',
+      showEvents: true,
+      color: '#9a9caa',
+      isDefault: false
+    });
+    expect(c.items.length).toEqual(1);
   });
 
-  xit('Calendars constructor should populate list from null/empty input', function () {
-    expect(true).toEqual(true);
+  it('Calendars constructor should populate list from null/empty input', function () {
+    var c = new Calendars();
+    expect(c.items.length).toEqual(0);
   });
 
 });
