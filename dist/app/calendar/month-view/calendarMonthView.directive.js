@@ -127,7 +127,7 @@
 
             if(day.events.length > maxEvents) {
               var removedEventsCount = 0;
-              while(day.events.length >= maxEvents) {
+              while(day.events.length > 0 && day.events.length >= maxEvents) {
                 var event = day.events.pop();
                 if(!event.fillerEvent) {
                   removedEventsCount++;
